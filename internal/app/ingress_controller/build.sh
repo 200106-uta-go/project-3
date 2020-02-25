@@ -1,18 +1,13 @@
 #! /bin/bash -xe
 
-cd sdn_Command
+cd executeCommand
 go build .
 cd ..
 
-cd sdn_Reasource
+cd scanner
 go build .
 cd ..
 
-cd sdn_Proxy
+cd proxy
 go build .
 cd ..
-
-cd ..
-
-cd dashboard
-go build .
