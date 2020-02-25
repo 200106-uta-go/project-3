@@ -1,0 +1,83 @@
+[
+	{
+		"Name": "kubernetes",
+		"Type": "ClusterIP",
+		"ClusterIP": "10.96.0.1",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "443/TCP",
+		"Age": "3d10h",
+		"Description": "Name:              kubernetes\nNamespace:         default\nLabels:            component=apiserver\n                   provider=kubernetes\nAnnotations:       \u003cnone\u003e\nSelector:          \u003cnone\u003e\nType:              ClusterIP\nIP:                10.96.0.1\nPort:              https  443/TCP\nTargetPort:        6443/TCP\nEndpoints:         10.0.2.15:6443\nSession Affinity:  None\nEvents:            \u003cnone\u003e\n"
+	},
+	{
+		"Name": "test2",
+		"Type": "NodePort",
+		"ClusterIP": "10.102.185.248",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "5000:30156/TCP",
+		"Age": "44m",
+		"Description": "Name:                     test2\nNamespace:                default\nLabels:                   run=test2\nAnnotations:              \u003cnone\u003e\nSelector:                 run=test2\nType:                     NodePort\nIP:                       10.102.185.248\nPort:                     \u003cunset\u003e  5000/TCP\nTargetPort:               5000/TCP\nNodePort:                 \u003cunset\u003e  30156/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "testing",
+		"Type": "NodePort",
+		"ClusterIP": "10.111.44.119",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:30448/TCP",
+		"Age": "39m",
+		"Description": "Name:                     testing\nNamespace:                default\nLabels:                   run=testing\nAnnotations:              \u003cnone\u003e\nSelector:                 run=testing\nType:                     NodePort\nIP:                       10.111.44.119\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  30448/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "testingthisthing",
+		"Type": "NodePort",
+		"ClusterIP": "10.110.199.119",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:31892/TCP",
+		"Age": "19m",
+		"Description": "Name:                     testingthisthing\nNamespace:                default\nLabels:                   run=testingthisthing\nAnnotations:              \u003cnone\u003e\nSelector:                 run=testingthisthing\nType:                     NodePort\nIP:                       10.110.199.119\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  31892/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "wow",
+		"Type": "NodePort",
+		"ClusterIP": "10.111.242.45",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:32304/TCP",
+		"Age": "36m",
+		"Description": "Name:                     wow\nNamespace:                default\nLabels:                   run=wow\nAnnotations:              \u003cnone\u003e\nSelector:                 run=wow\nType:                     NodePort\nIP:                       10.111.242.45\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  32304/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "wowmenow",
+		"Type": "NodePort",
+		"ClusterIP": "10.99.133.169",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:30750/TCP",
+		"Age": "2m25s",
+		"Description": "Name:                     wowmenow\nNamespace:                default\nLabels:                   run=wowmenow\nAnnotations:              \u003cnone\u003e\nSelector:                 run=wowmenow\nType:                     NodePort\nIP:                       10.99.133.169\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  30750/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "wowtest",
+		"Type": "NodePort",
+		"ClusterIP": "10.98.93.213",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:30147/TCP",
+		"Age": "35m",
+		"Description": "Name:                     wowtest\nNamespace:                default\nLabels:                   run=wowtest\nAnnotations:              \u003cnone\u003e\nSelector:                 run=wowtest\nType:                     NodePort\nIP:                       10.98.93.213\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  30147/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "wowtester2",
+		"Type": "NodePort",
+		"ClusterIP": "10.110.174.226",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:31921/TCP",
+		"Age": "26m",
+		"Description": "Name:                     wowtester2\nNamespace:                default\nLabels:                   run=wowtester2\nAnnotations:              \u003cnone\u003e\nSelector:                 run=wowtester2\nType:                     NodePort\nIP:                       10.110.174.226\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  31921/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	},
+	{
+		"Name": "wowtesting",
+		"Type": "NodePort",
+		"ClusterIP": "10.110.47.22",
+		"ExternalIP": "\u003cnone\u003e",
+		"Port": "4000:32669/TCP",
+		"Age": "28m",
+		"Description": "Name:                     wowtesting\nNamespace:                default\nLabels:                   run=wowtesting\nAnnotations:              \u003cnone\u003e\nSelector:                 run=wowtesting\nType:                     NodePort\nIP:                       10.110.47.22\nPort:                     \u003cunset\u003e  4000/TCP\nTargetPort:               4000/TCP\nNodePort:                 \u003cunset\u003e  32669/TCP\nEndpoints:                \u003cnone\u003e\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \u003cnone\u003e\n"
+	}
+]
