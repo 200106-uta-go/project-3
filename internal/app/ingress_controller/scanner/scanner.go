@@ -1,3 +1,6 @@
+//Scanner pulls information from the kubernetes cluster that is
+//running locally on the machine. It does this every TIMETOSLEEP
+//in a constant loop. It stores this information in various files.
 package main
 
 import (
@@ -9,8 +12,11 @@ import (
 	"time"
 )
 
+//TIMETOSLEEP this is the amount of time that the program waits
+//between resource scans.
 const TIMETOSLEEP = 10 * time.Second
 
+//Node contains all used information of what it consists of.
 type Node struct {
 	Name        string
 	Status      string
@@ -20,6 +26,7 @@ type Node struct {
 	Description string
 }
 
+//Pod contains all used information of what it consists of
 type Pod struct {
 	Name        string
 	Ready       string
@@ -30,6 +37,7 @@ type Pod struct {
 	Description string
 }
 
+//Service contains all used information of what it consists of
 type Service struct {
 	Name        string
 	Type        string
@@ -40,6 +48,7 @@ type Service struct {
 	Description string
 }
 
+//Deployment contains all used information of what it consists of
 type Deployment struct {
 	Name        string
 	Ready       string
@@ -56,6 +65,8 @@ func main() {
 	GetServices()
 }
 
+//GetNodes Scans for all nodes and serilizes them as a
+//Node struct and saved to a json file.
 func GetNodes() {
 	for {
 		var NewNode Node
@@ -97,6 +108,8 @@ func GetNodes() {
 	}
 }
 
+//GetPods Scans for all pods and serilizes them as a
+//Node struct and saved to a json file.
 func GetPods() {
 	for {
 		var NewPod Pod
@@ -147,6 +160,8 @@ func GetPods() {
 	}
 }
 
+//GetServices Scans for all services and serilizes them as a
+//Node struct and saved to a json file.
 func GetServices() {
 	for {
 		var NewService Service
@@ -188,6 +203,8 @@ func GetServices() {
 	}
 }
 
+//GetDeployments Scans for all deployments and serilizes them as a
+//Node struct and saved to a json file.
 func GetDeployments() {
 	for {
 		var NewDeployment Deployment
