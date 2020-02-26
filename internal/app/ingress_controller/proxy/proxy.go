@@ -137,7 +137,8 @@ func SessionListener(Conn net.Conn, shutdown chan string, Conn1 net.Conn) {
 	shutdown <- "Ending"
 }
 
-//GrabServers test
+// GrabServers reads the file serverlist.json and puts the contents
+// into the backendServers struct
 func GrabServers() {
 	for {
 
