@@ -1,3 +1,7 @@
+// This file sets up a reverse proxy for a kubernetes cluster
+// automatically routing port 4000 to the port that the service
+// on the kubernetes cluster is running on.
+
 package main
 
 import (
@@ -10,20 +14,25 @@ import (
 	"time"
 )
 
-var mu sync.Mutex
+var mu sync.Mutex // mutex lock
 
+// TIMETOSLEEP is how long the program waits in between checking for services
 const TIMETOSLEEP = 10 * time.Second
 
-//Power is a control bool to be accessed to shut down the
-//clientserver
+// PROXYPORT is a string of the port number where the reverse proxy can be accessed
+const PROXYPORT = "4000"
+
+// The list of backend servers running on the kubernetes cluster pulled from JSON
 var backendServers map[string]string = make(map[string]string)
+
+// If anything is sent to the shutdown channel it will end the program.
 var shutdownchan chan string = make(chan string)
 
 func main() {
 	fmt.Println("Software Defined Network Terminal")
-	go GrabServers()
-	go StartReverseProxy("4000")
-	<-shutdownchan
+	go GrabServers()                // Constantly grab the servers
+	go StartReverseProxy(PROXYPORT) // will set up the r-proxy when there is a server
+	<-shutdownchan                  // wait here until there's a shutdown signal
 	fmt.Println("Shuting Down...")
 }
 
@@ -32,8 +41,10 @@ func main() {
 func StartReverseProxy(port string) {
 	fmt.Println("Launching Software Defined Network...")
 
+	// Listen on the PROXYPORT
 	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
+		// If there is some error shut down the proxy
 		fmt.Println(err)
 		shutdownchan <- "Could Not Listen on Port"
 		return
@@ -41,10 +52,12 @@ func StartReverseProxy(port string) {
 
 	fmt.Println("Online - Now Listening On Port: " + port)
 
+	// Create a channel for the connection signal that allows us to
+	// wait for a new connection continuously
 	ConnSignal := make(chan string)
 
 	for {
-
+		// For every new connection make a session then listen for a new connection
 		go Session(ln, ConnSignal, port)
 		<-ConnSignal
 
@@ -73,6 +86,7 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 				if err != nil {
 					conn.Write([]byte("Could not resolve: " + ":" + v))
 					fmt.Println("Could not resolve: " + ":" + v)
+					mu.Unlock()
 					return
 				} else {
 					serverConn.Write(buf)
@@ -81,11 +95,11 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			}
 		}
 		if serverConn != nil {
+			mu.Unlock()
 			break
 		}
 
 	}
-	mu.Unlock()
 
 	shutdownSession := make(chan string)
 	go SessionListener(serverConn, shutdownSession, conn)
@@ -123,7 +137,8 @@ func SessionListener(Conn net.Conn, shutdown chan string, Conn1 net.Conn) {
 	shutdown <- "Ending"
 }
 
-//GrabServers test
+// GrabServers reads the file serverlist.json and puts the contents
+// into the backendServers struct
 func GrabServers() {
 	for {
 
