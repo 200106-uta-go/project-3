@@ -1,0 +1,16 @@
+# create two ClusterPipe resources
+apiVersion: revature.com/v1
+kind: ClusterPipe
+metadata:
+  name: pipe1
+spec:
+  cluster: cluster-a
+  targetip: 0.0.0.0
+---
+apiVersion: revature.com/v1
+kind: ClusterPipe
+metadata:
+  name: pipe2
+spec:
+  cluster: cluster-b
+  targetip: 255.255.255.255
