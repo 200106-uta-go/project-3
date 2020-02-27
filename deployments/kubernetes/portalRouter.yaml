@@ -1,0 +1,46 @@
+#deploy 1 portal router and cluster roles to allow for getting pods from api
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+---
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pod-reader
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+    name: portal-deployment
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: portal
+    template:
+        metadata:
+            labels:
+                app: portal
+        spec:
+            containers:
+            -   name: portal
+                image: mattackard/kube-portal:v4.0
+                ports:
+                -   containerPort: 8081
