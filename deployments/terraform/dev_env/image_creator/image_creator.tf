@@ -12,5 +12,5 @@ provider "aws" {
 
 resource "aws_ami_from_instance" "dev_env_image" {
   name               = "dev_env_image"
-  source_instance_id = "i-08483aa03dd6cdf9f" # Need to change this to the id of the instance created by base_for_image.tf
+  source_instance_id = "i-0f4c016c2e0ec06db" # Need to change this to the id of the instance created by base_for_image.tf
 }

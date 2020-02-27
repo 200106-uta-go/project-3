@@ -1,6 +1,4 @@
 access_key
 secret_key
 Temp.pem
-deployments/terraform/dev_env/.terraform/
-deployments/terraform/dev_env/base_for_image/.terraform/
-deployments/terraform/dev_env/image_creator/.terraform/
+.terraform/
