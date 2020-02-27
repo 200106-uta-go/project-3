@@ -1,22 +1,11 @@
 #! /bin/bash -xe
 
-cd sdn_Command
-chmod 777 sdn_Command
-./sdn_Command &
+cd proxy
+chmod 777 proxy
+./proxy &
 cd ..
 
-cd sdn_Proxy
-chmod 777 sdn_Proxy
-./sdn_Proxy &
+cd scanner
+chmod 777 scanner
+./scanner &
 cd ..
-
-cd sdn_Reasource
-chmod 777 sdn_Reasource
-./sdn_Reasource &
-cd ..
-
-cd ..
-
-cd dashboard
-chmod 777 dashboard
-./dashboard &
