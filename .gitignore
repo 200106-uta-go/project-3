@@ -62,3 +62,7 @@ terraform/secrets/creds.json
 test.sh
 worker.deploy.sh
 scripts/master_deploy.sh
+
+#go mod
+go.mod
+go.sum

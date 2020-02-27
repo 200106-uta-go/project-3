@@ -1,16 +1,8 @@
-# create two Portal resources
+# create a Portal resource
 apiVersion: revature.com/v1
 kind: Portal
 metadata:
   name: portal1
 spec:
   portal: cluster-a
-  targetip: google.com
----
-apiVersion: revature.com/v1
-kind: Portal
-metadata:
-  name: portal2
-spec:
-  portal: cluster-b
   targetip: golang.org
