@@ -27,7 +27,7 @@ resource "aws_instance" "cluster" {
         type = "ssh"
         private_key = file("./Temp.pem")
         host =  self.public_ip
-        timeout = "4m"
+        timeout = "15m"
     }
 
     provisioner "file" {

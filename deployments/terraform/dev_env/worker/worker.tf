@@ -28,7 +28,7 @@ resource "aws_instance" "worker" {
         type = "ssh"
         private_key = file("./Temp.pem")
         host =  self.public_ip
-        timeout = "4m"
+        timeout = "10m"
     }
 
     provisioner "file" {
