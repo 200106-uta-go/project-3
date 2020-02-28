@@ -7,6 +7,7 @@
 - [x] Understand how to use Grafana.
 - [ ] Create presentation for demo/training.
 - [ ] Discover what variables are needed to stay constant and what variables are customizable in each configuration.
+- [ ] Understand .yml and .ini file properties.
 
 ---
 ## Notes/Commands: 
@@ -42,7 +43,7 @@ prometheus.yml is based off their starting configuration, and will be used for t
 `docker run --rm -v /home/${USER}/{Path/To/.Yml_File}/prometheus.yml:/etc/prometheus/prometheus.yml -d -p 9090:9090 --name=myProm prom/prometheus` 
 
 ---
-
+## Configuration Notes for Grafana: 
 
 
 
