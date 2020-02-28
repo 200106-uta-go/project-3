@@ -1,1 +1,0 @@
-# Grifana & Prometheus Configuration Explanation
