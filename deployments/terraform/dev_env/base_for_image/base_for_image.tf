@@ -37,6 +37,25 @@ resource "aws_instance" "cluster_A" {
         source = "../setup_dev_env.sh"
         destination = "/home/ubuntu/setup_dev_env.sh"
     }
+
+    provisioner "file" {
+      source = "../worker/worker.tf"
+      destination = "/home/ubuntu/worker.tf"
+    }
+
+    provisioner "file" {
+      source = "../terraform"
+      destination = "/home/ubuntu/terraform"
+    }
+
+    provisioner "remote-exec" {
+      inline = [
+        "chmod 777 setup_dev_env.sh",
+        "chmod 777 terraform",
+        "sudo mv terraform /usr/local/bin",
+        "chmod 777 worker.tf",
+      ]
+    }
 }
 
 resource "aws_security_group" "SSH" {

@@ -10,26 +10,47 @@ provider "aws" {
     region = "us-east-2"
 }
 
-resource "aws_instance" "cluster_A" {
-    ami           = "ami-0a532537d305d1a34"
+resource "aws_instance" "cluster" {
+    ami           = "ami-0f35b7d4467861303"
     instance_type = "t2.medium"
 
     #Generate your own Key_Name from AWS and use that here, name it Temp.pem
     #DO NOT UPLOAD THESE FILES, make sure they are masked by the .gitignore
     key_name = "Temp"
 
-    security_groups = [aws_security_group.SSH.name]
-}
-
-resource "aws_instance" "cluster_B" {
-    ami           = "ami-0a532537d305d1a34"
-    instance_type = "t2.medium"
-
-    #Generate your own Key_Name from AWS and use that here, name it Temp.pem
-    #DO NOT UPLOAD THESE FILES, make sure they are masked by the .gitignore
-    key_name = "Temp"
+    count = "2"
 
     security_groups = [aws_security_group.SSH.name]
+
+    connection {
+        user = "ubuntu"
+        type = "ssh"
+        private_key = file("./Temp.pem")
+        host =  self.public_ip
+        timeout = "15m"
+    }
+
+    provisioner "file" {
+      source = "./access_key"
+      destination = "/home/ubuntu/access_key"
+    }
+
+    provisioner "file" {
+      source = "./secret_key"
+      destination = "/home/ubuntu/secret_key"
+    }
+
+    provisioner "file" {
+      source = "./Temp.pem"
+      destination = "/home/ubuntu/Temp.pem"
+    }
+
+    provisioner "remote-exec"{
+        inline = [
+          "chmod 777 setup_dev_env.sh",
+          "sudo ./setup_dev_env.sh"
+        ]
+    }
 }
 
 resource "aws_security_group" "SSH" {
