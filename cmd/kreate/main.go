@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
+
+	"github.com/200106-uta-go/project-3/pkg/kreate"
 )
 
 func main() {
@@ -15,9 +17,9 @@ func main() {
 	flag.Parse()
 	switch flag.Arg(0) {
 	case "chart":
-		kreate.CreateProfile(flag.Arg(1))
+		kreate.CreateChart(flag.Arg(1))
 
-		//SCAFFOLDING FOR PAST MVP
+	//SCAFFOLDING FOR AFTER MVP
 
 	// case "mount":
 	// 	kreate.Mount(flag.Arg(1))
