@@ -12,12 +12,14 @@ func main() {
 	// Set up error log to ouptut information
 	log.SetFlags(log.Lshortfile)
 
+	kreate.Init()
+
 	// Parse Command Line arguements and use them to find
-	// appropriate sub-command for mcProxy to run.
+	// appropriate sub-command for kreate to run.
 	flag.Parse()
 	switch flag.Arg(0) {
 	case "chart":
-		kreate.CreateChart(flag.Arg(1))
+		kreate.CreateChart(flag.Arg(1), HELMFOLDERS)
 
 	//SCAFFOLDING FOR AFTER MVP
 
