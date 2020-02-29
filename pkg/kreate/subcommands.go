@@ -1,7 +1,9 @@
 package kreate
 
 import (
+	"fmt"
 	"log"
+
 	"helm.sh/helm/v3/pkg/chartutil" // be sure to run 'go get -d -u -v helm.sh/helm/v3/...' in order to grab all of helm's dependencies
 )
 
@@ -16,7 +18,7 @@ func CreateChart(name string) error {
 	}
 
 	addRevatureTemplates(fullChartPath)
-	addRevatureValueYaml(fullChartPath)
+	// addRevatureValueYaml(fullChartPath)
 
 	return nil
 }
@@ -24,5 +26,7 @@ func CreateChart(name string) error {
 // EditValues will allow the user to edit the values Yaml created by helm.
 // How we choose to do this is up for discussion.
 func EditValues(name string) error {
+	fullChartPath := chartsLocation + name
+	fmt.Printf("Please edit your Values.yaml file with your favorite text edit @ %s", fullChartPath)
 	return nil
 }
