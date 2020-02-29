@@ -17,6 +17,9 @@ func CreateChart(name string) error {
 		log.Panicf("Error creating chart directory => %+v", createErr)
 	}
 
+	// This function merely should copy our templates from /config/templates/
+	// the the users /var/local/kreate/<helm-directory-name>/templates/
+	// TODO: THIS FUNCTION IS EMPTY AND NEEDS TO BE IMPLEMENTED!!!!
 	addRevatureTemplates(fullChartPath)
 	// addRevatureValueYaml(fullChartPath)
 
