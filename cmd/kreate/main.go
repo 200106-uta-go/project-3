@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 	switch flag.Arg(0) {
 	case "chart":
-		kreate.CreateChart(flag.Arg(1), HELMFOLDERS)
+		kreate.CreateChart(flag.Arg(1))
 
 	//SCAFFOLDING FOR AFTER MVP
 
@@ -37,6 +37,6 @@ func main() {
 	case "help":
 		fmt.Println(usage)
 	default:
-		fmt.Println("No valid sub command selected. Use \"mckreate.help\" for information on various options.")
+		fmt.Println("No valid sub command selected. Use \"kreate help\" for information on various options.")
 	}
 }
