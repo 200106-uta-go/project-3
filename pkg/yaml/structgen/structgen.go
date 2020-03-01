@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"reflect"
-	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -63,9 +62,15 @@ func (g Generated) HasKey(key string) []Generated {
 			newGen := Generated{}
 			tempMap := reflect.ValueOf(v)
 
-			//for each key value in tempMap, copy into newGen
-			for innerIndex := 0; innerIndex < tempMap.Len(); innerIndex++ {
-				newGen[strconv.Itoa(innerIndex)] = tempMap.Index(innerIndex)
+			//iterates through each value in tempMap and adds the key value to newGen
+			iterate := tempMap.MapRange()
+			for iterate.Next() {
+				newGen[iterate.Key().String()] = iterate.Value().Interface()
+			}
+
+			//if the key you're searching for is a map, add it
+			if i == key {
+				matches = append(matches, newGen)
 			}
 
 			//recursively append matches into matches slice
@@ -84,7 +89,10 @@ func (g Generated) HasKey(key string) []Generated {
 
 //IsMap ...
 func (g Generated) IsMap(value interface{}) bool {
-	return "structgen.Generated" == reflect.TypeOf(value).String()
+	if value != nil {
+		return "structgen.Generated" == reflect.TypeOf(value).String()
+	}
+	return false
 }
 
 //Print prints the contents of a generated struct
