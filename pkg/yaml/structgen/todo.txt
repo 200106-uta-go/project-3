@@ -1,4 +1,2 @@
-support slices in genstruct.Generated.hasKey
-
 get full path to nested map keys
  - ex. generatedMap[spec.selector.matchExpressions]
