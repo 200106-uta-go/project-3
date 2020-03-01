@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -47,6 +49,42 @@ func Copy(oldFile *os.File, newFile *os.File) {
 	default:
 		invalidFile(oldFile)
 	}
+}
+
+//HasKey checks if the generated struct has a key value pair
+//This also iterates through nested maps if there are any
+func (g Generated) HasKey(key string) []Generated {
+	var matches []Generated
+
+	//range over generated struct
+	for i, v := range g {
+		if g.IsMap(v) {
+			//create a new generated and a temporary map to iterate over
+			newGen := Generated{}
+			tempMap := reflect.ValueOf(v)
+
+			//for each key value in tempMap, copy into newGen
+			for innerIndex := 0; innerIndex < tempMap.Len(); innerIndex++ {
+				newGen[strconv.Itoa(innerIndex)] = tempMap.Index(innerIndex)
+			}
+
+			//recursively append matches into matches slice
+			matches = append(matches, newGen.HasKey(key)...)
+		} else {
+			//put match into new Generated to append to matches
+			if i == key {
+				matches = append(matches, Generated{
+					i: v,
+				})
+			}
+		}
+	}
+	return matches
+}
+
+//IsMap ...
+func (g Generated) IsMap(value interface{}) bool {
+	return "structgen.Generated" == reflect.TypeOf(value).String()
 }
 
 //Print prints the contents of a generated struct
