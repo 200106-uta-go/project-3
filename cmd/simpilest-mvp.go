@@ -23,7 +23,7 @@ func main() {
 	fmt.Scan(&yes)
 	if again == "y" || again == "Y" || again == "Yes" || again == "yes" {
 
-		command := exec.Command("./scripts/setup.sh")
+		command := exec.Command("./setup.sh")
 		command.Stderr = os.Stderr
 		out, err := command.Output()
 		if err != nil {

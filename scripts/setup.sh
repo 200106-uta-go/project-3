@@ -9,9 +9,13 @@ sudo cp helm /bin/helm
 sudo cp tiller /bin/tiller
 cd ..
 sudo kubectl apply -f install/kubernetes/helm/helm-service-account.yaml
+echo "Please wait this will take about a min"
+sleep 10
 sudo helm init --service-account tiller
-helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system 
+sleep 5
+helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
+sleep 5 
 kubectl -n istio-system wait --for=condition=complete job --all
-##demo
+sleep 5
 helm install install/kubernetes/helm/istio --name istio --namespace istio-system \
     --values install/kubernetes/helm/istio/values-istio-demo.yaml
