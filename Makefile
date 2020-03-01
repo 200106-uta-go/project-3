@@ -22,13 +22,13 @@ dev2:
 	export masterip=$$(terraform output -json master_ip | jq -j .[1])
 	echo $$masterip
 	ssh -i ./Temp.pem ubuntu@$$masterip
-
-image:
-	cd ./deployments/terraform/image
-	terraform init
-	terraform apply --auto-approve
 	
 destroy_dev:
+	cd ./deployments/terraform/dev_env
+	export masterip=$$(terraform output -json master_ip | jq -j .[0])
+	export masterip2=$$(terraform output -json master_ip | jq -j .[1])
+	ssh -i ./Temp.pem ubuntu@$$masterip 'sudo terraform destroy --auto-approve' & disown
+	ssh -i ./Temp.pem ubuntu@$$masterip2 'sudo terraform destroy --auto-approve'
 	cd ./deployments/terraform/dev_env
 	terraform destroy --auto-approve
 
