@@ -2,3 +2,5 @@ access_key
 secret_key
 Temp.pem
 .terraform/
+terraform.tfstate
+terraform.tfstate.backup
