@@ -1,4 +1,10 @@
-// creates two t2.medium ec2 instances each with kubernetes and docker installed
+// creates one t2.medium ec2 instances with kubernetes and docker installed
+output "master_ip" {
+  value = aws_instance.cluster.*.public_ip
+  description = "The Private IP address of the master"
+}
+
+
 
 provider "aws" {
     // access_key and secret_key are personal files to access your own
