@@ -1,6 +1,6 @@
 FROM ubuntu
 WORKDIR /root
 COPY . /root
-EXPOSE 4000
+EXPOSE 4002
 COPY --from=lachlanevenson/k8s-kubectl:v1.10.3 /usr/local/bin/kubectl /usr/local/bin/kubectl
 CMD [ "./run.sh" ]

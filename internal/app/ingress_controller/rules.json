@@ -4,8 +4,8 @@
         "Path": "/",
         "Route": {
             "ServiceName": "test",
-            "ServicePort": "4000",
-            "ServiceIP": "localhost"
+            "ServicePort": "5000",
+            "ServiceIP": "172.17.0.1"
         }
     },
     {
@@ -13,8 +13,8 @@
         "Path": "/player",
         "Route": {
             "ServiceName": "test",
-            "ServicePort": "4000",
-            "ServiceIP": "localhost"
+            "ServicePort": "5000",
+            "ServiceIP": "172.17.0.1"
         }
     }
 ]

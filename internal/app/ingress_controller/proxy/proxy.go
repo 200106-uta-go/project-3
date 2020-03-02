@@ -20,7 +20,7 @@ var mu sync.Mutex // mutex lock
 const TIMETOSLEEP = 10 * time.Second
 
 // PROXYPORT is a string of the port number where the reverse proxy can be accessed
-const PROXYPORT = "6000"
+const PROXYPORT = "4002"
 
 type Route struct {
 	ServiceName string `json:"ServiceName"`
@@ -107,7 +107,7 @@ func StartReverseProxy(port string) {
 	for {
 		// For every new connection make a session then listen for a new connection
 		go Session(ln, ConnSignal, port)
-		<-ConnSignal
+		fmt.Println(<-ConnSignal)
 	}
 
 }
@@ -116,7 +116,11 @@ func StartReverseProxy(port string) {
 //session handles all interactions with the connected
 //client
 func Session(ln net.Listener, ConnSignal chan string, port string) {
-	conn, _ := ln.Accept()
+	conn, err := ln.Accept()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 	defer conn.Close()
 	ConnSignal <- "New Connection \n"
 
@@ -137,7 +141,6 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 	fmt.Println("protocol = ", protocol)
 
 	var serverConn net.Conn = nil
-	var err error
 
 	mu.Lock()
 	for _, v := range rulesList {
@@ -145,7 +148,7 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			// route to location specified by the rule
 			route := v.Route
 			destination := route.ServiceIP + ":" + route.ServicePort
-			fmt.Println(destination)
+			fmt.Println("Going to Send Conn to: " + destination)
 			serverConn, err = net.Dial("tcp", destination)
 			if err != nil {
 				conn.Write([]byte("Could not resolve: " + destination))
@@ -157,9 +160,8 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			break
 		}
 	}
-	mu.Unlock()
+
 	if serverConn == nil {
-		mu.Lock()
 		for _, v := range clusterList {
 			// send request to other clusters
 			destination := v.ClusterIP + ":" + v.ClusterPort
@@ -168,8 +170,8 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 				serverConn.Write(buf)
 			}
 		}
-		mu.Unlock()
 	}
+	mu.Unlock()
 
 	shutdownSession := make(chan string)
 	if serverConn != nil {
