@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: ingressname
+spec:
+  tls:
+  - hosts:
+    - "*.our-server.net"
+    secretName: our-server-net-tls
+  rules:
+  - host: www.our-server.com
+    http:
+    paths: 
+    - path: /
+      backend:
+      serviceName: my-index-app-service
+      servicePort: 8080
+  - host: www.our-server.com
+    http:
+    paths: 
+    - path: /videos
+      backend:
+      serviceName: my-video-app-service
+      servicePort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: ingresscontroller
+labels:
+    app: ingress
+spec:
+  containers:
+  - name: ingresscontroller
+    image: jtheiss19/ingress-controller
+    ports:
+    - containerPort: 4000
+    volumeMounts:
+    - name: config-volume
+      mountPath: /root/.kube/
+  volumes:
+  - name: config-volume
+    configMap:
+      name: ingress
