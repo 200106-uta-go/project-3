@@ -26,26 +26,22 @@ func main() {
 	if again == "y" || again == "Y" || again == "Yes" || again == "yes" {
 
 		fmt.Println("Deploying services to cluster. This may take upto few minutes.")
-		command := exec.Command("sh", "./setup1.sh")
-		command.Stderr = os.Stderr
-		out, err := command.Output()
-		if err != nil {
-			log.Printf("Command Failed :: %s", err)
-		}
-		fmt.Print(string(out))
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println("Please wait. Still deploying services.")
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println("Please wait. Still deploying services.")
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println("Please wait. Still deploying services.")
-		command1 := exec.Command("sh", "./setup2.sh")
+		command1 := exec.Command("sh", "./setup1.sh")
 		command1.Stderr = os.Stderr
 		out1, err1 := command1.Output()
-		if err1 != nil {
-			log.Printf("Command Failed :: %s", err1)
-		}
+		errorHandler(err1)
 		fmt.Print(string(out1))
+		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println("Please wait. Still deploying services.")
+		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println("Please wait. Still deploying services.")
+		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println("Please wait. Still deploying services.")
+		command2 := exec.Command("sh", "./setup2.sh")
+		command2.Stderr = os.Stderr
+		out2, err2 := command2.Output()
+		errorHandler(err2)
+		fmt.Print(string(out2))
 
 	}
 
