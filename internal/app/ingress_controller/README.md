@@ -66,18 +66,74 @@ Other elements can be used to extend the functionality of this ingress controlle
 
 ## How To Configure
 
-Below is a sample _.yml_ file that can be used to luanch both the Ingress Manifest and the Ingress Controller 
+Below is a sample _.yml_ file that can be used to luanch both the Ingress Manifest (kind: ingress) and the Ingress Controller (kind: pod). 
 
     apiVersion: extensions/v1beta1
-    kind: ingress
+    kind: Ingress
     metadata:
-    name: IngressName
+        name: ingressname
     spec:
-    tls:
-    - hosts:
-        - "*.Our-Server.net"
-        secretName: Our-Server-net-tls
-    rules:
+        tls:
+        - hosts:
+            - "*.our-server.net"
+            secretName: our-server-net-tls
+        rules:
+        - host: www.our-server.com
+            http:
+            paths: 
+            - path: /
+                backend:
+                serviceName: my-index-app-service
+                servicePort: 8080
+        - host: www.our-server.com
+            http:
+            paths: 
+            - path: /videos
+                backend:
+                serviceName: my-video-app-service
+                servicePort: 8080
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+        name: ingresscontroller
+    labels:
+        app: ingress
+    spec:
+        containers:
+        - name: ingresscontroller
+            image: jtheiss19/ingress-controller
+            ports:
+            - containerPort: 4000
+            volumeMounts:
+            - name: config-volume
+                mountPath: /root/.kube/
+        volumes:
+        - name: config-volume
+            configMap:
+                name: ingress
+
+If you look at a section of the rules within the main _.yml_ file we can show how routing rules can be configured. 
+
+1. Host 
+
+    This simply refers to the incomming address dialed by the user, obsuring the implyied port in this case. Any paths specified later are used against the this host discriminator. 
+    
+    Example: even though www.Our-Server.com/ and www.Our-Server.net/ both have the same path, they both can be routed to different service backends because of their differing host names.
+
+2. Path
+
+    Path describes the path, ignoring keys and fragments. It is used as the specific, unique ending to a url. 
+
+    Example: the URL https://www.our-server.net/videos/cats?c=mykitty#00h02m30s has the path /videos/cats
+
+3. Service Name
+
+    Service Name describes the backend service in the Kubernetes cluster for this routing protocol. It has to be known before declaring this _.yml_ file. If you add a new service to the Kubernetes cluster and want to add it to the routing protocol you have to patch the _.yml_ file with the new service in mind.
+    
+
+    
+<pre>
     - host: www.Our-Server.com
         http:
         paths: 
@@ -85,32 +141,6 @@ Below is a sample _.yml_ file that can be used to luanch both the Ingress Manife
             backend:
             serviceName: MyIndexAppService
             servicePort: 8080
-    - host: www.Our-Server.com
-        http:
-        paths: 
-        - path: /videos
-            backend:
-            serviceName: MyVideoAppService
-            servicePort: 8080
-    ---
-    apiVersion: v1
-    kind: Pod
-    metadata:
-    name: ingressController
-    labels:
-        app: ingress
-    spec:
-    containers:
-        - name: ingressController
-        image: jtheiss19/ingress-controller
-        ports:
-        - containerPort: 4000
-        volumeMounts:
-        - name: config-volume
-            mountPath: /root/.kube/
-    volumes:
-        - name: config-volume
-        configMap:
-            name: ingress
+</pre>
 
-## User Stories
+Using the above example any requests to the URL http://www.Our-Server.com/?key=5#00h02m30s would redirect to our backend service MyIndexAppService whose IP address will be automatically pulled from the API server. 
