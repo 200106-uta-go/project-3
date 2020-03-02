@@ -293,12 +293,12 @@ func CreateFile() {
 
 	fileContent := Ruleset
 	rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-	myFile, _ := os.OpenFile("./rules.json", os.O_RDWR|os.O_TRUNC, 777)
+	myFile, _ := os.OpenFile("../rules.json", os.O_RDWR|os.O_TRUNC, 777)
 	myFile.Write(rulesJSON)
 
 	fileContent2 := TargetIP
 	rulesJSON, _ = json.MarshalIndent(fileContent2, "", "	")
-	myFile, _ = os.OpenFile("./clusters.json", os.O_RDWR|os.O_TRUNC, 777)
+	myFile, _ = os.OpenFile("../clusters.json", os.O_RDWR|os.O_TRUNC, 777)
 	myFile.Write(rulesJSON)
 
 }
