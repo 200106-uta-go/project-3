@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
     name: ingressname
@@ -9,19 +9,12 @@ spec:
     secretName: our-server-net-tls
   rules:
   - host: www.our-server.com
-    http:
-    paths: 
-    - path: /
-      backend:
-      serviceName: my-index-app-service
-      servicePort: 8080
-  - host: www.our-server.com
-    http:
-    paths: 
-    - path: /videos
-      backend:
-      serviceName: my-video-app-service
-      servicePort: 8080
+  - http:
+      paths: 
+      - path: /
+        backend:
+          serviceName: zach-server
+          servicePort: 4000
 ---
 apiVersion: v1
 kind: Pod
@@ -34,7 +27,7 @@ spec:
   - name: ingresscontroller
     image: jtheiss19/ingress-controller
     ports:
-    - containerPort: 4000
+    - containerPort: 80
     volumeMounts:
     - name: config-volume
       mountPath: /root/.kube/
@@ -42,3 +35,46 @@ spec:
   - name: config-volume
     configMap:
       name: ingress
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: zach-server
+labels:
+    app: zach
+spec:
+  containers:
+  - name: zach-server
+    image: zachthomas823/server
+    ports:
+    - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingressnode
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30100
+      targetPort: 80
+  selector:
+    name: ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zachnode
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 4000
+      nodePort: 30101
+      targetPort: 4000
+  selector:
+    name: zach

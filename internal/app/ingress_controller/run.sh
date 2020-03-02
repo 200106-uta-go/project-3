@@ -2,7 +2,7 @@
 
 cd proxy
 chmod 777 proxy
-./proxy &
+./proxy
 cd ..
 
 cd scanner

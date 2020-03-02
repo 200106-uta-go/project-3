@@ -1,283 +1,320 @@
-//Scanner pulls information from the kubernetes cluster that is
-//running locally on the machine. It does this every TIMETOSLEEP
-//in a constant loop. It stores this information in various files.
+// Scanner pulls information from the kubernetes cluster using the API running locally on the machine.
 package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"os"
-	"os/exec"
-	"strings"
 	"time"
+	"net/http"
+	"strconv"
+	"os/exec"
+	"os"
+	
 )
 
-//TIMETOSLEEP this is the amount of time that the program waits
-//between resource scans.
-const TIMETOSLEEP = 10 * time.Second
-
-//Node contains all used information of what it consists of.
-type Node struct {
-	Name        string
-	Status      string
-	Roles       string
-	Age         string
-	Version     string
-	Description string
+// MyServices contains data for all services in the network
+type MyServices struct {
+	Kind       string `json:"kind"`
+	APIVersion string `json:"apiVersion"`
+	Metadata   struct {
+		SelfLink        string `json:"selfLink"`
+		ResourceVersion string `json:"resourceVersion"`
+	} `json:"metadata"`
+	Items []Service `json:"items"`
 }
 
-//Pod contains all used information of what it consists of
-type Pod struct {
-	Name        string
-	Ready       string
-	Status      string
-	Restarts    string
-	Age         string
-	Port        string
-	Description string
-}
 
-//Service contains all used information of what it consists of
+// Service struct contains data pertaining to a service 
 type Service struct {
-	Name        string
-	Type        string
-	ClusterIP   string
-	ExternalIP  string
-	Port        string
-	Age         string
-	Description string
+	Metadata struct {
+		Name              string    `json:"name"`
+		Namespace         string    `json:"namespace"`
+		SelfLink          string    `json:"selfLink"`
+		UID               string    `json:"uid"`
+		ResourceVersion   string    `json:"resourceVersion"`
+		CreationTimestamp time.Time `json:"creationTimestamp"`
+		Labels            struct {
+			Component string `json:"component"`
+			Provider  string `json:"provider"`
+		} `json:"labels"`
+	} `json:"metadata"`
+	Spec struct {
+		Ports []struct {
+			Name       string `json:"name"`
+			Protocol   string `json:"protocol"`
+			Port       int    `json:"port"`
+			TargetPort int    `json:"targetPort"`
+		} `json:"ports"`
+		ClusterIP       string `json:"clusterIP"`
+		Type            string `json:"type"`
+		SessionAffinity string `json:"sessionAffinity"`
+	} `json:"spec"`
+	Status struct {
+		LoadBalancer struct {
+		} `json:"loadBalancer"`
+	} `json:"status"`
+} 
+
+// Portal retrieves data of portal information  
+type Portal struct {
+	APIVersion string `json:"apiVersion"`
+	Items      []struct {
+		APIVersion string `json:"apiVersion"`
+		Kind       string `json:"kind"`
+		Metadata   struct {
+			Annotations struct {
+				KubectlKubernetesIoLastAppliedConfiguration string `json:"kubectl.kubernetes.io/last-applied-configuration"`
+			} `json:"annotations"`
+			CreationTimestamp time.Time `json:"creationTimestamp"`
+			Generation        int       `json:"generation"`
+			Name              string    `json:"name"`
+			Namespace         string    `json:"namespace"`
+			ResourceVersion   string    `json:"resourceVersion"`
+			SelfLink          string    `json:"selfLink"`
+			UID               string    `json:"uid"`
+		} `json:"metadata"`
+		Spec struct {
+			Portal   string `json:"portal"`
+			Targetip string `json:"targetip"`
+		} `json:"spec"`
+	} `json:"items"`
+	Kind     string `json:"kind"`
+	Metadata struct {
+		Continue        string `json:"continue"`
+		ResourceVersion string `json:"resourceVersion"`
+		SelfLink        string `json:"selfLink"`
+	} `json:"metadata"`
 }
 
-//Deployment contains all used information of what it consists of
-type Deployment struct {
-	Name        string
-	Ready       string
-	UpToDate    string
-	Available   string
-	Age         string
-	Description string
+// IngressData stores 
+type IngressData struct {
+	Kind       string `json:"kind"`
+	APIVersion string `json:"apiVersion"`
+	Metadata   struct {
+		SelfLink        string `json:"selfLink"`
+		ResourceVersion string `json:"resourceVersion"`
+	} `json:"metadata"`
+	Items []IngressItem `json:"items"`
 }
+
+// IngressItem stores
+type IngressItem struct {
+	Metadata struct {
+		Name              string    `json:"name"`
+		Namespace         string    `json:"namespace"`
+		SelfLink          string    `json:"selfLink"`
+		UID               string    `json:"uid"`
+		ResourceVersion   string    `json:"resourceVersion"`
+		Generation        int       `json:"generation"`
+		CreationTimestamp time.Time `json:"creationTimestamp"`
+	} `json:"metadata"`
+	Spec struct {
+		TLS []struct {
+			Hosts      []string `json:"hosts"`
+			SecretName string   `json:"secretName"`
+		} `json:"tls"`
+		Rules []IngressRules `json:"rules"`
+	} `json:"spec"`
+	Status struct {
+		LoadBalancer struct {
+		} `json:"loadBalancer"`
+	} `json:"status"`
+}
+
+// IngressRules stores
+type IngressRules struct  {
+	Host string `json:"host"`
+	Prot struct {
+		Paths []struct {
+			Path    string `json:"path"`
+			Backend struct {
+				ServiceName string `json:"serviceName"`
+				ServicePort int    `json:"servicePort"`
+			} `json:"backend"`
+		} `json:"paths"`
+	} `json:"http"`
+}
+
+
+// Route stores 
+type Route struct {
+	ServiceName string `json:"ServiceName"`
+	ServicePort string `json:"ServicePort"`
+	ServiceIP   string `json:"ServiceIP"`
+}
+
+// Rules stores 
+type Rules struct {
+	Protocol string `json:"Protocol"`
+	Path     string `json:"Path"`
+	Route    Route  `json:"Route"`
+}
+
+// AltCluster stores
+type AltCluster struct{
+	ClusterName string
+	ClusterIP string
+	ClusterPort string
+}
+
+// Ruleset stores
+var Ruleset []Rules
+
+// ReqServices contians
+var ReqServices MyServices
+
+// TargetIP will store alternative IP address to dial if first one is not found
+var TargetIP []AltCluster
+
 
 func main() {
-	go GetNodes()
-	go GetPods()
-	go GetDeployments()
-	GetServices()
+	// run the kubectl proxy without TLS credentials
+	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
+	GetTargetIP()
+	GetIngress()
+	CreateFile()
+
 }
 
-//GetNodes Scans for all nodes and serilizes them as a
-//Node struct and saved to a json file.
-func GetNodes() {
-	for {
-		var NewNode Node
-		var TempNodesList []Node
+// GetServices gets all of the services in our cluster from the API
+func GetServices(serviceName string) (clusterIP string) {
 
-		output, _ := exec.Command("kubectl", "get", "nodes").Output()
+	// request information of services from k8s API
+	serviceURL := "http://localhost:8001/api/v1/services"
+	body := GetResponse(serviceURL)
+	
+	// unmarshall body of the request and populate structure currServices with information of current services from K8S API
+	err := json.Unmarshal(body, &ReqServices)
+	if err != nil { fmt.Println(err)}
+	clusterIP = FindService(serviceName)
 
-		t := strings.Split(string(output), "\n")
-		t = t[1:]
-
-		for _, v := range t {
-			z := strings.Split(v, " ")
-
-			var temp []string
-
-			for k2, v2 := range z {
-				z[k2] = strings.TrimSpace(v2)
-				if z[k2] != "" {
-					temp = append(temp, z[k2])
-				}
-			}
-
-			z = temp
-
-			if len(z) != 0 {
-				descrip, _ := exec.Command("kubectl", "describe", "nodes", z[0]).Output()
-
-				NewNode = Node{Name: z[0], Status: z[1], Roles: z[2], Age: z[3], Version: z[4], Description: string(descrip)}
-				TempNodesList = append(TempNodesList, NewNode)
-			}
-
-		}
-
-		byteslice, _ := json.MarshalIndent(TempNodesList, "", "	")
-
-		ioutil.WriteFile("../nodes.json", byteslice, 7777)
-
-		time.Sleep(TIMETOSLEEP)
-	}
+	return
 }
 
-//GetPods Scans for all pods and serilizes them as a
-//Node struct and saved to a json file.
-func GetPods() {
-	for {
-		var NewPod Pod
-		var TempPodList []Pod
+//FindService searches list of services by 'name' to match 
+func FindService(serviceName string) (clusterIP string) {
 
-		// Get a list of current pods from k8s
-		output, _ := exec.Command("kubectl", "get", "pods").Output()
-
-		// Seperate each pods by splitting on new lines
-		t := strings.Split(string(output), "\n")
-		t = t[1:]
-
-		// For each pod make a pod struct and add it to a slice of pod structs
-		for _, v := range t {
-			// Seperate each word
-			z := strings.Split(v, " ")
-
-			var temp []string
-
-			// Trim spaces from words
-			for k2, v2 := range z {
-				z[k2] = strings.TrimSpace(v2)
-				if z[k2] != "" {
-					temp = append(temp, z[k2])
-				}
-			}
-
-			// Set the slice of words to the trimmed slice of words
-			z = temp
-
-			// If there is a pod to be looked at
-			if len(z) != 0 {
-				// Get the decription of the pod
-				descrip, _ := exec.Command("kubectl", "describe", "pods", z[0]).Output()
-				descripfile, _ := os.OpenFile("./pods", os.O_RDWR|os.O_CREATE, 7777)
-				descripfile.Write(descrip)
-
-				grepport, _ := exec.Command("grep", "Port:", "./pods").Output()
-				grepportslice := strings.Split(string(grepport), "\n")
-				grepportslice = strings.Split(string(grepportslice[0]), " ")
-
-				port := grepportslice[len(grepportslice)-1]
-				portslice := strings.Split(port, "/")
-
-				NewPod = Pod{Name: z[0], Ready: z[1], Status: z[2], Restarts: z[3], Age: z[4], Port: portslice[0], Description: string(descrip)}
-				TempPodList = append(TempPodList, NewPod)
-			}
-
-		}
-
-		byteslice, _ := json.MarshalIndent(TempPodList, "", "	")
-
-		ioutil.WriteFile("../pods.json", byteslice, 7777)
-
-		time.Sleep(TIMETOSLEEP)
+	serviceLst := ReqServices.Items
+	for i:=0; i < len(serviceLst); i++{
+		currService := serviceLst[i]
+		if currService.Metadata.Name == serviceName {
+			clusterIP = currService.Spec.ClusterIP
+			return
+		}	
 	}
+	return 
 }
 
-//GetServices Scans for all services and serilizes them as a
-//Node struct and saved to a json file.
-func GetServices() {
-	for {
-		var NewService Service
-		var TempNewServiceList []Service
 
-		// Get the services from k8s
-		output, _ := exec.Command("kubectl", "get", "svc").Output()
+// GetIngress contains
+func GetIngress() {
+	
+	// items.spec, items.rules, items.http, items.path, items.sepc.ruleshttp.paths.backend.serviceport == serviceport, items.sepc.ruleshttp.paths.backend.servicename = servicename serviceip == cluster ip
+	var TargetData IngressData
+	var MyIngress []IngressRules
+	var MyRoute Route
+	var MyRules Rules
+	serviceURL := "http://localhost:8001/apis/extensions/v1beta1/ingresses"
+	body := GetResponse(serviceURL)
+	err := json.Unmarshal(body, &TargetData)
+	if err != nil {fmt.Println(err)}
 
-		// Seperate services by the new line
-		t := strings.Split(string(output), "\n")
-		t = t[1:]
-
-		// For each service populate a Service struct and add it to the
-		// TempNewServiceList []Service
-		for _, v := range t {
-			// Seperate each word
-			z := strings.Split(v, " ")
-
-			// Slice to hold strings temporarily
-			var temp []string
-
-			// Trim spaces for each word
-			for k2, v2 := range z {
-				z[k2] = strings.TrimSpace(v2)
-				if z[k2] != "" {
-					temp = append(temp, z[k2])
-				}
-			}
-
-			// reset z to the trimmed version temp
-			z = temp
-
-			// if there is a service
-			if len(z) != 0 {
-				// Get the description of the service from k8s
-				descrip, _ := exec.Command("kubectl", "describe", "svc", z[0]).Output()
-
-				// Make a Service struct with the information on the service from k8s
-				NewService = Service{Name: z[0], Type: z[1], ClusterIP: z[2], ExternalIP: z[3], Port: z[4], Age: z[5], Description: string(descrip)}
-				// Append the Service struct to the TempNewServiceList
-				TempNewServiceList = append(TempNewServiceList, NewService)
-			}
-
+	json.Unmarshal([]byte(body), &TargetData)
+	for i:=0 ;i < len(TargetData.Items); i++ {
+		myitem := TargetData.Items[i]
+		if TargetData.Items[i].Metadata.Name == "ingressname"{
+			MyIngress = myitem.Spec.Rules
+			break
 		}
-
-		// Write the new list of services to the services.json
-		byteslice, _ := json.MarshalIndent(TempNewServiceList, "", "	")
-
-		ioutil.WriteFile("../services.json", byteslice, 7777)
-
-		time.Sleep(TIMETOSLEEP)
+		
 	}
+
+	for i:=0 ;i < len(MyIngress); i++ {
+		MyRoute.ServiceName = MyIngress[i].Prot.Paths[0].Backend.ServiceName
+		MyRoute.ServicePort = strconv.Itoa(MyIngress[i].Prot.Paths[0].Backend.ServicePort)
+		MyRoute.ServiceIP = GetServices(MyIngress[i].Prot.Paths[0].Backend.ServiceName)
+		MyRules.Path = MyIngress[i].Prot.Paths[0].Path
+		MyRules.Route = MyRoute
+		MyRules.Protocol = "http"
+		Ruleset = append(Ruleset, MyRules)		
+	}
+
 }
 
-//GetDeployments Scans for all deployments and serilizes them as a
-//Node struct and saved to a json file.
-func GetDeployments() {
-	// Continuously check
-	for {
-		var NewDeployment Deployment
-		var TempNewDeploymentList []Deployment
 
-		// Get the active deployments from the k8s cluster
-		output, _ := exec.Command("kubectl", "get", "deployments").Output()
 
-		// Seperate the deployments by splitting on new line
-		t := strings.Split(string(output), "\n")
-		t = t[1:]
+// GetTargetIP will retrieve targetIP from the portal to provide an alternative IP address for proxy
+func GetTargetIP()  {
+	// request information of services from k8s API
+	var PortalData Portal
+	var MyCluster AltCluster
+	serviceURL := "http://localhost:8001/apis/revature.com/v1/namespaces/default/portals/"
+	body := GetResponse(serviceURL)
+	
+	// unmarshall body of the request and populate structure currServices with information of current services from K8S API
+	err := json.Unmarshal(body, &PortalData)
+	if err != nil { fmt.Println(err)}
+	MyCluster.ClusterName = PortalData.Items[0].Metadata.Name
+	MyCluster.ClusterPort = "80"
+	MyCluster.ClusterIP = PortalData.Items[0].Spec.Targetip
+	TargetIP = append(TargetIP, MyCluster)
 
-		// For each deployment get the description, populate a Deployment struct and
-		// add it to the TempNewDeploymentList
-		for _, v := range t {
-			// Split individual words
-			z := strings.Split(v, " ")
+}
 
-			var temp []string
+// GetResponse will request response from Kubernates API
+func GetResponse(requestURL string) (respBody []byte) {
 
-			// For each word in the line remove any extra spaces
-			for k2, v2 := range z {
-				z[k2] = strings.TrimSpace(v2) // remove spaces from the line
-				if z[k2] != "" {              // Check if there is anything there
-					temp = append(temp, z[k2]) // add the word to the new set of words
-				}
+	// create a new instance of client & create new request to retrieve info from k8s API
+	client := http.Client{}
+	apiReq, err := http.NewRequest("GET", requestURL, nil)
+	if err != nil { fmt.Println(err)}
+
+	// client do request: send HTTP request & recieve HTTP response
+	response, err := client.Do(apiReq)
+	if err != nil { fmt.Println( err)}
+
+	// read body of the reponse recieved from k8s API and defer closing body until end
+	respBody, err = ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+	if err != nil { fmt.Println(err)}
+
+	return 
+}
+
+
+// CreateFile creates the json files for the desired data (rules) obtained from the API
+func CreateFile() { 
+	fileName := [2]string{"rules.json", "clusters.json"}
+
+	for name, lst := range fileName {
+		if name == 0{
+			fileContent := Ruleset
+			rulesJSON, _ := json.MarshalIndent(fileContent,"", "	")
+			myFile, err := os.Create(lst)
+			myFile.Write(rulesJSON)
+			if err != nil {	
+        		fmt.Println(err)
 			}
-
-			// Set z equal to the trimmed set of words
-			z = temp
-
-			// If there is a deployment then get its description
-			if len(z) != 0 {
-				// Get description of the deployment
-				descrip, _ := exec.Command("kubectl", "describe", "deployments", z[0]).Output()
-
-				// Make a Deployment struct with the information returned from k8s
-				NewDeployment = Deployment{Name: z[0], Ready: z[1], UpToDate: z[2], Available: z[3], Age: z[4], Description: string(descrip)}
-				// Append the Deployment struct to the deploymentList
-				TempNewDeploymentList = append(TempNewDeploymentList, NewDeployment)
+			err = os.Rename(lst, "internal/app/ingress_controller/"+ lst)
+			if err != nil {
+        		fmt.Println(err)
 			}
-
+		} else {
+			fileContent := TargetIP
+			rulesJSON, _ := json.MarshalIndent(fileContent,"", "	")
+			myFile, err := os.Create(lst)
+			myFile.Write(rulesJSON)
+			if err != nil {	
+        		fmt.Println(err)
+			}
+			err = os.Rename(lst, "internal/app/ingress_controller/"+ lst)
+			if err != nil {
+        		fmt.Println(err)
 		}
-
-		// Make a byte slice out of the deployment list
-		byteslice, _ := json.MarshalIndent(TempNewDeploymentList, "", "	")
-
-		// Write the new deployment to the deployments.json file
-		ioutil.WriteFile("../deployments.json", byteslice, 7777)
-
-		// Wait TIMETOSLEEP before checking again
-		time.Sleep(TIMETOSLEEP)
+		}
+		
 	}
+	
+
 }
