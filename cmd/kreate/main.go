@@ -12,29 +12,23 @@ func main() {
 	// Set up error log to ouptut information
 	log.SetFlags(log.Lshortfile)
 
+	// Must run Init() to set up environmental variables that contain path to our main data folder
+	// that contains the helm chart directories. The environmenta
+	kreate.Init()
+
 	// Parse Command Line arguements and use them to find
-	// appropriate sub-command for mcProxy to run.
+	// appropriate sub-command for kreate to run.
 	flag.Parse()
+
 	switch flag.Arg(0) {
+
 	case "chart":
 		kreate.CreateChart(flag.Arg(1))
-
-	//SCAFFOLDING FOR AFTER MVP
-
-	// case "mount":
-	// 	kreate.Mount(flag.Arg(1))
-	// case "run":
-	// 	kreate.Run(flag.Arg(1))
-	// case "unmount":
-	// 	kreate.UnMount(flag.Arg(1))
-	// case "profiles":
-	// 	kreate.ViewProfiles()
-	// case "remove":
-	// 	kreate.Remove(flag.Arg(1))
-
+	case "edit":
+		kreate.EditValues(flag.Arg(1))
 	case "help":
 		fmt.Println(usage)
 	default:
-		fmt.Println("No valid sub command selected. Use \"mckreate.help\" for information on various options.")
+		fmt.Println("No valid sub command selected. Use \"kreate help\" for information on various options.")
 	}
 }

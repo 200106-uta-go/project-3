@@ -1,0 +1,12 @@
+structgen ---
+
+get full path to nested map keys
+ - ex. generatedMap[spec.selector.matchExpressions]
+
+figure out how to reference a nested value in a yaml for editing
+ - needs to be accessed from base Generated struct to allow persistent editing
+ - might not be necesssary if templates are used
+
+yamlgen ---
+
+generate helm chart resources based on a docker image

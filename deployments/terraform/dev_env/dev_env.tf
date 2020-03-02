@@ -1,4 +1,10 @@
-// creates two t2.medium ec2 instances each with kubernetes and docker installed
+// creates one t2.medium ec2 instances with kubernetes and docker installed
+output "master_ip" {
+  value = aws_instance.cluster.*.public_ip
+  description = "The Private IP address of the master"
+}
+
+
 
 provider "aws" {
     // access_key and secret_key are personal files to access your own
@@ -27,7 +33,7 @@ resource "aws_instance" "cluster" {
         type = "ssh"
         private_key = file("./Temp.pem")
         host =  self.public_ip
-        timeout = "4m"
+        timeout = "15m"
     }
 
     provisioner "file" {
@@ -43,6 +49,10 @@ resource "aws_instance" "cluster" {
     provisioner "file" {
       source = "./Temp.pem"
       destination = "/home/ubuntu/Temp.pem"
+    }
+    provisioner "file" {
+      source = "./istio_env"
+      destination = "/home/ubuntu/istio_env"
     }
 
     provisioner "remote-exec"{
