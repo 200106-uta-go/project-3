@@ -31,12 +31,10 @@ func main() {
 		out1, err1 := command1.Output()
 		errorHandler(err1)
 		fmt.Print(string(out1))
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println("Please wait. Still deploying services.")
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println("Please wait. Still deploying services.")
-		time.Sleep(time.Duration(10) * time.Second)
-		fmt.Println("Please wait. Still deploying services.")
+		for (i := 1; i <= 3; i++) {
+			fmt.Println("Please wait. Still deploying services.")
+			time.Sleep(time.Duration(10) * time.Second)
+		}
 		command2 := exec.Command("sh", "./setup2.sh")
 		command2.Stderr = os.Stderr
 		out2, err2 := command2.Output()
