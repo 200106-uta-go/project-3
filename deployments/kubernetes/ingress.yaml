@@ -19,8 +19,8 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-    name: ingresscontroller
-labels:
+  name: ingresscontroller
+  labels:
     app: ingress
 spec:
   containers:
@@ -39,8 +39,8 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-    name: zach-server
-labels:
+  name: zach-server
+  labels:
     app: zach
 spec:
   containers:
