@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 
 	"github.com/200106-uta-go/project-3/pkg/executil"
 )
 
 const (
-	script = `
-	sudo curl -L https://istio.io/downloadIstio | sh -
+	script = `sudo curl -L https://istio.io/downloadIstio -o istio.sh
+	ls -l
+	sh istio.sh
 	cd istio-1.4.5
 	export PATH=$PWD/bin:$PATH
 	sudo curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz
@@ -23,8 +23,11 @@ const (
 	sudo helm init --service-account tiller
 	helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
 	kubectl -n istio-system wait --for=condition=complete job --all
-	helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml
-	`
+	helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml`
+
+	script2 = `echo "Hello World"
+	sleep 2
+	echo "World Hello"`
 )
 
 var args []string
@@ -48,7 +51,7 @@ func main() {
 		//command1.Stderr = os.Stderr
 		//out1, err1 := command1.Output()
 
-		log.Println(executil.ExecHandler(script, 3, 5))
+		executil.ExecHandler(script)
 		// lineNumber, err := executil.ExecHandler(script1, 0)
 		// if err != nil {
 		// 	log.Printf("Restarting Script at Line => %d", lineNumber)
