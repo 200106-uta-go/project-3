@@ -31,6 +31,13 @@ func main() {
 			log.Printf("Command Failed :: %s", err)
 		}
 		fmt.Print(string(out))
+		command1 := exec.Command("sh", "./setup.sh")
+		command1.Stderr = os.Stderr
+		out1, err1 := command1.Output()
+		if err1 != nil {
+			log.Printf("Command Failed :: %s", err1)
+		}
+		fmt.Print(string(out1))
 
 	}
 
