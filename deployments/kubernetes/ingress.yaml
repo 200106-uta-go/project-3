@@ -1,28 +1,37 @@
 apiVersion: extensions/v1beta1
-kind: ingressmetadata:
-  name: base-ingress
+kind: ingress
+metadata:
+  name: DreamTeamIngress
 spec:
   tls:
   - hosts:
-    - "*.doxsey.net"
-    secretName: doxsey-net-tls
+    - "*.Our-Server.net"
+    secretName: Our-Server-net-tls
   rules:
-  - host: www.doxsey.net
+  - host: www.Our-Server.com
     http:
-      paths: /
-      backend:
-        serviceName: doxsey-www
-        servicePort: 9002
+      paths: 
+      - path: /
+        backend:
+          serviceName: MyIndexAppService
+          servicePort: 8080
+  - host: www.Our-Server.com
+    http:
+      paths: 
+      - path: /videos
+        backend:
+          serviceName: MyVideoAppService
+          servicePort: 8080
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: ingress
+  name: ingressController
   labels:
     app: ingress
 spec:
   containers:
-    - name: ingress
+    - name: ingressController
       image: jtheiss19/test20
       ports:
       - containerPort: 4000
