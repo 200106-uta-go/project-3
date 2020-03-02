@@ -167,7 +167,7 @@ var TargetIP []AltCluster
 func main() {
 	// run the kubectl proxy without TLS credentials
 	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
-	GetTargetIP()
+	//GetTargetIP()
 	GetIngress()
 	CreateFile()
 
@@ -290,22 +290,15 @@ func GetResponse(requestURL string) (respBody []byte) {
 
 // CreateFile creates the json files for the desired data (rules) obtained from the API
 func CreateFile() {
-	fileName := [2]string{"rules.json", "clusters.json"}
 
-	for name := range fileName {
-		if name == 0 {
-			fileContent := Ruleset
-			rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-			myFile, _ := os.Open("./rules.json")
-			myFile.Write(rulesJSON)
-		} else {
-			fileContent := TargetIP
-			rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-			myFile, _ := os.Open("./clusters.json")
-			myFile.Write(rulesJSON)
+	fileContent := Ruleset
+	rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
+	myFile, _ := os.OpenFile("./rules.json", os.O_RDWR|os.O_TRUNC, 777)
+	myFile.Write(rulesJSON)
 
-		}
-
-	}
+	fileContent2 := TargetIP
+	rulesJSON, _ = json.MarshalIndent(fileContent2, "", "	")
+	myFile, _ = os.OpenFile("./clusters.json", os.O_RDWR|os.O_TRUNC, 777)
+	myFile.Write(rulesJSON)
 
 }
