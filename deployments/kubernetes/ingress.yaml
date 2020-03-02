@@ -9,7 +9,7 @@ spec:
     secretName: our-server-net-tls
   rules:
   - host: www.our-server.com
-    http:
+  - http:
       paths: 
       - path: /
         backend:
