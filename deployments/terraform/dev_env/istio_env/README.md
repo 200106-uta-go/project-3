@@ -9,3 +9,5 @@ into the config.yaml. Run the next command after that is completed.
 ./istioStart.sh
 This will start the istio sdn, running the demo profile which will take awhile. 
 You can go to the ip of the master node :32077/productpage to test that bookinfo is running
+
+#Istio "Demo" Under KOPS Deployment:
