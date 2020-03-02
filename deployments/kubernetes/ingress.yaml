@@ -15,7 +15,7 @@ spec:
       backend:
       serviceName: my-index-app-service
       servicePort: 8080
-  - host: www.our-server.com
+  - host: www.ourl-server.com
     http:
     paths: 
     - path: /videos
