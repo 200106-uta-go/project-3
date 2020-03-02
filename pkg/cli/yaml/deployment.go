@@ -1,5 +1,6 @@
 package yaml
 
+//Deployment ...
 type Deployment struct {
 	APIVersion string             `yaml:"apiVersion"`
 	Kind       string             `yaml:"kind"`
@@ -7,6 +8,7 @@ type Deployment struct {
 	Spec       DeploymentSpecType `yaml:"spec"`
 }
 
+//DeploymentSpecType ...
 type DeploymentSpecType struct {
 	MinReadySeconds         int  `yaml:"minReadySeconds"`
 	Paused                  bool `yaml:"paused"`
@@ -18,11 +20,13 @@ type DeploymentSpecType struct {
 	Template                PodTemplateSpecType
 }
 
+//DeploymentStrategyType ...
 type DeploymentStrategyType struct {
 	RollingUpdate RollingUpdateDeploymentType `yaml:"rollingUpdate"`
 	Type          string                      `yaml:"type"`
 }
 
+//RollingUpdateDeploymentType ...
 type RollingUpdateDeploymentType struct {
 	maxSurge       int `yaml:"maxSurge"`
 	maxUnavailable int `yaml:"maxUnavailable"`

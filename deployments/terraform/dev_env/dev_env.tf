@@ -50,6 +50,10 @@ resource "aws_instance" "cluster" {
       source = "./Temp.pem"
       destination = "/home/ubuntu/Temp.pem"
     }
+    provisioner "file" {
+      source = "./istio_env"
+      destination = "/home/ubuntu/istio_env"
+    }
 
     provisioner "remote-exec"{
         inline = [
