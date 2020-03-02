@@ -20,7 +20,7 @@ var mu sync.Mutex // mutex lock
 const TIMETOSLEEP = 10 * time.Second
 
 // PROXYPORT is a string of the port number where the reverse proxy can be accessed
-const PROXYPORT = "4002"
+const PROXYPORT = "80"
 
 type Route struct {
 	ServiceName string `json:"ServiceName"`
