@@ -7,8 +7,5 @@ This will start the load balancer and return a list of the nodes. A range contai
 into the config.yaml. Run the next command after that is completed.
 
 ./istioStart.sh
-This will start the istio sdn, running the demo profile. This will block the command line. Use ctlz to
-use the command line after the profile is started.
-
-./istioCont.sh
-This will complete the start up. You can go to the ip of the master node :32077/productpage to test that bookinfo is running
+This will start the istio sdn, running the demo profile which will take awhile. 
+You can go to the ip of the master node :32077/productpage to test that bookinfo is running

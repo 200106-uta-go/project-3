@@ -4,10 +4,7 @@
 sudo apt install make
 
 #Chmod istio_env scripts
-sudo chmod 777 istio_env/mlbStart.sh
-sudo chmod 777 istio_env/istioStart.sh
-sudo chmod 777 istio_env/istioCont.sh
-
+sudo chmod 777 istio_env/mlbStart.sh istio_env/istioStart.sh istio_env/istioCont.sh
 
 #Start Kubelet for overlay connections
 systemctl enable kubelet
