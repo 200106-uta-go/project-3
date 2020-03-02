@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"reflect"
 
 	"github.com/200106-uta-go/project-3/pkg/yaml/structgen"
+	"github.com/200106-uta-go/project-3/pkg/yaml/yamlgen"
 )
 
 func main() {
@@ -15,7 +15,10 @@ func main() {
 		log.Fatalln(err)
 	}
 	gen := structgen.FromFile(file)
-	spec := reflect.ValueOf(gen["spec"])
-	fmt.Println(spec)
+	// spec := reflect.ValueOf(gen["spec"])
+	// fmt.Println(spec)
 	fmt.Println(gen.GetKey("cpu"))
+	fmt.Print("\n\n")
+
+	yamlgen.FromImage("mattackard/kube-portal:v6.0")
 }
