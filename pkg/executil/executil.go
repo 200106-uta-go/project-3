@@ -20,7 +20,7 @@ func ExecHandler(bashInput string, errTryCount, errWaitCount int) (int, error) {
 		if er != nil {
 			for i := 0; i < errTryCount; i++ {
 				// before retry, sleep for errWaitCount seconds
-				time.Sleep(time.Second * errWaitCount)
+				time.Sleep(time.Second * time.Duration(errWaitCount))
 				// attempt to execute again
 				er = execLine(ln)
 				// success will break out of the error catching loop
@@ -38,4 +38,5 @@ func ExecHandler(bashInput string, errTryCount, errWaitCount int) (int, error) {
 
 func execLine(bashLn string) error {
 	_, err := exec.Command("/bin/sh", "-c", "\""+bashLn+"\"").Output()
+	return err
 }
