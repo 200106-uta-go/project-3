@@ -28,7 +28,7 @@
 
 `docker run --rm -p 9090:9090 --name=myProm --network=myNetwork -v myVolume:/etc/prometheus -d prom/prometheus`
 
-`docker run --rm -p 3000:3000 --name=myGrafana --network=myTest -d  grafana/grafana`
+`docker run --rm -p 3000:3000 --name=myGrafana --network=myNetwork -d  grafana/grafana`
 
 ---
 ## Configuration Notes for Prometheus:
@@ -40,7 +40,7 @@ prometheus.yml is based off their starting configuration, and will be used for t
 
 ### Final step is to edit the prometheus.yml and set it up as a flag in the docker command below: 
 
-`docker run --rm -v /home/${USER}/{Path/To/.Yml_File}/prometheus.yml:/etc/prometheus/prometheus.yml -d -p 9090:9090 --name=myProm prom/prometheus` 
+`docker run --rm -v {/Path/To/.Yml_File}/prometheus.yml:/etc/prometheus/prometheus.yml -d -p 9090:9090 --name=myProm --network=myNetwork prom/prometheus` 
 
 ---
 ## Configuration Notes for Grafana: 
