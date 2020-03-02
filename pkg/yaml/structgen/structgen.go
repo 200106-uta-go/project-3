@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//Generated holds the data structure generated from a structured file
+//Generated holds the data structure Generated from a structured file
 type Generated map[string]interface{}
 
 // FromFile generates an anonymous struct holding all values present in the given file
@@ -50,15 +50,15 @@ func Copy(oldFile *os.File, newFile *os.File) {
 	}
 }
 
-//HasKey checks if the generated struct has a key value pair
-//This also iterates through nested maps if there are any
-func (g Generated) HasKey(key string) []Generated {
+//GetKey returns a slice of type Generated containing all matches
+//for key in a Generated struct
+func (g Generated) GetKey(key string) []Generated {
 	var matches []Generated
 
-	//range over generated struct
+	//range over Generated struct
 	for i, v := range g {
 		if g.IsMap(v) {
-			//create a new generated and a temporary map to iterate over
+			//create a new Generated and a temporary map to iterate over
 			newGen := Generated{}
 			tempMap := reflect.ValueOf(v)
 
@@ -74,7 +74,27 @@ func (g Generated) HasKey(key string) []Generated {
 			}
 
 			//recursively append matches into matches slice
-			matches = append(matches, newGen.HasKey(key)...)
+			matches = append(matches, newGen.GetKey(key)...)
+		} else if g.IsGenSlice(v) {
+			//iterate over slice to check values of internal Generated structs for key
+			tempSlice := reflect.ValueOf(v)
+
+			// iterates through each Generated in tempSlice and adds the key value to newGen
+			for i := 0; i < tempSlice.Len(); i++ {
+				// create a new Generated and a temporary map to iterate over
+				newGen := Generated{}
+				tempMap := tempSlice.Index(i)
+
+				//iterates through each value in tempMap and adds the key value to newGen
+				iterate := tempMap.Elem().MapRange()
+				for iterate.Next() {
+					// fmt.Println(iterate.Key().String())
+					newGen[iterate.Key().String()] = iterate.Value().Interface()
+				}
+
+				//recursively append matches into matches slice
+				matches = append(matches, newGen.GetKey(key)...)
+			}
 		} else {
 			//put match into new Generated to append to matches
 			if i == key {
@@ -87,7 +107,18 @@ func (g Generated) HasKey(key string) []Generated {
 	return matches
 }
 
-//IsMap ...
+//FilterValues returns a string slice of all --- it's not working yet
+// func (g Generated) FilterValues(key string) []string {
+// 	res := g.GetKey(key)
+// 	var filtered []string
+// 	for i := range res {
+// 		// fmt.Println(res[i])
+// 		filtered = append(filtered, fmt.Sprint(res[i][key]))
+// 	}
+// 	return filtered
+// }
+
+//IsMap checks if the value if of type structgen.Generated
 func (g Generated) IsMap(value interface{}) bool {
 	if value != nil {
 		return "structgen.Generated" == reflect.TypeOf(value).String()
@@ -95,7 +126,24 @@ func (g Generated) IsMap(value interface{}) bool {
 	return false
 }
 
-//Print prints the contents of a generated struct
+//IsGenSlice checks if the value if of type []interface {}
+func (g Generated) IsGenSlice(value interface{}) bool {
+	if value != nil {
+		//make sure type of value is []interface{}
+		if "[]interface {}" == reflect.TypeOf(value).String() {
+			if reflect.ValueOf(value).Len() > 0 {
+				//ugly way to see if the values inside the slice are maps
+				sliceType := fmt.Sprint(reflect.ValueOf(value).Index(0))
+				if strings.HasPrefix(sliceType, "map") {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+//Print prints the contents of a Generated struct
 func (g Generated) Print() {
 	fmt.Println(g)
 }
