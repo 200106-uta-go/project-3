@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 )
 
 var args []string
@@ -24,14 +25,21 @@ func main() {
 	fmt.Scan(&again)
 	if again == "y" || again == "Y" || again == "Yes" || again == "yes" {
 
-		command := exec.Command("sh", "./setup.sh")
+		fmt.Println("Deploying services to cluster. This may take upto few minutes.")
+		command := exec.Command("sh", "./setup1.sh")
 		command.Stderr = os.Stderr
 		out, err := command.Output()
 		if err != nil {
 			log.Printf("Command Failed :: %s", err)
 		}
 		fmt.Print(string(out))
-		command1 := exec.Command("sh", "./setup.sh")
+		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println("Please wait. Still deploying services.")
+		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println("Please wait. Still deploying services.")
+		time.Sleep(time.Duration(10) * time.Second)
+		fmt.Println("Please wait. Still deploying services.")
+		command1 := exec.Command("sh", "./setup2.sh")
 		command1.Stderr = os.Stderr
 		out1, err1 := command1.Output()
 		if err1 != nil {
