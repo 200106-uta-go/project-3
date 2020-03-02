@@ -5,12 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"time"
 	"net/http"
-	"strconv"
-	"os/exec"
 	"os"
-	
+	"os/exec"
+	"strconv"
+	"time"
 )
 
 // MyServices contains data for all services in the network
@@ -24,8 +23,7 @@ type MyServices struct {
 	Items []Service `json:"items"`
 }
 
-
-// Service struct contains data pertaining to a service 
+// Service struct contains data pertaining to a service
 type Service struct {
 	Metadata struct {
 		Name              string    `json:"name"`
@@ -54,9 +52,9 @@ type Service struct {
 		LoadBalancer struct {
 		} `json:"loadBalancer"`
 	} `json:"status"`
-} 
+}
 
-// Portal retrieves data of portal information  
+// Portal retrieves data of portal information
 type Portal struct {
 	APIVersion string `json:"apiVersion"`
 	Items      []struct {
@@ -87,7 +85,7 @@ type Portal struct {
 	} `json:"metadata"`
 }
 
-// IngressData stores 
+// IngressData stores
 type IngressData struct {
 	Kind       string `json:"kind"`
 	APIVersion string `json:"apiVersion"`
@@ -123,7 +121,7 @@ type IngressItem struct {
 }
 
 // IngressRules stores
-type IngressRules struct  {
+type IngressRules struct {
 	Host string `json:"host"`
 	Prot struct {
 		Paths []struct {
@@ -136,15 +134,14 @@ type IngressRules struct  {
 	} `json:"http"`
 }
 
-
-// Route stores 
+// Route stores
 type Route struct {
 	ServiceName string `json:"ServiceName"`
 	ServicePort string `json:"ServicePort"`
 	ServiceIP   string `json:"ServiceIP"`
 }
 
-// Rules stores 
+// Rules stores
 type Rules struct {
 	Protocol string `json:"Protocol"`
 	Path     string `json:"Path"`
@@ -152,9 +149,9 @@ type Rules struct {
 }
 
 // AltCluster stores
-type AltCluster struct{
+type AltCluster struct {
 	ClusterName string
-	ClusterIP string
+	ClusterIP   string
 	ClusterPort string
 }
 
@@ -166,7 +163,6 @@ var ReqServices MyServices
 
 // TargetIP will store alternative IP address to dial if first one is not found
 var TargetIP []AltCluster
-
 
 func main() {
 	// run the kubectl proxy without TLS credentials
@@ -183,33 +179,34 @@ func GetServices(serviceName string) (clusterIP string) {
 	// request information of services from k8s API
 	serviceURL := "http://localhost:8001/api/v1/services"
 	body := GetResponse(serviceURL)
-	
+
 	// unmarshall body of the request and populate structure currServices with information of current services from K8S API
 	err := json.Unmarshal(body, &ReqServices)
-	if err != nil { fmt.Println(err)}
+	if err != nil {
+		fmt.Println(err)
+	}
 	clusterIP = FindService(serviceName)
 
 	return
 }
 
-//FindService searches list of services by 'name' to match 
+//FindService searches list of services by 'name' to match
 func FindService(serviceName string) (clusterIP string) {
 
 	serviceLst := ReqServices.Items
-	for i:=0; i < len(serviceLst); i++{
+	for i := 0; i < len(serviceLst); i++ {
 		currService := serviceLst[i]
 		if currService.Metadata.Name == serviceName {
 			clusterIP = currService.Spec.ClusterIP
 			return
-		}	
+		}
 	}
-	return 
+	return
 }
-
 
 // GetIngress contains
 func GetIngress() {
-	
+
 	// items.spec, items.rules, items.http, items.path, items.sepc.ruleshttp.paths.backend.serviceport == serviceport, items.sepc.ruleshttp.paths.backend.servicename = servicename serviceip == cluster ip
 	var TargetData IngressData
 	var MyIngress []IngressRules
@@ -218,48 +215,51 @@ func GetIngress() {
 	serviceURL := "http://localhost:8001/apis/extensions/v1beta1/ingresses"
 	body := GetResponse(serviceURL)
 	err := json.Unmarshal(body, &TargetData)
-	if err != nil {fmt.Println(err)}
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	json.Unmarshal([]byte(body), &TargetData)
-	for i:=0 ;i < len(TargetData.Items); i++ {
+	for i := 0; i < len(TargetData.Items); i++ {
 		myitem := TargetData.Items[i]
-		if TargetData.Items[i].Metadata.Name == "ingressname"{
+		if TargetData.Items[i].Metadata.Name == "ingressname" {
 			MyIngress = myitem.Spec.Rules
 			break
 		}
-		
+
 	}
 
-	for i:=0 ;i < len(MyIngress); i++ {
+	for i := 0; i < len(MyIngress); i++ {
 		MyRoute.ServiceName = MyIngress[i].Prot.Paths[0].Backend.ServiceName
 		MyRoute.ServicePort = strconv.Itoa(MyIngress[i].Prot.Paths[0].Backend.ServicePort)
 		MyRoute.ServiceIP = GetServices(MyIngress[i].Prot.Paths[0].Backend.ServiceName)
 		MyRules.Path = MyIngress[i].Prot.Paths[0].Path
 		MyRules.Route = MyRoute
 		MyRules.Protocol = "http"
-		Ruleset = append(Ruleset, MyRules)		
+		Ruleset = append(Ruleset, MyRules)
 	}
 
 }
 
-
-
 // GetTargetIP will retrieve targetIP from the portal to provide an alternative IP address for proxy
-func GetTargetIP()  {
+func GetTargetIP() {
 	// request information of services from k8s API
 	var PortalData Portal
 	var MyCluster AltCluster
 	serviceURL := "http://localhost:8001/apis/revature.com/v1/namespaces/default/portals/"
 	body := GetResponse(serviceURL)
-	
+
 	// unmarshall body of the request and populate structure currServices with information of current services from K8S API
 	err := json.Unmarshal(body, &PortalData)
-	if err != nil { fmt.Println(err)}
-	MyCluster.ClusterName = PortalData.Items[0].Metadata.Name
-	MyCluster.ClusterPort = "80"
-	MyCluster.ClusterIP = PortalData.Items[0].Spec.Targetip
-	TargetIP = append(TargetIP, MyCluster)
-
+	if err != nil {
+		fmt.Println(err)
+	}
+	if len(PortalData.Items) != 0 {
+		MyCluster.ClusterName = PortalData.Items[0].Metadata.Name
+		MyCluster.ClusterPort = "80"
+		MyCluster.ClusterIP = PortalData.Items[0].Spec.Targetip
+		TargetIP = append(TargetIP, MyCluster)
+	}
 }
 
 // GetResponse will request response from Kubernates API
@@ -268,53 +268,44 @@ func GetResponse(requestURL string) (respBody []byte) {
 	// create a new instance of client & create new request to retrieve info from k8s API
 	client := http.Client{}
 	apiReq, err := http.NewRequest("GET", requestURL, nil)
-	if err != nil { fmt.Println(err)}
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// client do request: send HTTP request & recieve HTTP response
 	response, err := client.Do(apiReq)
-	if err != nil { fmt.Println( err)}
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// read body of the reponse recieved from k8s API and defer closing body until end
 	respBody, err = ioutil.ReadAll(response.Body)
 	defer response.Body.Close()
-	if err != nil { fmt.Println(err)}
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	return 
+	return
 }
 
-
 // CreateFile creates the json files for the desired data (rules) obtained from the API
-func CreateFile() { 
+func CreateFile() {
 	fileName := [2]string{"rules.json", "clusters.json"}
 
-	for name, lst := range fileName {
-		if name == 0{
+	for name := range fileName {
+		if name == 0 {
 			fileContent := Ruleset
-			rulesJSON, _ := json.MarshalIndent(fileContent,"", "	")
-			myFile, err := os.Create(lst)
+			rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
+			myFile, _ := os.Open("./rules.json")
 			myFile.Write(rulesJSON)
-			if err != nil {	
-        		fmt.Println(err)
-			}
-			err = os.Rename(lst, "internal/app/ingress_controller/"+ lst)
-			if err != nil {
-        		fmt.Println(err)
-			}
 		} else {
 			fileContent := TargetIP
-			rulesJSON, _ := json.MarshalIndent(fileContent,"", "	")
-			myFile, err := os.Create(lst)
+			rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
+			myFile, _ := os.Open("./clusters.json")
 			myFile.Write(rulesJSON)
-			if err != nil {	
-        		fmt.Println(err)
-			}
-			err = os.Rename(lst, "internal/app/ingress_controller/"+ lst)
-			if err != nil {
-        		fmt.Println(err)
+
 		}
-		}
-		
+
 	}
-	
 
 }
