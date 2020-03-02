@@ -42,3 +42,9 @@ func main() {
 	}
 
 }
+
+func errorHandler(err error) {
+	if err != nil {
+		log.Printf("Command Failed :: %s\n", err)
+	}
+}
