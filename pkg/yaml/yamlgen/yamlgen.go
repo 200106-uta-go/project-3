@@ -3,15 +3,18 @@ package yamlgen
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 //DockerInspect holds relevant data retrieved from the docker image inspect command
 type DockerInspect struct {
 	Config   DockerConfig `json:"Config"`
 	RepoTags []string     `json:"RepoTags"`
+	Name string
 }
 
 //DockerConfig holds configuration data for a docker imagef
@@ -114,12 +117,52 @@ func dockerRemove(image string) {
 //generateYAML creates a yaml deployment using exposed ports from the docker image
 //and name/labels based on the image tags/name
 func generateYAML(config DockerInspect) {
+	var ports []string
 	fmt.Println("Open ports: ")
 	for key := range config.Config.ExposedPorts {
 		fmt.Println(key)
+		tempKey := key
+		if (strings.Contains(tempKey, "/")) {
+			tempKey = strings.Split(tempKey, "/")[0]
+		}
+		ports = append(ports, tempKey)
 	}
 	fmt.Println("Docker Image tags: ")
 	for _, tag := range config.RepoTags {
 		fmt.Println(tag)
 	}
+
+	//import the yaml template
+	name := trimName(config.RepoTags[0])
+	tmpl := template.Must(template.New(name).Parse(deployment))
+	
+	//create a struct to hold values for template
+	values := struct{
+		Name string
+		Image string
+		ExposedPorts []string
+	}{
+		Name: name,
+		Image: config.RepoTags[0],
+		ExposedPorts: ports,
+	}
+
+	//create a new yaml and populate it with config values
+	newYAML, err := os.Create(name + ".yaml")
+	err = tmpl.Execute(newYAML, values)
+	if err != nil {
+		log.Println("executing template:", err)
+	}
+}
+
+//trimName takes a docker image name and trims anything after a / and before a :
+func trimName(fullName string) string {
+	prettyName := fullName
+	if strings.Contains(prettyName, "/") {
+		prettyName = strings.Split(prettyName, "/")[1]
+	}
+	if strings.Contains(prettyName, ":") {
+		prettyName = strings.Split(prettyName, ":")[0]
+	}
+	return prettyName
 }
