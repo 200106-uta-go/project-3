@@ -1,6 +1,7 @@
 package executil
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 	"time"
@@ -37,6 +38,7 @@ func ExecHandler(bashInput string, errTryCount, errWaitCount int) (int, error) {
 }
 
 func execLine(bashLn string) error {
-	_, err := exec.Command("/bin/sh", "-c", "\""+bashLn+"\"").Output()
+	out, err := exec.Command("/bin/sh", "-c", "\""+bashLn+"\"").Output()
+	fmt.Println(string(out))
 	return err
 }
