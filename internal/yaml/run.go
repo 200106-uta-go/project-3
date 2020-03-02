@@ -15,8 +15,6 @@ func main() {
 		log.Fatalln(err)
 	}
 	gen := structgen.FromFile(file)
-	// spec := reflect.ValueOf(gen["spec"])
-	// fmt.Println(spec)
 	fmt.Println(gen.GetKey("cpu"))
 	fmt.Print("\n\n")
 
