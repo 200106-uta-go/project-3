@@ -1,1 +1,2 @@
 kubectl create configmap ingress --from-file=${HOME}/.kube/config
+kubectl apply -f portalCRD.yml
