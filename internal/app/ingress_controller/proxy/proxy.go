@@ -7,8 +7,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 	"io/ioutil"
 	"net"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -58,28 +60,27 @@ func main() {
 // into the rulesList slice of rules struct
 func GrabRules() {
 	for {
+
+		scanner.Scan()
+
 		openFile, _ := ioutil.ReadFile("../rules.json")
+
 		mu.Lock()
 		err := json.Unmarshal(openFile, &rulesList)
+		mu.Unlock()
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		mu.Unlock()
-		time.Sleep(TIMETOSLEEP)
-	}
-}
 
-// GrabClusters reads the file cluster.json and puts the onctents
-// into the clusterList slice of clusters
-func GrabClusters() {
-	for {
-		openFile, _ := ioutil.ReadFile("../clusters.json")
+		openFile, _ = ioutil.ReadFile("../clusters.json")
+
 		mu.Lock()
-		err := json.Unmarshal(openFile, &clusterList)
+		err = json.Unmarshal(openFile, &clusterList)
+		mu.Unlock()
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		mu.Unlock()
+
 		time.Sleep(TIMETOSLEEP)
 	}
 }
@@ -119,6 +120,7 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 	conn, err := ln.Accept()
 	if err != nil {
 		fmt.Println(err.Error())
+		ConnSignal <- "Bad Connection \n"
 		return
 	}
 	defer conn.Close()
@@ -131,6 +133,10 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 	request := string(buf)
 	requestLine := strings.Split(request, "\n")[0]
 	requestWords := strings.Split(requestLine, " ")
+	if len(requestWords) <= 1 {
+		conn.Write(buf)
+		return
+	}
 	path := requestWords[1]
 	pathKeys := strings.Split(path, "?")
 	path = pathKeys[0]
@@ -151,11 +157,15 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			fmt.Println("Going to Send Conn to: " + destination)
 			serverConn, err = net.Dial("tcp", destination)
 			if err != nil {
-				conn.Write([]byte("Could not resolve: " + destination))
-				fmt.Println("Could not resolve: " + destination)
+				output, _ := os.Open("../rules.json")
 				mu.Unlock()
+				buf := make([]byte, 1024)
+				output.Read(buf)
+				conn.Write(buf)
+				fmt.Println("Could not resolve: " + destination)
 				return
 			}
+			defer serverConn.Close()
 			serverConn.Write(buf)
 			break
 		}
@@ -177,38 +187,31 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 	if serverConn != nil {
 		go SessionListener(serverConn, shutdownSession, conn)
 		go SessionListener(conn, shutdownSession, serverConn)
-		<-shutdownSession
+		fmt.Println(<-shutdownSession)
+	} else {
+		conn.Write([]byte("404: Page not found on any cluster"))
 	}
-
-	conn.Write([]byte("404: Page not found on any cluster"))
 }
 
 //SessionListener listens for connections noise and sends it to the writer
 func SessionListener(Conn net.Conn, shutdown chan string, Conn1 net.Conn) {
-	var cnt = 0
 	for {
-		var temp []byte
-		for {
-			buf := make([]byte, 1024)
-			Conn.SetReadDeadline(time.Now().Add(1 * time.Second))
-			_, err := Conn.Read(buf)
-			if err != nil {
-				if len(temp) == 0 {
-					cnt++
-				} else {
-					cnt = 0
-				}
-				break
-			}
-			temp = append(temp, buf...)
-		}
-		mu.Lock()
-		Conn1.Write(temp)
-		mu.Unlock()
 
-		if cnt >= 50 {
-			break
+		buf := make([]byte, 1024)
+		Conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+		_, err := Conn.Read(buf)
+		if err != nil {
+			return
 		}
+
+		var temp = []byte{}
+
+		for _, b := range buf {
+			if b != byte('\u0000') {
+				temp = append(temp, b)
+			}
+		}
+
+		Conn1.Write(temp)
 	}
-	shutdown <- "Ending"
 }

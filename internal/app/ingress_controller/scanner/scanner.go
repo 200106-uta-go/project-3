@@ -1,5 +1,5 @@
 // Scanner pulls information from the kubernetes cluster using the API running locally on the machine.
-package main
+package scanner
 
 import (
 	"encoding/json"
@@ -164,9 +164,12 @@ var ReqServices MyServices
 // TargetIP will store alternative IP address to dial if first one is not found
 var TargetIP []AltCluster
 
-func main() {
+func Scan() {
 	// run the kubectl proxy without TLS credentials
 	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
+	fmt.Println("Kube Proxy Running")
+	time.Sleep(5 * time.Second)
+	fmt.Println("Kube Proxy up")
 	GetTargetIP()
 	GetIngress()
 	CreateFile()
@@ -178,10 +181,14 @@ func GetServices(serviceName string) (clusterIP string) {
 
 	// request information of services from k8s API
 	serviceURL := "http://localhost:8001/api/v1/services"
-	body := GetResponse(serviceURL)
+	body, err := GetResponse(serviceURL)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
 	// unmarshall body of the request and populate structure currServices with information of current services from K8S API
-	err := json.Unmarshal(body, &ReqServices)
+	err = json.Unmarshal(body, &ReqServices)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -213,8 +220,12 @@ func GetIngress() {
 	var MyRoute Route
 	var MyRules Rules
 	serviceURL := "http://localhost:8001/apis/extensions/v1beta1/ingresses"
-	body := GetResponse(serviceURL)
-	err := json.Unmarshal(body, &TargetData)
+	body, err := GetResponse(serviceURL)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &TargetData)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -247,10 +258,14 @@ func GetTargetIP() {
 	var PortalData Portal
 	var MyCluster AltCluster
 	serviceURL := "http://localhost:8001/apis/revature.com/v1/namespaces/default/portals/"
-	body := GetResponse(serviceURL)
+	body, err := GetResponse(serviceURL)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
 	// unmarshall body of the request and populate structure currServices with information of current services from K8S API
-	err := json.Unmarshal(body, &PortalData)
+	err = json.Unmarshal(body, &PortalData)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -263,19 +278,21 @@ func GetTargetIP() {
 }
 
 // GetResponse will request response from Kubernates API
-func GetResponse(requestURL string) (respBody []byte) {
+func GetResponse(requestURL string) (respBody []byte, err error) {
 
 	// create a new instance of client & create new request to retrieve info from k8s API
 	client := http.Client{}
 	apiReq, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
 	}
 
 	// client do request: send HTTP request & recieve HTTP response
 	response, err := client.Do(apiReq)
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
 	}
 
 	// read body of the reponse recieved from k8s API and defer closing body until end
@@ -283,6 +300,7 @@ func GetResponse(requestURL string) (respBody []byte) {
 	defer response.Body.Close()
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
 	}
 
 	return
@@ -290,22 +308,17 @@ func GetResponse(requestURL string) (respBody []byte) {
 
 // CreateFile creates the json files for the desired data (rules) obtained from the API
 func CreateFile() {
-	fileName := [2]string{"rules.json", "clusters.json"}
 
-	for name := range fileName {
-		if name == 0 {
-			fileContent := Ruleset
-			rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-			myFile, _ := os.Open("./rules.json")
-			myFile.Write(rulesJSON)
-		} else {
-			fileContent := TargetIP
-			rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-			myFile, _ := os.Open("./clusters.json")
-			myFile.Write(rulesJSON)
+	fileContent := Ruleset
+	rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
+	myFile, _ := os.OpenFile("../rules.json", os.O_RDWR|os.O_TRUNC, 777)
+	defer myFile.Close()
+	myFile.Write(rulesJSON)
 
-		}
-
-	}
+	fileContent2 := TargetIP
+	clusterJSON, _ := json.MarshalIndent(fileContent2, "", "	")
+	myFile, _ = os.OpenFile("../clusters.json", os.O_RDWR|os.O_TRUNC, 777)
+	defer myFile.Close()
+	myFile.Write(clusterJSON)
 
 }
