@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: zach-server
+  labels:
+    app: zach
+spec:
+  containers:
+  - name: zach-server
+    image: zachthomas823/server
+    ports:
+    - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingressnode
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30100
+      targetPort: 80
+  selector:
+    name: ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zachnode
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 4000
+      nodePort: 30101
+      targetPort: 4000
+  selector:
+    name: zach
