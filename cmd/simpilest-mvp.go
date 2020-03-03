@@ -1,8 +1,8 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+<<<<<<< Updated upstream
 
 	"github.com/200106-uta-go/project-3/pkg/executil"
 )
@@ -29,13 +29,19 @@ const (
 	sleep 2
 	echo "World Hello"`
 )
+=======
+	"io/ioutil"
+	"log"
+	"os"
+	"os/exec"
+)
+
+const filename = "tempSetup.sh"
+>>>>>>> Stashed changes
+
+const script = `echo HELLO` // script goes here
 
 var args []string
-
-func init() {
-	flag.Parse()
-	args = flag.Args()
-}
 
 func main() {
 	//Which istio install package do you want?
@@ -46,6 +52,7 @@ func main() {
 	fmt.Scan(&again)
 	if again == "y" || again == "Y" || again == "Yes" || again == "yes" {
 
+<<<<<<< Updated upstream
 		fmt.Println("Deploying services to cluster. This may take upto few minutes.")
 		//command1 := exec.Command("sh", "./setup1.sh")
 		//command1.Stderr = os.Stderr
@@ -90,4 +97,23 @@ func main() {
 		// }
 
 	}
+=======
+		er := ioutil.WriteFile(filename, []byte(script), 0777)
+		if er != nil {
+			log.Fatal("Script failed to deploy - ", er)
+		}
+
+		cmd := exec.Command("/bin/sh", filename)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		er = cmd.Run()
+		if er != nil {
+			log.Fatal("Script failed to deploy - ", er)
+		}
+
+		os.Remove(filename)
+	}
+
+>>>>>>> Stashed changes
 }
