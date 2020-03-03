@@ -11,7 +11,7 @@ import (
 const filename = "tempSetup.sh"
 
 const script = `sudo curl -L https://istio.io/downloadIstio | sh -
-cd istio-1.4.5
+cd istio-*
 export PATH=$PWD/bin:$PATH
 sudo curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz
 tar xf helm.tar.gz
