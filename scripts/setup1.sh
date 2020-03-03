@@ -10,3 +10,9 @@ sudo cp tiller /bin/tiller
 cd ..
 sudo kubectl apply -f install/kubernetes/helm/helm-service-account.yaml
 sudo helm init --service-account tiller
+echo "waiting for tiller pod to be ready ..."
+sudo kubectl -n kube-system wait --for=condition=Ready pod -l name=tiller --timeout=300s
+sudo helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
+echo "waiting for istio-system jobs to complete (may take about a min)"
+kubectl -n istio-system wait --for=condition=complete job --all
+sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml
