@@ -228,6 +228,7 @@ func GetIngress() {
 	err = json.Unmarshal(body, &TargetData)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	json.Unmarshal([]byte(body), &TargetData)

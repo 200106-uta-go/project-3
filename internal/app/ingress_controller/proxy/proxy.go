@@ -174,7 +174,8 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 	if serverConn == nil {
 		for _, v := range clusterList {
 			// send request to other clusters
-			destination := v.ClusterIP + ":" + v.ClusterPort
+			// destination := v.ClusterIP + ":" + v.ClusterPort
+			destination := v.ClusterIP
 			serverConn, err = net.Dial("tcp", destination)
 			if err == nil {
 				serverConn.Write(buf)
