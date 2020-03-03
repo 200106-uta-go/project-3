@@ -26,7 +26,9 @@ sudo kubectl -n kube-system wait --for=condition=Ready pod -l name=tiller --time
 sudo helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
 echo "waiting for istio-system jobs to complete (may take about a min)"
 kubectl -n istio-system wait --for=condition=complete job --all
-sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml` // script goes here
+sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml
+kubectl create configmap ingress --from-file=${HOME}/.kube/config
+kubectl apply -f portalCRD.yml` // script goes here
 
 var args []string
 
