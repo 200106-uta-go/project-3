@@ -1,5 +1,5 @@
 // Scanner pulls information from the kubernetes cluster using the API running locally on the machine.
-package main
+package scanner
 
 import (
 	"encoding/json"
@@ -164,9 +164,12 @@ var ReqServices MyServices
 // TargetIP will store alternative IP address to dial if first one is not found
 var TargetIP []AltCluster
 
-func main() {
+func Scan() {
 	// run the kubectl proxy without TLS credentials
 	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
+	fmt.Println("Kube Proxy Running")
+	time.Sleep(5 * time.Second)
+	fmt.Println("Kube Proxy up")
 	//GetTargetIP()
 	GetIngress()
 	CreateFile()
@@ -294,11 +297,13 @@ func CreateFile() {
 	fileContent := Ruleset
 	rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
 	myFile, _ := os.OpenFile("../rules.json", os.O_RDWR|os.O_TRUNC, 777)
+	defer myFile.Close()
 	myFile.Write(rulesJSON)
 
 	fileContent2 := TargetIP
 	rulesJSON, _ = json.MarshalIndent(fileContent2, "", "	")
 	myFile, _ = os.OpenFile("../clusters.json", os.O_RDWR|os.O_TRUNC, 777)
+	defer myFile.Close()
 	myFile.Write(rulesJSON)
 
 }
