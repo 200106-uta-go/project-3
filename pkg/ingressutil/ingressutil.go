@@ -3,6 +3,7 @@ package ingressutil
 /*
 Ingressutil package created by Matt Ackard and Josh Nguyen.
 For use in adding a new rule to a kubernetes ingress deployment
+This package assumes you define the ingress rules in the top of your yaml file
 */
 
 import (
@@ -32,17 +33,25 @@ func AddPath(file *os.File, host, path, svcName string, svcPort int) error {
 	newBytes, err := yaml.Marshal(ingress)
 	check(err)
 
+	//replace first section of yaml to add new rules
 	newBytes = append(newBytes, []byte("---")...)
-	for _, section := range stringSlice[1:] {
-		newBytes = append(newBytes, []byte(section+"---")...)
+
+	for i, section := range stringSlice[1:] {
+		//don't add seapartor dashed on final yaml section
+		if i == len(stringSlice[1:]-1) {
+			newBytes = append(newBytes, []byte(section)...)
+		} else {
+			newBytes = append(newBytes, []byte(section+"---")...)
+		}
 	}
 
-	err = ioutil.WriteFile(file.Name(), newBytes[:len(newBytes)-3], 0644)
+	err = ioutil.WriteFile(file.Name(), newBytes, 0644)
 	check(err)
 
 	return nil
 }
 
+//separateYAML splits multiple deployments in a single yaml file
 func separateYAML(file *os.File) ([]string, error) {
 	//open the file and read its contents
 	bytes, err := ioutil.ReadAll(file)
@@ -56,6 +65,7 @@ func separateYAML(file *os.File) ([]string, error) {
 	return stringSlice, nil
 }
 
+//addRule appends a new rule to the ingress deployment
 func addRule(stringSlice []string, host string, path string, svcName string, svcPort int) (Ingress, error) {
 	//creates a new ingress struct and unmarshalse ingress section into it
 	ingress := Ingress{}
