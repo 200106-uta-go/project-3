@@ -22,7 +22,7 @@ spec:
   type: NodePort
   ports:
     - port: 4000
-      nodePort: 30101
+      nodePort: 30102
       targetPort: 4000
   selector:
     app: zach
