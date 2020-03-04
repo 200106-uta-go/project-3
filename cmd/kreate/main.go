@@ -26,7 +26,13 @@ func main() {
 		kreate.Initalization()
 	case "profile":
 		// Creates a new profile .yaml
-		kreate.CreateProfile(flag.Arg(1))
+		err := kreate.CreateProfile(flag.Arg(1))
+		if err != nil {
+			kreate.OpenFileInEditor(flag.Arg(1))
+		} else {
+			log.Printf(err)
+		}
+
 	case "edit":
 		// Edits an existing profile .yaml
 		kreate.EditProfile(flag.Arg(1))

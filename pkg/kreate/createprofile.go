@@ -1,7 +1,6 @@
 package kreate
 
 import (
-	"log"
 	"os"
 	"os/exec"
 
@@ -41,25 +40,32 @@ const DefaultEditor = "nano"
 
 // CreateProfile will take a name defined by the user and then ouput a default file with the users
 // default editor.
-func CreateProfile(name string) {
+func CreateProfile(name string) error {
 	// Check if given profile name exists
 	if _, err := os.Stat(PROFILES + name + ".yaml"); err != nil {
 		// If profile is not exist, create new yaml file
 		file, err := os.Create(PROFILES + name + ".yaml")
 		if err != nil {
-			log.Panicln(err)
+			return err
 		}
 		defer file.Close()
 
 		// Marshal defaultProfile struct
 		defaultProfile.Name = name
 		bytes, err := yaml.Marshal(defaultProfile)
+		if err != nil {
+			return err
+		}
 		_, err = file.Write(bytes)
+		if err != nil {
+			return err
+		}
 		defaultProfile.Name = "myProfileName"
 		// Open generated yaml file with text editor
-		OpenFileInEditor(PROFILES + name + ".yaml")
+	} else {
+		return err
 	}
-
+	return nil
 }
 
 // OpenFileInEditor opens filename in a text editor.
@@ -75,7 +81,7 @@ func OpenFileInEditor(filename string) error {
 		return err
 	}
 
-	cmd := exec.Command(executable, filename)
+	cmd := exec.Command(executable, PROFILES+filename+".yaml")
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
