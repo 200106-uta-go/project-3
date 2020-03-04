@@ -167,6 +167,8 @@ var TargetIP []AltCluster
 // Intended to be called by the proxy
 func Scan() (ruleset []Rules, targetIP []AltCluster) {
 	// run the kubectl proxy without TLS credentials
+	TargetIP = []AltCluster{}
+	Ruleset = []Rules{}
 	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
 	fmt.Println("Kube Proxy Running")
 	time.Sleep(5 * time.Second)
@@ -215,10 +217,10 @@ func FindService(serviceName string) (clusterIP string) {
 func GetIngress() {
 
 	// items.spec, items.rules, items.http, items.path, items.sepc.ruleshttp.paths.backend.serviceport == serviceport, items.sepc.ruleshttp.paths.backend.servicename = servicename serviceip == cluster ip
-	var TargetData IngressData
-	var MyIngress []IngressRules
-	var MyRoute Route
-	var MyRules Rules
+	var TargetData = IngressData{}
+	var MyIngress = []IngressRules{}
+	var MyRoute = Route{}
+	var MyRules = Rules{}
 	serviceURL := "http://localhost:8001/apis/extensions/v1beta1/ingresses"
 	body, err := GetResponse(serviceURL)
 	if err != nil {
