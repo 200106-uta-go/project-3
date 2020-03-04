@@ -1,16 +1,16 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-    name: ingressname
+  name: ingressname
 spec:
   tls:
   - hosts:
-    - "*.our-server.net"
+    - '*.our-server.net'
     secretName: our-server-net-tls
   rules:
   - host: www.our-server.com
     http:
-      paths: 
+      paths:
       - path: /
         backend:
           serviceName: zach-server
