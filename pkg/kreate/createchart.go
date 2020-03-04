@@ -9,4 +9,6 @@ package kreate
     - The kustom chart must then be copied to a user-friendly directory (implementation as descretioned by developer)
 */
 
-func CreateChart(profileName string) {}
+func CreateChart(profileName string) {
+
+}

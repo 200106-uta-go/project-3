@@ -8,7 +8,7 @@ import (
 // This value will determine where the helm directories will go by default.
 const (
 	MOULDFOLDERS = "/var/local/kreate/" // Initial value on where to store helm charts
-	PROFILES    = "/etc/kreate/"
+	PROFILES     = "/etc/kreate/"
 )
 
 var (
