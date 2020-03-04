@@ -55,7 +55,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ingressnode
+  name: ingressnode2
   labels:
     name: node
 spec:

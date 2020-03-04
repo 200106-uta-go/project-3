@@ -42,7 +42,11 @@ func main() {
 func GrabRules() {
 	for {
 
+		mu.Lock()
+		rulesList = nil
+		clusterList = nil
 		rulesList, clusterList = scanner.Scan()
+		mu.Unlock()
 
 		fmt.Println(rulesList)
 		fmt.Println(clusterList)
