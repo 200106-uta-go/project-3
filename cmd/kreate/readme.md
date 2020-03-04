@@ -1,7 +1,7 @@
 # True CLI MVP
 
 ## kreate init
-1. Setup kreate's folders to the proper paths (var/local/kreate holds the istio and custom molds. etc/kreate/ holds profile .yaml files.)
+1. Setup kreate's folders to the proper paths (var/local/kreate holds the istio and custom moulds. etc/kreate/ holds profile .yaml files.)
 2. Setup kreate's environment variables (If any)
 ## kreate profile <profile name>
 1. The following variables must be saved to the profile .yaml file.

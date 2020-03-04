@@ -7,7 +7,7 @@ import (
 
 // This value will determine where the helm directories will go by default.
 const (
-	HELMFOLDERS = "/var/local/kreate/" // Initial value on where to store helm charts
+	MOULDFOLDERS = "/var/local/kreate/" // Initial value on where to store helm charts
 	PROFILES    = "/etc/kreate/"
 )
 
@@ -15,12 +15,17 @@ var (
 	chartsLocation string
 )
 
-// Init will set up the environment variables for use with Kreate
-func Init() {
+/*
+## kreate init
+1. Setup kreate's folders to the proper paths (var/local/kreate holds the istio and custom moulds. etc/kreate/ holds profile .yaml files.)
+2. Setup kreate's environment variables (If any)
+*/
 
-	pathErr := os.MkdirAll(HELMFOLDERS, 1777)
+func Init() { // current logic was written prior to the 3/3/20 MVP meeting
+
+	pathErr := os.MkdirAll(MOULDFOLDERS, 1777)
 	if pathErr != nil {
-		log.Panicf("Error making directory %s => %v", HELMFOLDERS, pathErr)
+		log.Panicf("Error making directory %s => %v", MOULDFOLDERS, pathErr)
 	}
 
 	// Register the path of where the helm charts will be stored by checking the env var "KREATE_DATA"
@@ -28,7 +33,7 @@ func Init() {
 	var ok bool
 	chartsLocation, ok = os.LookupEnv("KREATE_DATA")
 	if !ok {
-		setErr := os.Setenv("KREATE_DATA", HELMFOLDERS)
+		setErr := os.Setenv("KREATE_DATA", MOULDFOLDERS)
 		if setErr != nil {
 			log.Panicf("Error Setting KREATE_DATA to default value => %+v", setErr)
 		}

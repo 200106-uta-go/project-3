@@ -1,24 +1,16 @@
 package kreate
 
-import (
-	"log"
+/*
+## kreate profile <profile name>
+1. The following variables must be saved to the profile .yaml file.
+    - A profile name.
+    - The foreign cluster's name (the name of the fallback cluster)
+    - The foreign cluster's IP
+    - The foreign cluster's Port of Entry
+    - The business application's (the client's application container) image URL
+    - An array of the business application's container exposable ports (non-specific)
+    - An array of the business application's endpoints (/players, /info, /static. /, ect.)
+2. Created profiles will be saved to etc/kreate/
+*/
 
-	"helm.sh/helm/v3/pkg/chartutil"
-)
-
-// CreateProfile will take in a path to a set up yaml, and then create the output chart in the user's current directory.
-func CreateProfile(name string) error {
-	// Use Helm code here to create charts for MVP
-	fullChartPath, createErr := chartutil.Create(name, chartsLocation)
-	if createErr != nil {
-		log.Panicf("Error creating chart directory => %+v", createErr)
-	}
-
-	// This function merely should copy our templates from /config/templates/
-	// the the users /var/local/kreate/<helm-directory-name>/templates/
-	// TODO: THIS FUNCTION IS EMPTY AND NEEDS TO BE IMPLEMENTED!!!!
-	addRevatureTemplates(fullChartPath)
-	// addRevatureValueYaml(fullChartPath)
-
-	return nil
-}
+func CreateProfile(name string) { }
