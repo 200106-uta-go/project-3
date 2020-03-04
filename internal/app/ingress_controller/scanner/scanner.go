@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"os/exec"
 	"strconv"
 	"time"
@@ -164,16 +163,17 @@ var ReqServices MyServices
 // TargetIP will store alternative IP address to dial if first one is not found
 var TargetIP []AltCluster
 
-func Scan() {
+// Scan gets the rules and clusters from the Kubernetes API and returns them as structs
+// Intended to be called by the proxy
+func Scan() (ruleset []Rules, targetIP []AltCluster) {
 	// run the kubectl proxy without TLS credentials
 	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
 	fmt.Println("Kube Proxy Running")
 	time.Sleep(5 * time.Second)
 	fmt.Println("Kube Proxy up")
-	GetTargetIP()
+	//GetTargetIP()
 	GetIngress()
-	CreateFile()
-
+	return Ruleset, TargetIP
 }
 
 // GetServices gets all of the services in our cluster from the API
@@ -305,21 +305,4 @@ func GetResponse(requestURL string) (respBody []byte, err error) {
 	}
 
 	return
-}
-
-// CreateFile creates the json files for the desired data (rules) obtained from the API
-func CreateFile() {
-
-	fileContent := Ruleset
-	rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-	myFile, _ := os.OpenFile("../rules.json", os.O_RDWR|os.O_TRUNC, 777)
-	defer myFile.Close()
-	myFile.Write(rulesJSON)
-
-	fileContent2 := TargetIP
-	clusterJSON, _ := json.MarshalIndent(fileContent2, "", "	")
-	myFile, _ = os.OpenFile("../clusters.json", os.O_RDWR|os.O_TRUNC, 777)
-	defer myFile.Close()
-	myFile.Write(clusterJSON)
-
 }
