@@ -6,3 +6,4 @@ metadata:
 spec:
   portal: cluster-a
   targetip: golang.org
+  port: 8080
