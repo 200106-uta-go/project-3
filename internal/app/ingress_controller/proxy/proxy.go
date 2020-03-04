@@ -5,12 +5,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
-	"io/ioutil"
 	"net"
-	"os"
 	"strings"
 	"sync"
 	"time"
@@ -23,36 +20,20 @@ const TIMETOSLEEP = 10 * time.Second
 
 // PROXYPORT is a string of the port number where the reverse proxy can be accessed
 const PROXYPORT = "80"
+const SECONDPORT = "8080"
 
-type Route struct {
-	ServiceName string `json:"ServiceName"`
-	ServicePort string `json:"ServicePort"`
-	ServiceIP   string `json:"ServiceIP"`
-}
-
-type Rules struct {
-	Protocol string `json:"Protocol"`
-	Path     string `json:"Path"`
-	Route    Route  `json:Route`
-}
-
-type Cluster struct {
-	ClusterName string `json:"ClusterName"`
-	ClusterIP   string `json:"ClusterIP"`
-	ClusterPort string `json:"ClusterPort`
-}
-
-var rulesList = []Rules{}
-var clusterList = []Cluster{}
+var rulesList = []scanner.Rules{}
+var clusterList = []scanner.AltCluster{}
 
 // If anything is sent to the shutdown channel it will end the program.
 var shutdownchan chan string = make(chan string)
 
 func main() {
 	fmt.Println("Software Defined Network Terminal")
-	go GrabRules()                  // Constantly grab the servers
-	go StartReverseProxy(PROXYPORT) // will set up the r-proxy when there is a server
-	<-shutdownchan                  // wait here until there's a shutdown signal
+	go GrabRules()                   // Constantly grab the servers
+	go StartReverseProxy(PROXYPORT)  // will set up the r-proxy when there is a server
+	go StartReverseProxy(SECONDPORT) // will set up the r-proxy when there is a server
+	<-shutdownchan                   // wait here until there's a shutdown signal
 	fmt.Println("Shuting Down...")
 }
 
@@ -61,25 +42,10 @@ func main() {
 func GrabRules() {
 	for {
 
-		scanner.Scan()
+		rulesList, clusterList = scanner.Scan()
 
-		openFile, _ := ioutil.ReadFile("../rules.json")
-
-		mu.Lock()
-		err := json.Unmarshal(openFile, &rulesList)
-		mu.Unlock()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-
-		openFile, _ = ioutil.ReadFile("../clusters.json")
-
-		mu.Lock()
-		err = json.Unmarshal(openFile, &clusterList)
-		mu.Unlock()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		fmt.Println(rulesList)
+		fmt.Println(clusterList)
 
 		time.Sleep(TIMETOSLEEP)
 	}
@@ -126,6 +92,11 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 	defer conn.Close()
 	ConnSignal <- "New Connection \n"
 
+	var IsFirst = true
+	if port != PROXYPORT {
+		IsFirst = false
+	}
+
 	//Checking for server to handle the connecting client
 	buf := make([]byte, 1024)
 	conn.Read(buf)
@@ -157,12 +128,8 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			fmt.Println("Going to Send Conn to: " + destination)
 			serverConn, err = net.Dial("tcp", destination)
 			if err != nil {
-				output, _ := os.Open("../rules.json")
 				mu.Unlock()
-				buf := make([]byte, 1024)
-				output.Read(buf)
-				conn.Write(buf)
-				fmt.Println("Could not resolve: " + destination)
+				fmt.Println("Could not resolve: " + destination + " server could not be dialed: " + err.Error())
 				return
 			}
 			defer serverConn.Close()
@@ -171,7 +138,7 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 		}
 	}
 
-	if serverConn == nil {
+	if serverConn == nil && IsFirst {
 		for _, v := range clusterList {
 			// send request to other clusters
 			// destination := v.ClusterIP + ":" + v.ClusterPort
@@ -179,6 +146,14 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			serverConn, err = net.Dial("tcp", destination)
 			if err == nil {
 				serverConn.Write(buf)
+				buf2 := make([]byte, 1024)
+				serverConn.Read(buf2)
+				if !strings.Contains(string(buf2), "404") {
+					conn.Write(buf2)
+					break
+				} else {
+					serverConn = nil
+				}
 			}
 		}
 	}
@@ -199,7 +174,7 @@ func SessionListener(Conn net.Conn, shutdown chan string, Conn1 net.Conn) {
 	for {
 
 		buf := make([]byte, 1024)
-		Conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+		Conn.SetReadDeadline(time.Now().Add(10 * time.Second))
 		_, err := Conn.Read(buf)
 		if err != nil {
 			return
