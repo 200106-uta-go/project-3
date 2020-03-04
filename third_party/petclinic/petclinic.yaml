@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: petclinic
+  labels:
+    app: petclinic
+    service: petclinic
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: petclinic
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: petclinic-service
+  labels:
+    account: petclinic
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic-v1
+  labels:
+    app: petclinic
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petclinic
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: petclinic
+        version: v1
+    spec:
+      serviceAccountName: petclinic-service
+      containers:
+      - name: petclinic
+        image: jbrisbin/spring-petclinic
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+---
+# Istio - Gateway Addon
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: petclinic-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 8080
+      name: pet-http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: petclinic
+spec:
+   hosts:
+    - "*"
+    gateways:
+    - petclinic-gateway
+    http:
+    - match:
+      - port: 8080
+      route:
+      - destination:
+          host: petclinic
+          port:
+            number: 8080
