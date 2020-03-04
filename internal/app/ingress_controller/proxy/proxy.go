@@ -42,10 +42,10 @@ func main() {
 func GrabRules() {
 	for {
 
+		temp1, temp2 := scanner.Scan()
+
 		mu.Lock()
-		rulesList = nil
-		clusterList = nil
-		rulesList, clusterList = scanner.Scan()
+		rulesList, clusterList = temp1, temp2
 		mu.Unlock()
 
 		fmt.Println(rulesList)
@@ -134,13 +134,15 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			if err != nil {
 				mu.Unlock()
 				fmt.Println("Could not resolve: " + destination + " server could not be dialed: " + err.Error())
-				return
+				serverConn = nil
+				break
 			}
 			defer serverConn.Close()
 			serverConn.Write(buf)
 			break
 		}
 	}
+	shutdownSession := make(chan string)
 
 	if serverConn == nil && IsFirst {
 		for _, v := range clusterList {
@@ -153,17 +155,30 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 				buf2 := make([]byte, 1024)
 				serverConn.Read(buf2)
 				if !strings.Contains(string(buf2), "404") {
-					conn.Write(buf2)
-					break
-				} else {
-					serverConn = nil
+
+					var temp = []byte{}
+
+					for _, b := range buf2 {
+						if b != byte('\u0000') {
+							temp = append(temp, b)
+						}
+					}
+
+					conn.Write(temp)
+
+					go SessionListener(serverConn, shutdownSession, conn)
+					go SessionListener(conn, shutdownSession, serverConn)
+
+					mu.Unlock()
+					fmt.Println(<-shutdownSession)
+					return
 				}
+				serverConn = nil
 			}
 		}
 	}
 	mu.Unlock()
 
-	shutdownSession := make(chan string)
 	if serverConn != nil {
 		go SessionListener(serverConn, shutdownSession, conn)
 		go SessionListener(conn, shutdownSession, serverConn)

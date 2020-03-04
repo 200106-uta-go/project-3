@@ -173,7 +173,7 @@ func Scan() (ruleset []Rules, targetIP []AltCluster) {
 	fmt.Println("Kube Proxy Running")
 	time.Sleep(5 * time.Second)
 	fmt.Println("Kube Proxy up")
-	//GetTargetIP()
+	GetTargetIP()
 	GetIngress()
 	return Ruleset, TargetIP
 }
@@ -227,6 +227,7 @@ func GetIngress() {
 		fmt.Println(err.Error())
 		return
 	}
+	fmt.Println(body)
 	err = json.Unmarshal(body, &TargetData)
 	if err != nil {
 		fmt.Println(err)
@@ -260,7 +261,7 @@ func GetTargetIP() {
 	// request information of services from k8s API
 	var PortalData Portal
 	var MyCluster AltCluster
-	serviceURL := "http://localhost:8001/apis/revature.com/v1/namespaces/default/portals/"
+	serviceURL := "http://localhost:8001/apis/revature.com/v1/portals/"
 	body, err := GetResponse(serviceURL)
 	if err != nil {
 		fmt.Println(err.Error())
