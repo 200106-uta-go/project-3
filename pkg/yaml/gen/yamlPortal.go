@@ -22,7 +22,7 @@ func PortalGen() {
 	errorHandler(err)
 	defer file.Close()
 
-	//marshal user data into ingress struct
+	// Marshal user data into Portal struct
 	bytes, err := yaml.Marshal(dataWrite(portal, targetIP))
 	errorHandler(err)
 
