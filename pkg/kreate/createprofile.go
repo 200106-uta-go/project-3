@@ -21,7 +21,7 @@ import (
 2. Created profiles will be saved to etc/kreate/
 */
 
-var defaultProfile Profile = Profile{
+var defaultProfile *Profile = &Profile{
 	Name:         "myProfileName",
 	ClusterName:  "Your Cluster Name",
 	ClusterIP:    "127.0.0.1",
@@ -43,17 +43,21 @@ const DefaultEditor = "nano"
 // default editor.
 func CreateProfile(name string) {
 	// Check if given profile name exists
-	if _, err := os.Stat(name + ".yaml"); err != nil {
+	if _, err := os.Stat(PROFILES + name + ".yaml"); err != nil {
 		// If profile is not exist, create new yaml file
-		file, err := os.Create(name + ".yaml")
+		file, err := os.Create(PROFILES + name + ".yaml")
 		if err != nil {
 			log.Panicln(err)
 		}
 		defer file.Close()
 
 		// Marshal defaultProfile struct
+		defaultProfile.Name = name
 		bytes, err := yaml.Marshal(defaultProfile)
 		_, err = file.Write(bytes)
+		defaultProfile.Name = "myProfileName"
+		// Open generated yaml file with text editor
+		OpenFileInEditor(PROFILES + name + ".yaml")
 	}
 
 }

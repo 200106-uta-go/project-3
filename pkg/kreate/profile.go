@@ -24,12 +24,12 @@ type App struct {
 	Endpoints []string `yaml:"endpoints"`
 }
 
-profilePath = "/etc/kreate/" 
+// This is already defined by PROFILES const in initialization.go. This is where the vars and consts are defined.
 
 //GetProfile gets the profile file and return the data as a struct
 func GetProfile(profileName string) Profile {
 	//open profile
-	file, err := os.Open(profilePath + profileName)
+	file, err := os.Open(PROFILES + profileName)
 	if err != nil {
 		panic(err)
 	}
