@@ -22,10 +22,12 @@ func main() {
 
 	switch flag.Arg(0) {
 
-	case "chart":
-		kreate.CreateChart(flag.Arg(1))
+	case "profile":
+		kreate.CreateProfile(flag.Arg(1))
 	case "edit":
-		kreate.EditValues(flag.Arg(1))
+		kreate.EditProfile(flag.Arg(1))
+	case "run":
+		kreate.RunProfile(flag.Arg(1))
 	case "help":
 		fmt.Println(usage)
 	default:
