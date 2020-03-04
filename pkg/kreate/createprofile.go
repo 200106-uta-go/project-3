@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 /*
@@ -39,7 +39,8 @@ var defaultProfile Profile = Profile{
 // DefaultEditor is vim because we're adults ;)
 const DefaultEditor = "nano"
 
-// CreateProfile will take a name defined by the user and then ouput a default file with
+// CreateProfile will take a name defined by the user and then ouput a default file with the users
+// default editor.
 func CreateProfile(name string) {
 	// Check if given profile name exists
 	if _, err := os.Stat(name + ".yaml"); err != nil {

@@ -1,5 +1,12 @@
 package kreate
 
+import (
+	"fmt"
+	"os"
+
+	"gopkg.in/yaml.v2"
+)
+
 /*
 ## kreate chart <profile name>
 1. Part 1. (to be reused within kreate run)
@@ -9,6 +16,45 @@ package kreate
     - The kustom chart must then be copied to a user-friendly directory (implementation as descretioned by developer)
 */
 
+//CreateChart creates a helm chart using the data provided in profile
 func CreateChart(profileName string) {
+	profile := GetProfile(profileName + ".yaml")
 
+	createValues(profile)
+
+	tmpl, err := os.Open("chart.tmpl")
+	if err != nil {
+		panic(err)
+	}
+
+	//chart template and values.yaml should be created at this point
+
+	//add values into chart for deployment yaml
+	populateChart("values.yaml", tmpl)
+}
+
+//createValues creates a values.yaml based on a profile
+func createValues(profile Profile) {
+	//create values yaml
+	file, err := os.Create("values.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	bytes, err := yaml.Marshal(profile)
+	if err != nil {
+		panic(err)
+	}
+
+	written, err := file.Write(bytes)	if written == 0 {
+		panic("Nothing was written to values.yaml")
+	}
+	if err != nil {
+		panic(err)
+	}
+}
+
+//populateChart injects the values inside filename into a chart template
+func populateChart(filename string, template *os.File) {
+	fmt.Println("Test Complete")
 }
