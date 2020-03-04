@@ -46,8 +46,7 @@ func createValues(profile Profile) {
 		panic(err)
 	}
 
-	written, err := file.Write(bytes)
-	if written == 0 {
+	written, err := file.Write(bytes)	if written == 0 {
 		panic("Nothing was written to values.yaml")
 	}
 	if err != nil {
