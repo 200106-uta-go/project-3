@@ -23,7 +23,7 @@ func main() {
 	switch flag.Arg(0) {
 	case "init":
 		// Sets up directory paths and environment variables
-		kreate.Initalization()
+		kreate.Initialization()
 	case "profile":
 		// Creates a new profile .yaml
 		err := kreate.CreateProfile(flag.Arg(1))

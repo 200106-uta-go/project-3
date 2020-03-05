@@ -22,7 +22,7 @@ var (
 2. Setup kreate's environment variables (If any)
 */
 
-func Initalization() { // current logic was written prior to the 3/3/20 MVP meeting
+func Initialization() { // current logic was written prior to the 3/3/20 MVP meeting
 
 	home, _ := os.UserHomeDir()
 
@@ -31,7 +31,7 @@ func Initalization() { // current logic was written prior to the 3/3/20 MVP meet
 		log.Panicf("Error making directory %s => %v", MOULDFOLDERS, pathErr)
 	}
 	
-	pathErr := os.MkdirAll(PROFILES, 1777)
+	pathErr = os.MkdirAll(PROFILES, 1777)
 	if pathErr != nil {
 		log.Panicf("Error making directory %s => %v", PROFILES, pathErr)
 	}
