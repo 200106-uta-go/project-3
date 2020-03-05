@@ -1,0 +1,20 @@
+[
+    {
+        "Protocol": "http",
+        "Path": "/",
+        "Route": {
+            "ServiceName": "test",
+            "ServicePort": "5000",
+            "ServiceIP": "172.17.0.1"
+        }
+    },
+    {
+        "Protocol": "http",
+        "Path": "/player",
+        "Route": {
+            "ServiceName": "test",
+            "ServicePort": "5000",
+            "ServiceIP": "172.17.0.1"
+        }
+    }
+]

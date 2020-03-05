@@ -1,5 +1,5 @@
 # Expose Grafana gateway
-# Team: Aaron Kim,  Nehemiah "Neo" Campbell
+# Author: Aaron Kim,  Nehemiah "Neo" Campbell
 # Purpose: Added along Gateway, VirtualService, and DestinationRule.
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway

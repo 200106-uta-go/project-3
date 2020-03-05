@@ -10,7 +10,7 @@ master: ## Not currently functional
 	export masterip=$$(terraform output master_ip)
 	ssh -i ./secrets/private.pem ubuntu@$$masterip
 
-dev1: ## Start aws env from dev_env and ssh into master1
+dev1:
 	cd ./deployments/terraform/dev_env
 	terraform init
 	terraform apply --auto-approve
@@ -18,7 +18,7 @@ dev1: ## Start aws env from dev_env and ssh into master1
 	echo $$masterip
 	ssh -i ./Temp.pem ubuntu@$$masterip
 
-dev2: ## Start aws env from dev_env and ssh into master2
+dev2:
 	cd ./deployments/terraform/dev_env
 	terraform init
 	terraform apply --auto-approve

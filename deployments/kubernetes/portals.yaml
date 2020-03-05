@@ -1,8 +1,0 @@
-# create a Portal resource
-apiVersion: revature.com/v1
-kind: Portal
-metadata:
-  name: portal1
-spec:
-  portal: cluster-a
-  targetip: golang.org
