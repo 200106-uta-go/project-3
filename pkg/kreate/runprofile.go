@@ -71,16 +71,16 @@ func RunProfile(profileName string) string {
 			return fmt.Sprintf("Error: Could not resolve %s.", str)
 		}
 	}
-	
+
 	// 3. Create the custom chart
-	profile := GetProfile(PROFILES + profileName + ".yaml")
+	profile := GetProfile(profileName + ".yaml")
 
 	// Creates a new values.yml & Chart.yml file.
 	createValues(profile)
 	createChartFile(profile)
 
 	//build file structure for running helm
-	buildFileSystem()
+	buildFileSystem(profile)
 
 	//add values into chart for deployment yaml
 	populateChart("values.yaml", "./templates")
@@ -135,18 +135,17 @@ func runInstallScript() error {
 	return er
 }
 
-
-	/*
-		// JZ: I think we should hang on to this logic since initializing helm v2.16.2/deploying istio might be relocated to init in the future...?
-		str, err := shellCommand("sudo helm version", currentDir)
-		if !strings.Contains(str, "v2.16.3") && err == nil {
-			return fmt.Sprintf("Error: Helm version is not v2.16.3 (required). Please confirm your Helm version.")
-		} else if err != nil {
-			// Prerequisite: Confirm Helm init is already ran.
-			if strings.Contains(str, "could not find tiller") {
-				return fmt.Sprint("Error: Could not find tiller. Please confirm that Helm is initialized.")
-			}
-			// Misc. error (Helm not installed, no Cluster, ect.)
-			return fmt.Sprintf("Error: %s", str)
+/*
+	// JZ: I think we should hang on to this logic since initializing helm v2.16.2/deploying istio might be relocated to init in the future...?
+	str, err := shellCommand("sudo helm version", currentDir)
+	if !strings.Contains(str, "v2.16.3") && err == nil {
+		return fmt.Sprintf("Error: Helm version is not v2.16.3 (required). Please confirm your Helm version.")
+	} else if err != nil {
+		// Prerequisite: Confirm Helm init is already ran.
+		if strings.Contains(str, "could not find tiller") {
+			return fmt.Sprint("Error: Could not find tiller. Please confirm that Helm is initialized.")
 		}
-	*/
+		// Misc. error (Helm not installed, no Cluster, ect.)
+		return fmt.Sprintf("Error: %s", str)
+	}
+*/
