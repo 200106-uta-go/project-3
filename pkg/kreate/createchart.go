@@ -116,13 +116,21 @@ func buildFileSystem(profile Profile) {
 	copyDir(MOULDFOLDERS, "./charts/"+profile.Name+"/templates/")
 }
 
-func copyDir(sourceDir string, targetDir string) {
-	//get a list of files/folders in source directory
-	files, err := ioutil.ReadDir(sourceDir)
+//fixFileSystem rearranges the generated files to better organize the directory and to give user permissions
+func fixFileSystem(profile Profile) {
+	//move templates
+	copyDir("./charts/"+profile.Name+"/deploy/"+profile.Name+"/templates/", "./charts/"+profile.Name+"/deploy/")
+
+	//delete empty files in deploy folder
+	cmd2 := exec.Command("rm", "-r", "./charts/"+profile.Name+"/deploy/"+profile.Name)
+	err := cmd2.Run()
 	if err != nil {
 		panic(err)
 	}
+}
 
+//copyDir copies the contents of sourceDir into targetDir
+func copyDir(sourceDir string, targetDir string) {
 	//add slashes to directories if not already present
 	if !strings.HasSuffix(sourceDir, "/") {
 		sourceDir += "/"
@@ -131,35 +139,20 @@ func copyDir(sourceDir string, targetDir string) {
 		targetDir += "/"
 	}
 
+	//get a list of files/folders in source directory
+	files, err := ioutil.ReadDir(sourceDir)
+	if err != nil {
+		panic(err)
+	}
+
 	//copy each file in source files to target directory
 	for _, file := range files {
-		fmt.Println(sourceDir + file.Name())
-		cmd := exec.Command("sudo", "cp", "-r", sourceDir+file.Name(), targetDir)
+		cmd := exec.Command("cp", "-r", sourceDir+file.Name(), targetDir)
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()
 		if err != nil {
 			panic(cmd.Stderr)
 		}
-	}
-}
-
-//fixFileSystem rearranges the generated files to better organize the directory and to give user permissions
-func fixFileSystem(profile Profile) {
-	//update permissions on chart folders
-	cmd := exec.Command("sudo", "chmod", "777", "./charts")
-	err := cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	//move templates
-	copyDir("./charts/"+profile.Name+"/deploy/"+profile.Name+"/templates/", "./charts/"+profile.Name+"/deploy/")
-
-	//delete empty files in deploy folder
-	cmd2 := exec.Command("sudo", "rm", "-r", "./charts/"+profile.Name+"/deploy/"+profile.Name)
-	err = cmd2.Run()
-	if err != nil {
-		panic(err)
 	}
 }
 
