@@ -18,8 +18,9 @@ import (
 */
 
 //CreateChart creates a helm chart using the data provided in profile
+// TODO -Need to add full path to file name to get correct yaml.
 func CreateChart(profileName string) {
-	profile := GetProfile(profileName + ".yaml")
+	profile := GetProfile(PROFILES + profileName + ".yaml")
 
 	createValues(profile)
 	createChartFile(profile)

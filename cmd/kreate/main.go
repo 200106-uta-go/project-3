@@ -14,7 +14,7 @@ func main() {
 
 	// Must run Init() to set up environmental variables that contain path to our main data folder
 	// that contains the helm chart directories. The environmenta
-	kreate.Init()
+	//kreate.Initalization() //JZ: do we want kreate to init every time the tool is run?
 
 	// Parse Command Line arguements and use them to find
 	// appropriate sub-command for kreate to run.
@@ -28,9 +28,9 @@ func main() {
 		// Creates a new profile .yaml
 		err := kreate.CreateProfile(flag.Arg(1))
 		if err != nil {
-			kreate.OpenFileInEditor(flag.Arg(1))
+			kreate.OpenFileInEditor(kreate.PROFILES + flag.Arg(1))
 		} else {
-			log.Printf(err)
+			log.Printf(err.Error())
 		}
 
 	case "edit":
@@ -48,8 +48,8 @@ func main() {
 	case "help":
 		// describes CLI commands to user
 		fmt.Println(usage)
-		fallthrough
 	default:
 		fmt.Println("No valid sub command selected. Use \"kreate help\" for information on various options.")
+		fmt.Println(usage)
 	}
 }
