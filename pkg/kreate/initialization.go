@@ -30,6 +30,11 @@ func Initalization() { // current logic was written prior to the 3/3/20 MVP meet
 	if pathErr != nil {
 		log.Panicf("Error making directory %s => %v", MOULDFOLDERS, pathErr)
 	}
+	
+	pathErr := os.MkdirAll(PROFILES, 1777)
+	if pathErr != nil {
+		log.Panicf("Error making directory %s => %v", PROFILES, pathErr)
+	}
 
 	// Register the path of where the helm charts will be stored by checking the env var "KREATE_DATA"
 	// Set "KREATE_DATA" == The default value of /var/local/kreate/
