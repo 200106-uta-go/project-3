@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: {{ .Values.name }}
-      image: {{ .Values.imageurl }}
+      {{- $app := index .Values.apps 0 }}
+      image: {{ $app.imageurl }}
       resources:
         limits:
           memory: "128Mi"
