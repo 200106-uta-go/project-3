@@ -16,30 +16,13 @@ import (
 3. The custom chart must be created using Part 1. of the the 'Kreate chart' logic.
 4. Check: If a custom chart is already deployed to the cluster, it must be upgraded to the new chart.
     - If a custom chart is not already deployed, the new chart must be installed rather than upgraded.
-	- Possible lead for the implementing developer: https://github.com/helm/helm/issues/3353
 */
 
-func main() {
-	fmt.Println(RunProfile("./test.yaml"))
-}
-
-func RunProfile(profileName string) string { // current logic was written prior to the 3/3/20 MVP meeting
+// RunProfile installs the specified profile and the istio environment in tandem, into the kubernetes cluster.
+// If an istio environment is already deployed, RunProfile will not attempt to redeploy it.
+// If a profile is already deployed, RunProfile will upgrade the deployment using the new profile.
+func RunProfile(profileName string) string {
 	currentDir := "./"
-
-	/*
-		// 1. Prerequisite: Confirm Helm v2.16.4 is installed. JZ: I think we should hang on to this logic since initializing helm v2.16.2/deploying istio might be relocated to init in the future.
-		str, err := shellCommand("sudo helm version", currentDir)
-		if !strings.Contains(str, "v2.16.3") && err == nil {
-			return fmt.Sprintf("Error: Helm version is not v2.16.3 (required). Please confirm your Helm version.")
-		} else if err != nil {
-			// Prerequisite: Confirm Helm init is already ran.
-			if strings.Contains(str, "could not find tiller") {
-				return fmt.Sprint("Error: Could not find tiller. Please confirm that Helm is initialized.")
-			}
-			// Misc. error (Helm not installed, no Cluster, ect.)
-			return fmt.Sprintf("Error: %s", str)
-		}
-	*/
 
 	// 1. Confirm Helm conditions
 	str, err := shellCommand("sudo helm version", currentDir)
@@ -88,7 +71,7 @@ func RunProfile(profileName string) string { // current logic was written prior 
 			return fmt.Sprintf("Error: Could not resolve %s.", str)
 		}
 	}
-	//================================================================
+	
 	// 3. Create the custom chart
 	profile := GetProfile(PROFILES + profileName + ".yaml")
 
@@ -101,9 +84,12 @@ func RunProfile(profileName string) string { // current logic was written prior 
 
 	//add values into chart for deployment yaml
 	populateChart("values.yaml", "./templates")
-	//==============================================================
 
 	// 4. Deploy/Upgrade custom chart
+	str, err = shellCommand(fmt.Sprintf("helm upgrade --install ./%s", profileName), currentDir)
+	if err != nil {
+		return fmt.Sprintf("Error: Failed to deploy custom helm chart - %s", str)
+	}
 	return fmt.Sprintf("Profile %s deployed successfully", profileName)
 }
 
@@ -148,3 +134,19 @@ func runInstallScript() error {
 	os.Remove(filename)
 	return er
 }
+
+
+	/*
+		// JZ: I think we should hang on to this logic since initializing helm v2.16.2/deploying istio might be relocated to init in the future...?
+		str, err := shellCommand("sudo helm version", currentDir)
+		if !strings.Contains(str, "v2.16.3") && err == nil {
+			return fmt.Sprintf("Error: Helm version is not v2.16.3 (required). Please confirm your Helm version.")
+		} else if err != nil {
+			// Prerequisite: Confirm Helm init is already ran.
+			if strings.Contains(str, "could not find tiller") {
+				return fmt.Sprint("Error: Could not find tiller. Please confirm that Helm is initialized.")
+			}
+			// Misc. error (Helm not installed, no Cluster, ect.)
+			return fmt.Sprintf("Error: %s", str)
+		}
+	*/
