@@ -3,18 +3,18 @@ kind: Ingress
 metadata:
   name: {{ .Values.clustername }}
 spec:
-  tls:
-  - hosts:
-    - '*.our-server.net'
-    secretName: our-server-net-tls
+{{- range $app := .Values.apps }}
+{{- range $endpoint := $app.endpoints }}
   rules:
-  - host: www.our-server.com
+  - host:
     http:
       paths:
-      - path: /
+      - path: {{ $endpoint }}
         backend:
-          serviceName: zach-server
-          servicePort: 4000
+          serviceName: {{ $app.servicename }}
+          servicePort: {{ $app.serviceport }}
+{{- end }}
+{{- end }}
 ---
 apiVersion: v1
 kind: Pod
