@@ -1,6 +1,6 @@
  .ONESHELL:
 
- help:
+help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 master: ## Not currently functional
@@ -25,13 +25,8 @@ dev2: ## Start aws env from dev_env and ssh into master2
 	export masterip=$$(terraform output -json master_ip | jq -j .[1])
 	echo $$masterip
 	ssh -i ./Temp.pem ubuntu@$$masterip
-<<<<<<< HEAD
 	
 destroy_dev: ## Tear down whole dev env
-=======
-
-destroy_dev:
->>>>>>> 6c09a95d82b88367a45247f768ced8fe05bdefae
 	cd ./deployments/terraform/dev_env
 	export masterip=$$(terraform output -json master_ip | jq -j .[0])
 	export masterip2=$$(terraform output -json master_ip | jq -j .[1])
