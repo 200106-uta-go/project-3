@@ -21,8 +21,6 @@ import (
 func CreateChart(profileName string) {
 	profile := GetProfile(profileName + ".yaml")
 
-	fmt.Println(profile)
-
 	createValues(profile)
 	createChartFile(profile)
 
@@ -64,7 +62,6 @@ func populateChart(filename string, templateDir string) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Test Complete")
 }
 
 //createChartFile generates the required chart.yaml metadata file to use with helm

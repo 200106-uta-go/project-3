@@ -18,10 +18,12 @@ type Profile struct {
 
 // App ...
 type App struct {
-	Name      string   `yaml:"name"`
-	ImageURL  string   `yaml:"imageurl"`
-	Ports     []string `yaml:"ports"`
-	Endpoints []string `yaml:"endpoints"`
+	Name        string   `yaml:"name"`
+	ImageURL    string   `yaml:"imageurl"`
+	ServiceName string   `yaml:"servicename"`
+	ServicePort int      `yaml:"serviceport"`
+	Ports       []string `yaml:"ports"`
+	Endpoints   []string `yaml:"endpoints"`
 }
 
 // This is already defined by PROFILES const in initialization.go. This is where the vars and consts are defined.
