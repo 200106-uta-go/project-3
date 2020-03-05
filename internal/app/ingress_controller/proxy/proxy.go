@@ -153,8 +153,11 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			if err == nil {
 				serverConn.Write(buf)
 				buf2 := make([]byte, 1024)
-				serverConn.Read(buf2)
-				if !strings.Contains(string(buf2), "404") {
+				serverConn.SetReadDeadline(time.Now().Add(5 * time.Second))
+				_, err := serverConn.Read(buf2)
+				if err != nil {
+					fmt.Println("404 No Response from portal server, could dial but not read")
+				} else if !strings.Contains(string(buf2), "404") {
 
 					var temp = []byte{}
 
