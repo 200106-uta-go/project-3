@@ -2,8 +2,10 @@ package kreate
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -20,22 +22,30 @@ import (
 //CreateChart creates a helm chart using the data provided in profile
 // TODO -Need to add full path to file name to get correct yaml.
 func CreateChart(profileName string) {
-	profile := GetProfile(profileName + ".yaml")
+	var profile Profile
+	if strings.HasSuffix(profileName, ".yaml") {
+		profile = GetProfile(profileName)
+	} else {
+		profile = GetProfile(profileName + ".yaml")
+	}
+
+	//build file structure for running helm
+	buildFileSystem(profile)
 
 	createValues(profile)
 	createChartFile(profile)
 
-	//build file structure for running helm
-	buildFileSystem()
-
 	//add values into chart for deployment yaml
-	populateChart("values.yaml", "./templates")
+	populateChart("values.yaml", "./charts/"+profile.Name)
+
+	//update file permissions and reorganize directories
+	fixFileSystem(profile)
 }
 
 //createValues creates a values.yaml based on a profile
 func createValues(profile Profile) {
 	//create values yaml
-	file, err := os.Create("values.yaml")
+	file, err := os.Create("./charts/" + profile.Name + "/values.yaml")
 	if err != nil {
 		panic(err)
 	}
@@ -54,14 +64,23 @@ func createValues(profile Profile) {
 	}
 }
 
-//populateChart injects the values inside filename into a chart template
-func populateChart(filename string, templateDir string) {
+//populateChart injects the values inside valuesFile into chart templates
+func populateChart(valuesFile string, chartDir string) {
 	//uses helm to inject values into template
-
-	cmd := exec.Command("helm", "template", "--output-dir", "./", "./")
+	if !strings.HasSuffix(valuesFile, ".yaml") {
+		valuesFile += ".yaml"
+	}
+	if !dirExists(chartDir + "/deploy") {
+		err := os.Mkdir(chartDir+"/deploy", 0777)
+		if err != nil {
+			panic(err)
+		}
+	}
+	cmd := exec.Command("helm", "template", "--values", chartDir+"/"+valuesFile, "--output-dir", chartDir+"/deploy", chartDir)
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		panic(err)
+		panic(cmd.Stderr)
 	}
 }
 
@@ -79,7 +98,7 @@ sources:
 maintainers:
 - name: do we want our names here? for posterity/blame`, profile.Name)
 
-	chartFile, err := os.Create("Chart.yaml")
+	chartFile, err := os.Create("./charts/" + profile.Name + "/Chart.yaml")
 	if err != nil {
 		panic(err)
 	}
@@ -88,14 +107,57 @@ maintainers:
 }
 
 //buildFileSystem sets up the file structure to install and template a helm chart
-func buildFileSystem() {
-	if !dirExists("./templates") {
-		os.Mkdir("templates", 0777)
+func buildFileSystem(profile Profile) {
+	if !dirExists("./charts/" + profile.Name + "/templates/") {
+		os.MkdirAll("./charts/"+profile.Name+"/templates/", 0777)
 	}
 
 	//copy files from /var/local/kreate into ./templates
-	cmd := exec.Command("sudo", "cp", "-r", MOULDFOLDERS, "./templates")
+	copyDir(MOULDFOLDERS, "./charts/"+profile.Name+"/templates/")
+}
+
+func copyDir(sourceDir string, targetDir string) {
+	//get a list of files/folders in source directory
+	files, err := ioutil.ReadDir(sourceDir)
+	if err != nil {
+		panic(err)
+	}
+
+	//add slashes to directories if not already present
+	if !strings.HasSuffix(sourceDir, "/") {
+		sourceDir += "/"
+	}
+	if !strings.HasSuffix(targetDir, "/") {
+		targetDir += "/"
+	}
+
+	//copy each file in source files to target directory
+	for _, file := range files {
+		fmt.Println(sourceDir + file.Name())
+		cmd := exec.Command("sudo", "cp", "-r", sourceDir+file.Name(), targetDir)
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
+		if err != nil {
+			panic(cmd.Stderr)
+		}
+	}
+}
+
+//fixFileSystem rearranges the generated files to better organize the directory and to give user permissions
+func fixFileSystem(profile Profile) {
+	//update permissions on chart folders
+	cmd := exec.Command("sudo", "chmod", "777", "./charts")
 	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	//move templates
+	copyDir("./charts/"+profile.Name+"/deploy/"+profile.Name+"/templates/", "./charts/"+profile.Name+"/deploy/")
+
+	//delete empty files in deploy folder
+	cmd2 := exec.Command("sudo", "rm", "-r", "./charts/"+profile.Name+"/deploy/"+profile.Name)
+	err = cmd2.Run()
 	if err != nil {
 		panic(err)
 	}
