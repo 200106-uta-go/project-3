@@ -1,0 +1,9 @@
+# Portal resource template
+apiVersion: revature.com/v1
+kind: Portal
+metadata:
+  name: {{ .Values.clustername }}-portal
+spec:
+  portal: {{ .Values.clustername }}
+  targetip: {{ .Values.clusterip }}
+  port: {{ index .Values.clusterports 0 }}
