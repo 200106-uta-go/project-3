@@ -16,37 +16,37 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// YamlFileName is the name of the yaml that describes a profile.
-var YamlFileName string
+// YamlFileName is a global variable that holds the title of the yaml file
+// 	that will be used to create the yaml file.
+var YamlFileName string 
 
 //FLAG VARIABLES
-var profileName string
-var profileClusterName string
-var profileClusterIP string
-var profileClusterPort string
+var Name string
+var ClusterName string
+var ClusterIP string
+var ClusterPort string
 
-var profileAppName string
-var profileAppImageURL string
-var profileAppServiceName string
-var profileAppServicePort int
-var profileAppPort string
-var profileAppEndpoint string
+var AppName string
+var AppImageURL string
+var AppServiceName string
+var AppServicePort int
+var AppPort string
+var AppEndpoint string
 
 // init assigns flag defaults and parses the flags, which are used to assign new values if they are set.
 func init() {
-	flag.StringVar(&FileName, "f", "testProfile.yaml", "Default is named testProfile.yaml, this is located within /etc/kreate.")
 
-	flag.StringVar(&profileName, "profileName", "", "Name for config.")
-	flag.StringVar(&profileClusterName, "profileClusterName", "", "ClusterName for config.")
-	flag.StringVar(&profileClusterIP, "profileClusterIP", "", "ClusterIp for config.")
-	flag.StringVar(&profileClusterPort, "profileClusterPort", "", "ClusterPort for config.")
+	flag.StringVar(&Name, "Name", "", "Name for config.")
+	flag.StringVar(&ClusterName, "ClusterName", "", "ClusterName for config.")
+	flag.StringVar(&ClusterIP, "ClusterIP", "", "ClusterIp for config.")
+	flag.StringVar(&ClusterPort, "ClusterPort", "", "ClusterPort for config.")
 
-	flag.StringVar(&profileAppName, "profileAppName", "", "Under App, the Name value.")
-	flag.StringVar(&profileAppImageURL, "profileAppImageURL", "", "Under App, the ImageURL.")
-	flag.StringVar(&profileAppServiceName, "profileAppServiceName", "", "Under App, the ServiceName value.")
-	flag.IntVar(&profileAppServicePort, "profileAppServicePort", 0, "Under App, the ServicePort value.")
-	flag.StringVar(&profileAppPort, "profileAppPort", "", "Under App, Port Value.")
-	flag.StringVar(&profileAppEndpoint, "profileAppEndpoint", "", "Under App, Endpoint Value.")
+	flag.StringVar(&AppName, "AppName", "", "Under App, the Name value.")
+	flag.StringVar(&AppImageURL, "AppImageURL", "", "Under App, the ImageURL.")
+	flag.StringVar(&AppServiceName, "AppServiceName", "", "Under App, the ServiceName value.")
+	flag.IntVar(&AppServicePort, "AppServicePort", 0, "Under App, the ServicePort value.")
+	flag.StringVar(&AppPort, "AppPort", "", "Under App, Port Value.")
+	flag.StringVar(&AppEndpoint, "AppEndpoint", "", "Under App, Endpoint Value.")
 
 	flag.Parse()
 }
@@ -83,19 +83,19 @@ func ProfileToYaml(pf Profile) error {
 // 	change a boolean value, which is used to determine whether to assign values or log a report depending on further logic.
 func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint *bool) {
 	// This 5 if statements are checking corresponding flags to know what varaibles to change in the file pointed to by corresponding.
-	if profileAppImageURL == "" {
+	if AppImageURL == "" {
 		*noImageURL = true
 	}
-	if profileAppServiceName == "" {
+	if AppServiceName == "" {
 		*noServiceName = true
 	}
-	if profileAppServicePort == 0 {
+	if AppServicePort == 0 {
 		*noServicePort = true
 	}
-	if profileAppPort == "" {
+	if AppPort == "" {
 		*noPort = true
 	}
-	if profileAppEndpoint == "" {
+	if AppEndpoint == "" {
 		*noEndpoint = true
 	}
 }
@@ -110,30 +110,30 @@ func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logi
 	noPort := false
 	noEndpoint := false
 	//Checking this 4 if statements to see if any one of our next four flags where set to make changes to the file pointed to by YamlFileName.
-	if profileName != "" {
-		pf.Name = profileName
+	if Name != "" {
+		pf.Name = Name
 	}
-	if profileClusterName != "" {
-		pf.ClusterName = profileClusterName
+	if ClusterName != "" {
+		pf.ClusterName = ClusterName
 	}
-	if profileClusterIP != "" {
-		pf.ClusterIP = profileClusterIP
+	if ClusterIP != "" {
+		pf.ClusterIP = ClusterIP
 	}
 	// This is an array of ports so we are chekcing if the flag to add aport has been declared and specified.
-	if profileClusterPort != "" {
+	if ClusterPort != "" {
 		foundPort := false
 		for index := range pf.ClusterPorts {
-			if pf.ClusterPorts[index] == profileClusterPort {
+			if pf.ClusterPorts[index] == ClusterPort {
 				foundPort = true
 			}
 		}
 		if foundPort == false {
-			pf.ClusterPorts = append(pf.ClusterPorts, profileClusterPort)
+			pf.ClusterPorts = append(pf.ClusterPorts, ClusterPort)
 		}
 	}
 	//Here used boolean and to see what flags where specified to edit the yaml structure file specified by YamlFileName.
 	CheckAppValues(&noImageURL, &noServiceName, &noServicePort, &noPort, &noEndpoint)
-	if profileAppName == "" {
+	if AppName == "" {
 		//ALL GOOD, no app is being changed.
 		if noImageURL && noServiceName && noServicePort && noPort && noEndpoint {
 			Check(ProfileToYaml(pf))
@@ -144,32 +144,32 @@ func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logi
 		log.Print("Editing app without specificing app.Name, program can not determine which app to change so values are unchanged.")
 		Check(ProfileToYaml(pf))
 		return pf, nil
-	} else if profileAppName != "" {
+	} else if AppName != "" {
 		for i int := 0; i < len(pf.Apps); i++ {
-			// profileAppName is an array of appname so we must cross reference to see if a specific app name 
+			// AppName is an array of appname so we must cross reference to see if a specific app name 
 			//	is mentions in order to modify desired variables of that specific appname.
-			if pf.Apps[i].Name == profileAppName {
+			if pf.Apps[i].Name == AppName {
 				if noImageURL == false {
-					pf.Apps[i].ImageURL = profileAppImageURL
+					pf.Apps[i].ImageURL = AppImageURL
 				}
 				if noServiceName == false {
-					pf.Apps[i].ServiceName = profileAppServiceName
+					pf.Apps[i].ServiceName = AppServiceName
 				}
 				if noServicePort == false {
-					pf.Apps[i].ServicePort = profileAppServicePort
+					pf.Apps[i].ServicePort = AppServicePort
 				}
 				if noPort == false {
-					pf.Apps[i].Ports = append(pf.Apps[i].Ports, profileAppPort)
+					pf.Apps[i].Ports = append(pf.Apps[i].Ports, AppPort)
 				}
 				if noEndpoint == false {
-					pf.Apps[i].Endpoints = append(pf.Apps[i].Endpoints, profileAppEndpoint)
+					pf.Apps[i].Endpoints = append(pf.Apps[i].Endpoints, AppEndpoint)
 				}
 			}
 			//Case: no app name, and no app details proved, just return any changes that happen on clsuter details.
 			Check(ProfileToYaml(pf))
 			return pf, nil
 		}
-		// profileAppName does not match with an existing App.Names.
+		// AppName does not match with an existing App.Names.
 		log.Print("Editing app an App_Name that does not exist, program can not modify an app that does not exist.")
 		Check(ProfileToYaml(pf))
 		return pf, nil
