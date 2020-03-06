@@ -6,7 +6,7 @@ package main
 
 import (
 	"fmt"
-	"github/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
+	"github.com/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 	"net"
 	"strings"
 	"sync"
