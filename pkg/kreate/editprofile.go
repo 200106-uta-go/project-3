@@ -16,6 +16,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// YamlFileName is a global variable that holds the title of the yaml file
+// 	that will be used to create the yaml file.
+var YamlFileName string 
+
 //FLAG VARIABLES
 var Name string
 var ClusterName string
@@ -130,7 +134,7 @@ func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logi
 	//Here used boolean and to see what flags where specified to edit the yaml structure file specified by YamlFileName.
 	CheckAppValues(&noImageURL, &noServiceName, &noServicePort, &noPort, &noEndpoint)
 	if AppName == "" {
-		//ALL GOOD,  no app is being changed.
+		//ALL GOOD, no app is being changed.
 		if noImageURL && noServiceName && noServicePort && noPort && noEndpoint {
 			Check(ProfileToYaml(pf))
 			return pf, nil
