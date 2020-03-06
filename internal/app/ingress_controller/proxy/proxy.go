@@ -158,7 +158,6 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 				if err != nil {
 					fmt.Println("404 No Response from portal server, could dial but not read")
 				} else if !strings.Contains(string(buf2), "404") {
-
 					var temp = []byte{}
 
 					for _, b := range buf2 {
