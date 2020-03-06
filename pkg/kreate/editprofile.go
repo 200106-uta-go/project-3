@@ -1,30 +1,3 @@
-package main
-
-import (
-	"fmt"
-
-	kre8 "github.com/200106-uta-go/project-3/pkg/kreate"
-)
-
-func main() {
-	kre8.Initialization()
-	// Call GetProfile to obtain a profile struct from a given file name defined by the -f flag.
-	file, _ := kre8.CreateProfile("test123")
-	// Call out EditProfile function.
-	profileStruct := kre8.GetProfile("test123.yaml")
-
-	fmt.Println(profileStruct)
-	//f, _ := os.OpenFile("/etc/kreate/test123.yaml", os.O_RDWR|os.O_CREATE, 0755)
-	defer file.Close()
-
-	profileStruct, _ = kre8.EditProfile(profileStruct, "test123.yaml")
-
-	fmt.Println(profileStruct)
-
-}
-
-----------------
-
 package kreate
 
 import (
