@@ -8,6 +8,11 @@ import (
 	"github.com/200106-uta-go/project-3/pkg/kreate"
 )
 
+func init() {
+	// ensures the internal directory structure is built
+	kreate.InitializeDirectories()
+}
+
 func main() {
 	// Set up error log to ouptut information
 	log.SetFlags(log.Lshortfile)
@@ -22,8 +27,8 @@ func main() {
 
 	switch flag.Arg(0) {
 	case "init":
-		// Sets up directory paths and environment variables
-		kreate.Initialization()
+		// downloads and deploys istio environment to the kubernetes cluster. must be ran before kreate run, but the user does not need to kreate init in order to add/edit/remove profiles or make charts
+		kreate.InitializeEnvironment()
 	case "profile":
 		// Creates a new profile .yaml
 		err := kreate.CreateProfile(flag.Arg(1))
