@@ -1,12 +1,16 @@
-# editprofile.go
+# kreate.EditProfile
 
 A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
 
 ## Getting Started
 
-Our implementation will allow changes to Cluster specific entries by setting values to each flag, the `FlagName` will map to the value within the file pointed to by the YamlFileName to modify their values.  The first section below list all the configuration flags for cluster related settings. The second section below list all confuration flags for app specific setting. *Note* that the `AppName` flag must be set to an existing app's name within the yaml file, otherwise the function will not change any values and log to the user that a name was not correctly specified.
+Our implementation will allow changes to Cluster specific entries by setting values to each flag, the `FlagName` will map to the value within the file pointed to by the YamlFileName to modify their values.
+
+*Note* that the `AppName` flag must be set to an existing app's name within the yaml file, otherwise the function will not change any values and log to the user that a name was not correctly specified.
 
 ### Configuration flags specific to Cluster
+
+This section below list all the configuration flags for cluster related settings.
 
 > `Name` - *Name for config*
 
@@ -18,6 +22,8 @@ Our implementation will allow changes to Cluster specific entries by setting val
 
 >
 ### Configuration flags specific to individual app
+
+This section below list all configuration flags for app specific setting.
 
 > `AppName` - *Under App, the Name value*
 
@@ -33,7 +39,7 @@ Our implementation will allow changes to Cluster specific entries by setting val
 
 ### Prerequisites
 
-This function requires a properly constructed profile struct instance, and the name of the yaml in the form of `"path/to/profile.yaml"`. 
+This function requires a properly constructed profile struct instance, and the name of the yaml in the form of `"path/to/profile.yaml"`.
 
 Before starting, initialization must be executed with:
 
@@ -59,7 +65,6 @@ Call `editprofile()` to profile to change the values of this yaml to reflect how
 
 * [Yaml]("gopkg.in/yaml.v2") - The configuration mark up language
 
-
 ## Authors
 
 * **Joshua Nguyen** - *Co-Author* - [CodeZipline](https://github.com/CodeZipline)
@@ -67,5 +72,3 @@ Call `editprofile()` to profile to change the values of this yaml to reflect how
 * **Hector Moreno** - *Co-Author* - [higgyhiggy](https://github.com/higgyhiggy)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-
