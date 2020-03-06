@@ -16,9 +16,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// YamlFileName is the name of the yaml that describes a profile.
-var YamlFileName string
-
 //FLAG VARIABLES
 var profileName string
 var profileClusterName string
@@ -34,7 +31,6 @@ var profileAppEndpoint string
 
 // init assigns flag defaults and parses the flags, which are used to assign new values if they are set.
 func init() {
-	flag.StringVar(&FileName, "f", "testProfile.yaml", "Default is named testProfile.yaml, this is located within /etc/kreate.")
 
 	flag.StringVar(&profileName, "profileName", "", "Name for config.")
 	flag.StringVar(&profileClusterName, "profileClusterName", "", "ClusterName for config.")
