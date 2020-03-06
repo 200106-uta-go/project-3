@@ -1,9 +1,39 @@
+package main
+
+import (
+	"fmt"
+
+	kre8 "github.com/200106-uta-go/project-3/pkg/kreate"
+)
+
+func main() {
+	kre8.Initialization()
+	// Call GetProfile to obtain a profile struct from a given file name defined by the -f flag.
+	file, _ := kre8.CreateProfile("test123")
+	// Call out EditProfile function.
+	profileStruct := kre8.GetProfile("test123.yaml")
+
+	fmt.Println(profileStruct)
+	//f, _ := os.OpenFile("/etc/kreate/test123.yaml", os.O_RDWR|os.O_CREATE, 0755)
+	defer file.Close()
+
+	profileStruct, _ = kre8.EditProfile(profileStruct, "test123.yaml")
+
+	fmt.Println(profileStruct)
+
+}
+
+----------------
+
 package kreate
 
 import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 /*
@@ -12,7 +42,11 @@ import (
 2. After modification, the profile will save.
 */
 
-//Global var, which are our flags
+// YamlFileName is th name of the yaml.
+var YamlFileName string = "CustomProfile.yaml"
+
+// Flag variables that can be configured.
+
 var FileName string
 
 var Profile_Name string
@@ -33,7 +67,7 @@ func init() {
 	flag.StringVar(&Profile_Name, "pn", "", "Name for config.")
 	flag.StringVar(&Profile_ClusterName, "pcn", "", "ClusterName for config.")
 	flag.StringVar(&Profile_ClusterIP, "pci", "", "ClusterIp for config.")
-	flag.StringVar(&Profile_ClusterPort, "pcp", "", "ClusterIp for config.")
+	flag.StringVar(&Profile_ClusterPort, "pcp", "", "ClusterPort for config.")
 
 	flag.StringVar(&Profile_App_Name, "pan", "", "Under App, the Name value.")
 	flag.StringVar(&Profile_App_ImageURL, "pai", "", "Under App, the ImageURL.")
@@ -43,6 +77,33 @@ func init() {
 	flag.StringVar(&Profile_App_Endpoint, "pae", "", "Under App, Endpoint Value.")
 
 	flag.Parse()
+}
+
+// Check panics on any error that is not nill.
+func Check(err error) {
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+// ProfileToYaml ...
+func ProfileToYaml(pf Profile) error {
+	Check(os.Remove(PROFILES + YamlFileName))
+	f, err := os.OpenFile(PROFILES+YamlFileName, os.O_RDWR|os.O_CREATE, 0755)
+	Check(err)
+
+	bytes, err := yaml.Marshal(&pf)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Finish marshal")
+
+	_, err = f.Write(bytes)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Finish write")
+	return nil
 }
 
 // CheckAppValues will determine if any App information is passed into the flag and change its boolean value to determine future logic flow.
@@ -64,9 +125,15 @@ func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint
 	}
 }
 
-// EditProfile is a function that checks a single cluster and overwrites any profile information, while checking through app specific information and adjusting according to provided flags
-func EditProfile(pf Profile) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
-	//fullChartPath := chartsLocation + name
+// EditProfile is a function that Checks a single cluster and overwrites any profile information, while Checking through app specific information and adjusting according to provided flags
+func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
+	YamlFileName = YamlName
+	noImageURL := false
+	noServiceName := false
+	noServicePort := false
+	noPort := false
+	noEndpoint := false
+
 	if Profile_Name != "" {
 		pf.Name = Profile_Name
 	}
@@ -87,32 +154,21 @@ func EditProfile(pf Profile) (Profile, error) { // current logic was written pri
 			pf.ClusterPorts = append(pf.ClusterPorts, Profile_ClusterPort)
 		}
 	}
-	noImageURL := false
-	noServiceName := false
-	noServicePort := false
-	noPort := false
-	noEndpoint := false
-
 	CheckAppValues(&noImageURL, &noServiceName, &noServicePort, &noPort, &noEndpoint)
-
-	fmt.Println(Profile_App_Name)
-
 	if Profile_App_Name == "" {
 		//ALL GOOD, no app is being changed.
 		if noImageURL && noServiceName && noServicePort && noPort && noEndpoint {
+			Check(ProfileToYaml(pf))
 			return pf, nil
 		}
 		// Editing app without specificing app.Name, program can not determine which
 		//	app to change so values are unchanged and log an error to the user
 		log.Print("Editing app without specificing app.Name, program can not determine which app to change so values are unchanged.")
+		Check(ProfileToYaml(pf))
 		return pf, nil
-
 	} else if Profile_App_Name != "" {
-		fmt.Println("elseIF")
-		fmt.Println(pf.Apps)
 		for i, _ := range pf.Apps {
 			// Profile_App_Name matches with an existing app_name
-			fmt.Println("pf.Apps[i].Name, Profile_App_Name")
 			if pf.Apps[i].Name == Profile_App_Name {
 				if noImageURL == false {
 					pf.Apps[i].ImageURL = Profile_App_ImageURL
@@ -131,11 +187,14 @@ func EditProfile(pf Profile) (Profile, error) { // current logic was written pri
 				}
 			}
 			// ALL GOOD, no app is being changed
+			Check(ProfileToYaml(pf))
 			return pf, nil
 		}
 		// Profile_App_Name does not match with an existing app_name
 		log.Print("Editing app an App_Name that does not exist, program can not modify an app that does not exist.")
+		Check(ProfileToYaml(pf))
 		return pf, nil
 	}
+	Check(ProfileToYaml(pf))
 	return pf, nil
 }
