@@ -71,4 +71,4 @@ Call `editprofile()` to profile to change the values of this yaml to reflect how
 
 * **Hector Moreno** - *Co-Author* - [higgyhiggy](https://github.com/higgyhiggy)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/200106-uta-go/project-3/graphs/contributors) who participated in this project.
