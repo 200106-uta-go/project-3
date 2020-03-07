@@ -37,21 +37,14 @@ func RunProfile(profileName string) string {
 		return fmt.Sprintf("Error: %s", str)
 	}
 
-	// 3. Create the custom chart
-	profile := GetProfile(profileName + ".yaml")
-
-	// Creates a new values.yml & Chart.yml file.
-	createValues(profile)
-	createChartFile(profile)
-
-	//build file structure for running helm
-	buildFileSystem(profile)
-
-	//add values into chart for deployment yaml
-	populateChart("values.yaml", "./templates")
+	// 2. Create charts using profile
+	CreateChart(profileName)
+	profile := GetProfile(profileName)
+	releaseName := strings.ToLower(profileName)
+	releaseName = strings.ReplaceAll(releaseName, " ", "-")
 
 	// 3. Deploy/Upgrade custom chart
-	str, err = shellCommand(fmt.Sprintf("helm upgrade --install ./%s", profileName), currentDir)
+	str, err = shellCommand(fmt.Sprintf("helm upgrade --install %s ./charts/%s", releaseName, profile.Name), currentDir)
 	if err != nil {
 		return fmt.Sprintf("Error: Failed to deploy custom helm chart - %s", str)
 	}
