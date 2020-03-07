@@ -39,7 +39,7 @@ This section below list all configuration flags for app specific setting.
 
 ### Prerequisites
 
-This function requires the name of the yaml in the form of `"defaultName.yaml"`.
+This function requires the name of the yaml in the form of `"defaultName"`.
 
 Before starting, initialization must be executed with:
 
@@ -47,15 +47,15 @@ Before starting, initialization must be executed with:
 
 Create a profile yaml named *defaultName.yaml* and store it under */etc/kreate/*, which is define as *kreate.PROFILES*.
 
-2. `kreate.CreateProfile("defaultName.yaml")`
+2. `kreate.CreateProfile("defaultName")`
 
 Create an isntance of a *kreate.Profile* from the name of the yaml file, and unmarshal the values into that isntance.
 
-3. `profileInstance := kreate.GetProfile("defaultName.yaml")`
+3. `profileInstance := kreate.GetProfile("defaultName")`
 
 Call `editprofile()` to profile to change the values of this yaml to reflect how the configuration of the cluster and apps within the cluster should be.
 
-`kreate.editprofile("defaultName.yaml")`
+`kreate.editprofile("defaultName")`
 
 ## Deployment
 
