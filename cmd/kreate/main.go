@@ -48,7 +48,7 @@ func main() {
 		kreate.CreateChart(flag.Arg(1))
 	case "run":
 		// Installs the istio environment (if not already installed) and Installs/Upgrades a helm chart using the specified profile
-		kreate.RunProfile(flag.Arg(1))
+		fmt.Println(kreate.RunProfile(flag.Arg(1)))
 	case "help":
 		// describes CLI commands to user
 		fmt.Println(usage)
