@@ -9,7 +9,6 @@ Trainer: Mehrab R.
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -69,13 +68,13 @@ func ProfileToYaml(pf Profile) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Finish marshal")
+
 	// Write the new updated structure to the file specified by YamlFileName.
 	_, err = f.Write(bytes)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Finish write")
+
 	return nil
 }
 
@@ -102,8 +101,9 @@ func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint
 
 // EditProfile is a function that Checks a single cluster and overwrites any profile information, while Checking through app specific information
 //	 and adjusting according to provided flags
-func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
+func EditProfile(YamlName string) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
 	YamlFileName = YamlName
+	pf := GetProfile(YamlFileName)
 	noImageURL := false
 	noServiceName := false
 	noServicePort := false

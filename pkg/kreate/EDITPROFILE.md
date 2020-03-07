@@ -39,7 +39,7 @@ This section below list all configuration flags for app specific setting.
 
 ### Prerequisites
 
-This function requires a properly constructed profile struct instance, and the name of the yaml in the form of `"path/to/profile.yaml"`.
+This function requires the name of the yaml in the form of `"defaultName.yaml"`.
 
 Before starting, initialization must be executed with:
 
@@ -55,7 +55,7 @@ Create an isntance of a *kreate.Profile* from the name of the yaml file, and unm
 
 Call `editprofile()` to profile to change the values of this yaml to reflect how the configuration of the cluster and apps within the cluster should be.
 
-`kreate.editprofile(profileInstance, "defaultName.yaml")`
+`kreate.editprofile("defaultName.yaml")`
 
 ## Deployment
 
