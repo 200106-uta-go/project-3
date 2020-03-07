@@ -131,6 +131,35 @@ Use this space to show useful examples of how a project can be used. Additional 
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
+### kreate.CreateChart
+```
+kreate.CreateChart("myprofile.yaml")
+```
+
+CreateChart is a function that generates a values.yaml, Chart.yaml, yaml templates for use with helm, and already-templated yamls ready for deployment in a Kubernetes cluster. 
+
+When this command is used, a charts folder will be added to your current working directory with the following structure.
+```
+.
+└── charts
+    └── example
+        ├── Chart.yaml
+        ├── deploy
+        │   ├── deployment.yaml
+        │   ├── ingress.yaml
+        │   └── service.yaml
+        ├── templates
+        │   ├── deployment.yaml
+        │   ├── ingress.yaml
+        │   └── service.yaml
+        └── values.yaml
+```
+The `charts` directory is where all charts generated using CreateChart will be located. Each folder underneath `charts`, will be a separate chart based on a unique kreate profile. If the program is run multiple times without editing the `name` value in `Chart.yaml`, the new deployment will overwrite any existing chart with the same name.
+
+Within each unique chart folder, the `deploy` folder will hold already-templated .yaml files ready for deployment using [kubectl apply](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply).
+
+The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
+
 
 
 <!-- ROADMAP -->
