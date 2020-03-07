@@ -16,7 +16,7 @@ pipeline {
 		}
 		stage('Build') {
 			steps {
-				sh 'go git -u -d'
+				sh 'go get -u -d'
 				sh 'go build ./...'
 			}
 		}
