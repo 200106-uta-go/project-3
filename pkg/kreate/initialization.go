@@ -68,7 +68,7 @@ func runInstallScript() error {
 	cd istio-1.4.5
 	export PATH=$PWD/bin:$PATH
 	sudo curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz
-	tar -xf helm.tar.gzs
+	tar -xf helm.tar.gz
 	cd linux-amd64/
 	sudo cp helm /bin/helm
 	sudo cp tiller /bin/tiller
