@@ -21,19 +21,35 @@ import (
 
 //CreateChart creates a helm chart using the data provided in profile
 func CreateChart(profileName string) {
-	profile := GetProfile(profileName)
 
-	//build file structure for running helm
-	buildFileSystem(profile)
+	if profileName == "" {
+		fmt.Println("Profile name is required to create a chart")
+		showChartHelp()
+	} else {
+		profile := GetProfile(profileName)
 
-	createValues(profile)
-	createChartFile(profile)
+		//build file structure for running helm
+		buildFileSystem(profile)
 
-	//add values into chart for deployment yaml
-	populateChart("values.yaml", "./charts/"+profile.Name)
+		createValues(profile)
+		createChartFile(profile)
 
-	//update file permissions and reorganize directories
-	fixFileSystem(profile)
+		//add values into chart for deployment yaml
+		populateChart("values.yaml", "./charts/"+profile.Name)
+
+		//update file permissions and reorganize directories
+		fixFileSystem(profile)
+	}
+}
+
+func showChartHelp() {
+	help := `Usage:
+	kreate chart [profile name]
+
+Examples:
+	kreate chart myProfile
+	kreate chart anotherProfile.yaml`
+	fmt.Print(help, "\n\n")
 }
 
 //createValues creates a values.yaml based on a profile
