@@ -12,18 +12,21 @@ pipeline {
 		stage('Checkout') {
 			steps {
 				sh 'git init'
+				echo 'Checking out code...'
 				checkout scm
 			}
 		}
 		stage('Build') {
 			steps {
+				echo 'Building project...'
 				sh 'go get -d ./...'
 				sh 'go build ./...'
 			}
 		}
 		stage('Test') {
 			steps {
-			sh 'go test ./...'
+				echo 'Testing project...
+				sh 'go test ./...'
 			}
 		}
 	}
