@@ -1,0 +1,16 @@
+name: Test
+clustername: TestCluster
+clusterip: 127.0.0.1
+clusterports:
+- 8080
+- 9090
+app:
+- name: TestApp
+  imageurl: testapp.com/image
+  ports: 
+  - 8000
+  - 9000
+  endpoints: 
+  - /one
+  - /two
+  - /three

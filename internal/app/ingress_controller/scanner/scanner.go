@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"os/exec"
 	"strconv"
 	"time"
@@ -164,16 +163,19 @@ var ReqServices MyServices
 // TargetIP will store alternative IP address to dial if first one is not found
 var TargetIP []AltCluster
 
-func Scan() {
+// Scan gets the rules and clusters from the Kubernetes API and returns them as structs
+// Intended to be called by the proxy
+func Scan() (ruleset []Rules, targetIP []AltCluster) {
 	// run the kubectl proxy without TLS credentials
+	TargetIP = []AltCluster{}
+	Ruleset = []Rules{}
 	exec.Command("kubectl", "proxy", "--insecure-skip-tls-verify").Start()
 	fmt.Println("Kube Proxy Running")
 	time.Sleep(5 * time.Second)
 	fmt.Println("Kube Proxy up")
 	GetTargetIP()
 	GetIngress()
-	CreateFile()
-
+	return Ruleset, TargetIP
 }
 
 // GetServices gets all of the services in our cluster from the API
@@ -215,16 +217,17 @@ func FindService(serviceName string) (clusterIP string) {
 func GetIngress() {
 
 	// items.spec, items.rules, items.http, items.path, items.sepc.ruleshttp.paths.backend.serviceport == serviceport, items.sepc.ruleshttp.paths.backend.servicename = servicename serviceip == cluster ip
-	var TargetData IngressData
-	var MyIngress []IngressRules
-	var MyRoute Route
-	var MyRules Rules
+	var TargetData = IngressData{}
+	var MyIngress = []IngressRules{}
+	var MyRoute = Route{}
+	var MyRules = Rules{}
 	serviceURL := "http://localhost:8001/apis/extensions/v1beta1/ingresses"
 	body, err := GetResponse(serviceURL)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	fmt.Println(body)
 	err = json.Unmarshal(body, &TargetData)
 	if err != nil {
 		fmt.Println(err)
@@ -258,7 +261,7 @@ func GetTargetIP() {
 	// request information of services from k8s API
 	var PortalData Portal
 	var MyCluster AltCluster
-	serviceURL := "http://localhost:8001/apis/revature.com/v1/namespaces/default/portals/"
+	serviceURL := "http://localhost:8001/apis/revature.com/v1/portals/"
 	body, err := GetResponse(serviceURL)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -305,21 +308,4 @@ func GetResponse(requestURL string) (respBody []byte, err error) {
 	}
 
 	return
-}
-
-// CreateFile creates the json files for the desired data (rules) obtained from the API
-func CreateFile() {
-
-	fileContent := Ruleset
-	rulesJSON, _ := json.MarshalIndent(fileContent, "", "	")
-	myFile, _ := os.OpenFile("../rules.json", os.O_RDWR|os.O_TRUNC, 777)
-	defer myFile.Close()
-	myFile.Write(rulesJSON)
-
-	fileContent2 := TargetIP
-	clusterJSON, _ := json.MarshalIndent(fileContent2, "", "	")
-	myFile, _ = os.OpenFile("../clusters.json", os.O_RDWR|os.O_TRUNC, 777)
-	defer myFile.Close()
-	myFile.Write(clusterJSON)
-
 }

@@ -9,7 +9,6 @@ Trainer: Mehrab R.
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -18,7 +17,7 @@ import (
 
 // YamlFileName is a global variable that holds the title of the yaml file
 // 	that will be used to create the yaml file.
-var YamlFileName string 
+var YamlFileName string
 
 //FLAG VARIABLES
 var Name string
@@ -58,8 +57,8 @@ func Check(err error) {
 	}
 }
 
-// ProfileToYaml takes in a profile struct and delete old yaml file with the same name as the 
-// 	value set in YamlFileName, and create a new yaml file with that same YamlFileName. 
+// ProfileToYaml takes in a profile struct and delete old yaml file with the same name as the
+// 	value set in YamlFileName, and create a new yaml file with that same YamlFileName.
 func ProfileToYaml(pf Profile) error {
 	Check(os.Remove(PROFILES + YamlFileName))
 	f, err := os.OpenFile(PROFILES+YamlFileName, os.O_RDWR|os.O_CREATE, 0755)
@@ -69,17 +68,17 @@ func ProfileToYaml(pf Profile) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Finish marshal")
-	// Write the new updated structure to the file specified by YamlFileName. 
+
+	// Write the new updated structure to the file specified by YamlFileName.
 	_, err = f.Write(bytes)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Finish write")
+
 	return nil
 }
 
-// CheckAppValues will determine if any App information is set to non empty value and 
+// CheckAppValues will determine if any App information is set to non empty value and
 // 	change a boolean value, which is used to determine whether to assign values or log a report depending on further logic.
 func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint *bool) {
 	// This 5 if statements are checking corresponding flags to know what varaibles to change in the file pointed to by corresponding.
@@ -102,8 +101,9 @@ func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint
 
 // EditProfile is a function that Checks a single cluster and overwrites any profile information, while Checking through app specific information
 //	 and adjusting according to provided flags
-func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
+func EditProfile(YamlName string) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
 	YamlFileName = YamlName
+	pf := GetProfile(YamlFileName)
 	noImageURL := false
 	noServiceName := false
 	noServicePort := false
@@ -145,8 +145,8 @@ func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logi
 		Check(ProfileToYaml(pf))
 		return pf, nil
 	} else if AppName != "" {
-		for i int := 0; i < len(pf.Apps); i++ {
-			// AppName is an array of appname so we must cross reference to see if a specific app name 
+		for i := 0; i < len(pf.Apps); i++ {
+			// AppName is an array of appname so we must cross reference to see if a specific app name
 			//	is mentions in order to modify desired variables of that specific appname.
 			if pf.Apps[i].Name == AppName {
 				if noImageURL == false {
@@ -174,7 +174,7 @@ func EditProfile(pf Profile, YamlName string) (Profile, error) { // current logi
 		Check(ProfileToYaml(pf))
 		return pf, nil
 	}
-	
+
 	Check(ProfileToYaml(pf))
 	return pf, nil
 }

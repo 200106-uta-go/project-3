@@ -20,14 +20,8 @@ import (
 */
 
 //CreateChart creates a helm chart using the data provided in profile
-// TODO -Need to add full path to file name to get correct yaml.
 func CreateChart(profileName string) {
-	var profile Profile
-	if strings.HasSuffix(profileName, ".yaml") {
-		profile = GetProfile(profileName)
-	} else {
-		profile = GetProfile(profileName + ".yaml")
-	}
+	profile := GetProfile(profileName)
 
 	//build file structure for running helm
 	buildFileSystem(profile)

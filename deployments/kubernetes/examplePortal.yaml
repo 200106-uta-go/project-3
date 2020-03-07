@@ -4,6 +4,5 @@ kind: Portal
 metadata:
   name: portal1
 spec:
-  portal: cluster-a
-  targetip: golang.org
-  port: 8080
+  portal: cluster-b
+  targetip: 1.2.3.4:30101
