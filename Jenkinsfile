@@ -25,7 +25,7 @@ pipeline {
 		}
 		stage('Test') {
 			steps {
-				echo 'Testing project...
+				echo 'Testing project...'
 				sh 'go test ./...'
 			}
 		}
