@@ -26,7 +26,7 @@ pipeline {
 		stage('Test') {
 			steps {
 				echo 'Testing project...'
-				sh 'go test ./...'
+				sh 'go test ./... -v'
 			}
 		}
 	}
