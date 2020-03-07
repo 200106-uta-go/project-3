@@ -5,9 +5,14 @@ pipeline {
 			customWorkspace '/var/jenkins_home/go/src/github.com/200106-uta-go/project-3'
 		}
 	 } 
+	 tools {
+		 go 'Go'
+	 }
 	stages {
 		stage('Checkout') {
-			checkout scm
+			steps {
+				checkout scm
+			}
 		}
 		stage('Build') {
 			steps {
