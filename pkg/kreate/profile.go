@@ -3,6 +3,7 @@ package kreate
 import (
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -30,6 +31,11 @@ type App struct {
 
 //GetProfile gets the profile file and return the data as a struct
 func GetProfile(profileName string) Profile {
+	//check if profileName has an extension, if not add .yaml
+	if !strings.HasSuffix(profileName, ".yaml") && !strings.HasSuffix(profileName, ".yml") {
+		profileName += ".yaml"
+	}
+
 	//open profile
 	file, err := os.Open(PROFILES + profileName)
 	if err != nil {
