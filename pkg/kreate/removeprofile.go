@@ -18,7 +18,7 @@ import (
 // RemoveProfile removes a specified profile from the directory.
 func RemoveProfile(profileName string) {
 	for {
-		fmt.Printf("%s profile will be removed.\nAre you sure you want to continue (Y/n)? ")
+		fmt.Printf("%s profile will be removed.\nAre you sure you want to continue (Y/n)? ", profileName)
 		reader := bufio.NewReader(os.Stdin)
 		answer, err := reader.ReadString('\n')
 		if err != nil {

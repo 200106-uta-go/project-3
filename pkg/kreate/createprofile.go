@@ -27,10 +27,12 @@ var defaultProfile *Profile = &Profile{
 	ClusterPorts: []string{"80"},
 	Apps: []App{
 		App{
-			Name:      "helloWorld",
-			ImageURL:  "https://hub.docker.com/hello-world",
-			Ports:     []string{"80", "8080"},
-			Endpoints: []string{"/", "/helloworld"},
+			Name:        "helloWorld",
+			ImageURL:    "https://hub.docker.com/hello-world",
+			ServiceName: "hello-service",
+			ServicePort: 7777,
+			Ports:       []string{"80", "8080"},
+			Endpoints:   []string{"/", "/helloworld"},
 		},
 	},
 }

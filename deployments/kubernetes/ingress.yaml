@@ -25,9 +25,10 @@ metadata:
 spec:
   containers:
   - name: ingresscontroller
-    image: jtheiss19/ingress-controller
+    image: jtheiss19/ingress-controller:latest
     ports:
     - containerPort: 80
+    - containerPort: 8080
     volumeMounts:
     - name: config-volume
       mountPath: /root/.kube/
@@ -48,5 +49,20 @@ spec:
     - port: 80
       nodePort: 30100
       targetPort: 80
+  selector:
+    app: ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingressnode2
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      nodePort: 30101
+      targetPort: 8080
   selector:
     app: ingress
