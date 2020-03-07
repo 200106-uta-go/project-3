@@ -11,6 +11,7 @@ pipeline {
 	stages {
 		stage('Checkout') {
 			steps {
+				sh 'git init'
 				checkout scm
 			}
 		}
