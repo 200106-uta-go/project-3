@@ -20,26 +20,36 @@ import (
 */
 
 //CreateChart creates a helm chart using the data provided in profile
-// TODO -Need to add full path to file name to get correct yaml.
 func CreateChart(profileName string) {
-	var profile Profile
-	if strings.HasSuffix(profileName, ".yaml") {
-		profile = GetProfile(profileName)
+
+	if profileName == "" {
+		fmt.Println("Profile name is required to create a chart")
+		showChartHelp()
 	} else {
-		profile = GetProfile(profileName + ".yaml")
+		profile := GetProfile(profileName)
+
+		//build file structure for running helm
+		buildFileSystem(profile)
+
+		createValues(profile)
+		createChartFile(profile)
+
+		//add values into chart for deployment yaml
+		populateChart("values.yaml", "./charts/"+profile.Name)
+
+		//update file permissions and reorganize directories
+		fixFileSystem(profile)
 	}
+}
 
-	//build file structure for running helm
-	buildFileSystem(profile)
+func showChartHelp() {
+	help := `Usage:
+	kreate chart [profile name]
 
-	createValues(profile)
-	createChartFile(profile)
-
-	//add values into chart for deployment yaml
-	populateChart("values.yaml", "./charts/"+profile.Name)
-
-	//update file permissions and reorganize directories
-	fixFileSystem(profile)
+Examples:
+	kreate chart myProfile
+	kreate chart anotherProfile.yaml`
+	fmt.Print(help, "\n\n")
 }
 
 //createValues creates a values.yaml based on a profile
