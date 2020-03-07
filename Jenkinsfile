@@ -32,6 +32,7 @@ pipeline {
 	}
 	post {
 		always {
+				echo 'Job complete, deleting directory...'
 				deleteDir()
 		}
 	}
