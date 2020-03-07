@@ -180,6 +180,8 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+See also the list of [contributors](https://github.com/200106-uta-go/project-3/graphs/contributors) who participated in this project.
+
 
 
 <!-- LICENSE -->
