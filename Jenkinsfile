@@ -11,6 +11,7 @@ pipeline {
 	stages {
 		stage('Checkout') {
 			steps {
+				sh 'sudo apt-get install build-essential -y'
 				sh 'git init'
 				echo 'Checking out code...'
 				checkout scm
@@ -26,7 +27,7 @@ pipeline {
 		stage('Test') {
 			steps {
 				echo 'Testing project...'
-				sh 'go test ./...'
+				sh 'go test ./... -v'
 			}
 		}
 	}
