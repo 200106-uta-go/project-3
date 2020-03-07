@@ -24,12 +24,12 @@ var (
 */
 
 func InitializeDirectories() {
-	pathErr := os.MkdirAll(MOULDFOLDERS, 1777)
+	pathErr := os.MkdirAll(MOULDFOLDERS, 0777)
 	if pathErr != nil {
 		log.Panicf("Error making directory %s => %v", MOULDFOLDERS, pathErr)
 	}
 
-	pathErr = os.MkdirAll(PROFILES, 1777)
+	pathErr = os.MkdirAll(PROFILES, 0777)
 	if pathErr != nil {
 		log.Panicf("Error making directory %s => %v", PROFILES, pathErr)
 	}
