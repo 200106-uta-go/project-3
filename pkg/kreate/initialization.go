@@ -65,6 +65,7 @@ func runInstallScript() error {
 	const filename = "tempSetup.sh"
 
 	const installScript = `curl -L https://github.com/istio/istio/releases/download/1.4.5/istio-1.4.5-linux.tar.gz -o istio-1.4.5.tar.gz
+	sudo apt install -y subversion 
 	tar -xf istio-1.4.5.tar.gz
 	cd istio-1.4.5
 	export PATH=$PWD/bin:$PATH
@@ -74,6 +75,8 @@ func runInstallScript() error {
 	sudo cp helm /bin/helm
 	sudo cp tiller /bin/tiller
 	cd ..
+	svn export http://github.com/200106-uta-go/project-3/trunk/deployments/templates
+	sudo mv templates/*.yaml  /var/local/kreate/
 	rm -r linux-amd64
 	rm helm.tar.gz
 	rm ../istio-1.4.5.tar.gz
