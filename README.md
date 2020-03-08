@@ -170,6 +170,10 @@ RunProfile anticipates that Kreate.InitializeEnvironment() has been completed su
 
 A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
 
+### kreate remove [PROFILE_NAME / --all / -a]
+
+The `remove` command removes a specified profile from etc/kreate/ directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
+
 #### Getting Started
 
 Our implementation will allow changes to Cluster specific entries by setting values to each flag, the `FlagName` will map to the value within the file pointed to by the YamlFileName to modify their values.
