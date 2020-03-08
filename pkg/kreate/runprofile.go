@@ -2,6 +2,7 @@ package kreate
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -43,7 +44,21 @@ func RunProfile(profileName string) string {
 	releaseName := strings.ToLower(profileName)
 	releaseName = strings.ReplaceAll(releaseName, " ", "-")
 
-	// 3. Deploy/Upgrade custom chart
+	//3. set up cluster pre-requisites
+	shellCommand("kubectl create configmap ingress --from-file=${HOME}/.kube/config", currentDir)
+	shellCommand("kubectl apply -f ./deployments/templates/portalCRD.yaml", currentDir)
+
+	//used cmd.Run because it needs to block execution
+	cmd := exec.Command("/bin/sh", "-c", "kubectl -n default wait --for condition=established --timeout=60s crd/portals.revature.com")
+	fmt.Println("Applying portal CRD to cluster ...")
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		fmt.Println(cmd.Stderr)
+		panic(err)
+	}
+
+	// 4. Deploy/Upgrade custom chart
 	str, err = shellCommand(fmt.Sprintf("helm upgrade --install %s ./charts/%s", releaseName, profile.Name), currentDir)
 	if err != nil {
 		return fmt.Sprintf("Error: Failed to deploy custom helm chart - %s", str)
