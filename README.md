@@ -196,7 +196,7 @@ A function that receives a profile struct and allows edits based on set flags to
 
 ### kreate remove [PROFILE_NAME / --all / -a]
 
-The `remove` command removes a specified profile from etc/kreate/ directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
+The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
 
 #### Getting Started
 
