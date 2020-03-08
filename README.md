@@ -62,7 +62,6 @@
 * [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
-* [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
 
@@ -119,6 +118,10 @@ Kreate init
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
+```
+kreate <sub-command> [PROFILE_NAME]
+```
+
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 ### kreate.CreateChart
@@ -162,6 +165,14 @@ RunProfile is a function which utilizes helm to deploy a profile directly to the
 4. Install the Helm chart, or if the profile was previously deployed, Upgrade the existing installation.
 
 RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
+
+### kreate.Help()
+
+```
+kreate help
+```
+
+This sub-command will display a brief helpt text to familiarize the user with various commands associated with the tool.
 
 <!-- ROADMAP -->
 ## Roadmap
