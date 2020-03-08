@@ -150,7 +150,18 @@ Within each unique chart folder, the `deploy` folder will hold already-templated
 
 The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
 
+### kreate.RunProfile
+```
+kreate.RunProfile("myprofile.yaml")
+```
 
+RunProfile is a function which utilizes helm to deploy a profile directly to the Kubernetes Cluster. Given a profile name, RunProfile will attempt the following\:
+1. Determine if Helm is properly initialized. The tiller must be installed to the cluster prior to running a profile
+2. Build a custom Helm chart for the specified profile using kreate.CreateChart()
+3. Create the custom ingress configmap and install the portal custom resource to the cluster
+4. Install the Helm chart, or if the profile was previously deployed, Upgrade the existing installation.
+
+RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
 <!-- ROADMAP -->
 ## Roadmap
