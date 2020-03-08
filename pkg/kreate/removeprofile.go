@@ -17,13 +17,18 @@ import (
 
 // RemoveProfile removes a specified profile from the directory.
 func RemoveProfile(profileName string) {
-	_, err := os.Stat(PROFILES + profileName + ".yaml")
+	//check if profileName has an extension, if not add .yaml
+	if !strings.HasSuffix(profileName, ".yaml") && !strings.HasSuffix(profileName, ".yml") {
+		profileName += ".yaml"
+	}
+
+	_, err := os.Stat(PROFILES + profileName)
 	if os.IsNotExist(err) {
-		fmt.Printf("Profile %s.yaml not found in %s\n", profileName, PROFILES)
+		fmt.Printf("Profile %s not found in %s\n", profileName, PROFILES)
 		return
 	}
 	for {
-		fmt.Printf("Profile %s.yaml will be removed.\nAre you sure you want to continue (Y/n)? ", profileName)
+		fmt.Printf("Profile %s will be removed.\nAre you sure you want to continue (Y/n)? ", profileName)
 		reader := bufio.NewReader(os.Stdin)
 		answer, err := reader.ReadString('\n')
 		if err != nil {
@@ -31,7 +36,7 @@ func RemoveProfile(profileName string) {
 		}
 		answer = strings.Replace(answer, "\n", "", -1)
 		if answer == "y" || answer == "Y" {
-			cmd := exec.Command("rm", PROFILES+profileName+".yaml")
+			cmd := exec.Command("rm", PROFILES+profileName)
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 			err = cmd.Run()

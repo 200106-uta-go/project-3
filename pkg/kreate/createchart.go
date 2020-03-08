@@ -60,6 +60,8 @@ func createValues(profile Profile) {
 		panic(err)
 	}
 
+	profile = validateProfile(profile)
+
 	bytes, err := yaml.Marshal(profile)
 	if err != nil {
 		panic(err)
@@ -72,6 +74,20 @@ func createValues(profile Profile) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+//validateProfile checks profile values for kubectl invalid characters
+func validateProfile(profile Profile) Profile {
+	profile.ClusterName = strings.ReplaceAll(strings.ToLower(profile.ClusterName), " ", "-")
+	profile.Name = strings.ReplaceAll(strings.ToLower(profile.Name), " ", "-")
+	tempApps := []App{}
+	for _, app := range profile.Apps {
+		app.Name = strings.ReplaceAll(strings.ToLower(app.Name), " ", "-")
+		app.ServiceName = strings.ReplaceAll(strings.ToLower(app.ServiceName), " ", "-")
+		tempApps = append(tempApps, app)
+	}
+	profile.Apps = tempApps
+	return profile
 }
 
 //populateChart injects the values inside valuesFile into chart templates
