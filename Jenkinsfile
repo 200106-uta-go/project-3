@@ -33,7 +33,13 @@ pipeline {
 	}
 	post {
 		failure {
-			discordSend description: "Jenkins Pipeline Build", footer: "Build Failed", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discordapp.com/api/webhooks/685969377430077573/a0Nno_j58sYJS3QScZIE7v45GZYfG8JDSbJT112cWFiuDfh_eu53XSI7u4JC5XO6Lgf0", image: "https://engineering.taboola.com/wp-content/uploads/2018/05/tidhar-post-featured-665x408.jpg"
+			discordSend description: "Jenkins Pipeline Build", 
+			footer: "Build Failed: " + env.GET_COMMIT, 
+			link: env.BUILD_URL, 
+			result: currentBuild.currentResult, 
+			title: JOB_NAME, 
+			webhookURL: "https://discordapp.com/api/webhooks/685969377430077573/a0Nno_j58sYJS3QScZIE7v45GZYfG8JDSbJT112cWFiuDfh_eu53XSI7u4JC5XO6Lgf0", 
+			image: "https://engineering.taboola.com/wp-content/uploads/2018/05/tidhar-post-featured-665x408.jpg"
 		}
 		always {
 				echo 'Job complete, deleting directory...'
