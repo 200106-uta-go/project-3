@@ -9,8 +9,10 @@ Trainer: Mehrab R.
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -101,7 +103,14 @@ func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint
 
 // EditProfile is a function that Checks a single cluster and overwrites any profile information, while Checking through app specific information
 //	 and adjusting according to provided flags
-func EditProfile(YamlName string) (Profile, error) { // current logic was written prior to the 3/3/20 MVP meeting
+func EditProfile(YamlName string) (Profile, error) {
+	if (YamlName == "") {
+		fmt.Println("No profile specified")
+		os.Exit(1)
+	} else if (!strings.HasSuffix(YamlName, ".yaml") && !strings.HasSuffix(YamlName, ".yml")) {
+		YamlName += ".yaml"
+	}
+
 	YamlFileName = YamlName
 	pf := GetProfile(YamlFileName)
 	noImageURL := false
@@ -109,6 +118,10 @@ func EditProfile(YamlName string) (Profile, error) { // current logic was writte
 	noServicePort := false
 	noPort := false
 	noEndpoint := false
+
+	if flag.NFlag() == 0 {
+		OpenFileInEditor(YamlName)
+	}
 	//Checking this 4 if statements to see if any one of our next four flags where set to make changes to the file pointed to by YamlFileName.
 	if Name != "" {
 		pf.Name = Name

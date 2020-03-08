@@ -1,18 +1,22 @@
 package main
 
 const usage = `
-mcproxy is a tool for creating and running reverse proxies.
+kreate is a tool for setting up a kubernetes cluster with the ability to contact other
+Kubernetes clusters in the event that a service can not be found. The tool will also set
+up additional resources, such as Istio, Gafana, & Jaeger.
 
 Usage:
 
-        mcproxy <command> [arguments]
+        kreate <sub-command> [PROFILE_NAME]
 
 The commands are:
 
-		build		create a new mcProxy profile with a given name
-		run 		start running mcProxy server with selected profile.
-		profiles	list out reverse proxy profiles
+		init		sets up necessary dependencies
+		profile		create a new profile which the user can set key value pairs in "etc/kreate"
+		edit		edit a pre-existing profile
+		chart		will use a profile to produce a preconfigured chart that the user may use with his verstion of helm
 		remove		remove selected profile from system
-		mount		add a routing to an application server
-		unmount		remove a routing to an application server
+		ls  		will produce a list of available profiles
+		run 		will apply the user defined profile to the Kubernetes cluster
+		help		display this help text
 `

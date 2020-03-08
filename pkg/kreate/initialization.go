@@ -24,12 +24,12 @@ var (
 */
 
 func InitializeDirectories() {
-	pathErr := os.MkdirAll(MOULDFOLDERS, 1777)
+	pathErr := os.MkdirAll(MOULDFOLDERS, 0777)
 	if pathErr != nil {
 		log.Panicf("Error making directory %s => %v", MOULDFOLDERS, pathErr)
 	}
 
-	pathErr = os.MkdirAll(PROFILES, 1777)
+	pathErr = os.MkdirAll(PROFILES, 0777)
 	if pathErr != nil {
 		log.Panicf("Error making directory %s => %v", PROFILES, pathErr)
 	}
@@ -57,22 +57,30 @@ func InitializeDirectories() {
 func InitializeEnvironment() {
 	// TODO check if helm version is 2.16.3. If not, prompt the user to overwrite?
 	// TODO check if istio environment is already deployed?
+
 	runInstallScript()
 }
 
 func runInstallScript() error {
 	const filename = "tempSetup.sh"
 
-	const installScript = `sudo curl -L https://github.com/istio/istio/releases/download/1.4.5/istio-1.4.5-linux.tar.gz -o istio-1.4.5.tar.gz
+	const installScript = `curl -L https://github.com/istio/istio/releases/download/1.4.5/istio-1.4.5-linux.tar.gz -o istio-1.4.5.tar.gz
+	sudo apt install -y subversion 
 	tar -xf istio-1.4.5.tar.gz
 	cd istio-1.4.5
 	export PATH=$PWD/bin:$PATH
-	sudo curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz
-	tar -xf helm.tar.gzs
+	curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz
+	tar -xf helm.tar.gz
 	cd linux-amd64/
 	sudo cp helm /bin/helm
 	sudo cp tiller /bin/tiller
 	cd ..
+	svn export http://github.com/200106-uta-go/project-3/trunk/deployments/templates
+	sudo mv templates/*.yaml  /var/local/kreate/
+	rm -r linux-amd64
+	rm helm.tar.gz
+	rm ../istio-1.4.5.tar.gz
+	sudo chmod 777 ../istio-1.4.5
 	sudo kubectl apply -f install/kubernetes/helm/helm-service-account.yaml
 	sudo helm init --service-account tiller
 	echo "waiting for tiller pod to be ready ..."

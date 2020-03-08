@@ -15,14 +15,15 @@ spec:
         app: {{ .Values.name }}
     spec:
       containers:
-      - name: {{ .Values.name }}
-      {{- $app := index .Values.apps 0 }}
-      image: {{ $app.imageurl }}
-      resources:
-        limits:
-          memory: "128Mi"
-          cpu: "500m"
-      ports:
-		  {{- range $port := .Values.ports }}
+      {{- range $app := .Values.apps }}
+      - name: {{ $app.name }}
+        image: {{ $app.imageurl }}
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        {{- range $port := $app.ports }}
         - containerPort: {{$port -}}
-      {{- end }}
+        {{- end }}
+      {{ end }}

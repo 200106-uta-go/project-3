@@ -3,6 +3,7 @@ package kreate
 import (
 	"os"
 	"os/exec"
+	"strings"
 
 	yaml "gopkg.in/yaml.v3"
 )
@@ -21,14 +22,14 @@ import (
 */
 
 var defaultProfile *Profile = &Profile{
-	Name:         "myProfileName",
-	ClusterName:  "Your Cluster Name",
-	ClusterIP:    "127.0.0.1",
-	ClusterPorts: []string{"80"},
+	Name:         "myprofile",
+	ClusterName:  "foreign-cluster",
+	ClusterIP:    "127.0.0.1:30101",
+	ClusterPorts: []string{"30101"},
 	Apps: []App{
 		App{
-			Name:        "helloWorld",
-			ImageURL:    "https://hub.docker.com/hello-world",
+			Name:        "hello-world",
+			ImageURL:    "hello-world",
 			ServiceName: "hello-service",
 			ServicePort: 7777,
 			Ports:       []string{"80", "8080"},
@@ -62,7 +63,7 @@ func CreateProfile(name string) error {
 		if err != nil {
 			return err
 		}
-		defaultProfile.Name = "myProfileName"
+		defaultProfile.Name = "myprofile"
 		// Open generated yaml file with text editor
 	} else {
 		return err
@@ -83,7 +84,11 @@ func OpenFileInEditor(filename string) error {
 		return err
 	}
 
-	cmd := exec.Command(executable, PROFILES+filename+".yaml")
+	if !strings.HasSuffix(filename, ".yaml") && !strings.HasSuffix(filename, ".yml") {
+		filename += ".yaml"
+	}
+
+	cmd := exec.Command(executable, PROFILES+filename)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

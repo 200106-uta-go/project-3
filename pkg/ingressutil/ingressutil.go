@@ -38,7 +38,7 @@ func AddPath(file *os.File, host, path, svcName string, svcPort int) error {
 
 	for i, section := range stringSlice[1:] {
 		//don't add seapartor dashed on final yaml section
-		if i == len(stringSlice[1:]-1) {
+		if i == len(stringSlice[1:])-1 {
 			newBytes = append(newBytes, []byte(section)...)
 		} else {
 			newBytes = append(newBytes, []byte(section+"---")...)

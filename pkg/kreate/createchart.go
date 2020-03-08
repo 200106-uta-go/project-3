@@ -20,26 +20,36 @@ import (
 */
 
 //CreateChart creates a helm chart using the data provided in profile
-// TODO -Need to add full path to file name to get correct yaml.
 func CreateChart(profileName string) {
-	var profile Profile
-	if strings.HasSuffix(profileName, ".yaml") {
-		profile = GetProfile(profileName)
+
+	if profileName == "" {
+		fmt.Println("Profile name is required to create a chart")
+		showChartHelp()
 	} else {
-		profile = GetProfile(profileName + ".yaml")
+		profile := GetProfile(profileName)
+
+		//build file structure for running helm
+		buildFileSystem(profile)
+
+		createValues(profile)
+		createChartFile(profile)
+
+		//add values into chart for deployment yaml
+		populateChart("values.yaml", "./charts/"+profile.Name)
+
+		//update file permissions and reorganize directories
+		fixFileSystem(profile)
 	}
+}
 
-	//build file structure for running helm
-	buildFileSystem(profile)
+func showChartHelp() {
+	help := `Usage:
+	kreate chart [profile name]
 
-	createValues(profile)
-	createChartFile(profile)
-
-	//add values into chart for deployment yaml
-	populateChart("values.yaml", "./charts/"+profile.Name)
-
-	//update file permissions and reorganize directories
-	fixFileSystem(profile)
+Examples:
+	kreate chart myProfile
+	kreate chart anotherProfile.yaml`
+	fmt.Print(help, "\n\n")
 }
 
 //createValues creates a values.yaml based on a profile
@@ -49,6 +59,8 @@ func createValues(profile Profile) {
 	if err != nil {
 		panic(err)
 	}
+
+	profile = validateProfile(profile)
 
 	bytes, err := yaml.Marshal(profile)
 	if err != nil {
@@ -62,6 +74,20 @@ func createValues(profile Profile) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+//validateProfile checks profile values for kubectl invalid characters
+func validateProfile(profile Profile) Profile {
+	profile.ClusterName = strings.ReplaceAll(strings.ToLower(profile.ClusterName), " ", "-")
+	profile.Name = strings.ReplaceAll(strings.ToLower(profile.Name), " ", "-")
+	tempApps := []App{}
+	for _, app := range profile.Apps {
+		app.Name = strings.ReplaceAll(strings.ToLower(app.Name), " ", "-")
+		app.ServiceName = strings.ReplaceAll(strings.ToLower(app.ServiceName), " ", "-")
+		tempApps = append(tempApps, app)
+	}
+	profile.Apps = tempApps
+	return profile
 }
 
 //populateChart injects the values inside valuesFile into chart templates
@@ -111,6 +137,9 @@ func buildFileSystem(profile Profile) {
 	if !dirExists("./charts/" + profile.Name + "/templates/") {
 		os.MkdirAll("./charts/"+profile.Name+"/templates/", 0777)
 	}
+	if !dirExists("./charts/" + profile.Name + "/crd/") {
+		os.MkdirAll("./charts/"+profile.Name+"/crd/", 0777)
+	}
 
 	//copy files from /var/local/kreate into ./templates
 	copyDir(MOULDFOLDERS, "./charts/"+profile.Name+"/templates/")
@@ -124,6 +153,12 @@ func fixFileSystem(profile Profile) {
 	//delete empty files in deploy folder
 	cmd2 := exec.Command("rm", "-r", "./charts/"+profile.Name+"/deploy/"+profile.Name)
 	err := cmd2.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	//move portalCRD into the crd folder so helm doesn't reapply it
+	_, err = shellCommand("mv ./charts/"+profile.Name+"/templates/portalCRD.yaml ./charts/"+profile.Name+"/crd/", "./")
 	if err != nil {
 		panic(err)
 	}

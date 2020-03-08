@@ -1,180 +1,331 @@
-# Standard Go Project Layout
+<!--
+*** Thanks for checking out this README Template. If you have a suggestion that would
+*** make this better, please fork the repo and create a pull request or simply open
+*** an issue with the tag "enhancement".
+*** Thanks again! Now go create something AMAZING! :D
+-->
 
-This is a basic layout for Go application projects. It's not an official standard defined by the core Go dev team; however, it is a set of common historical and emerging project layout patterns in the Go ecosystem. Some of these patterns are more popular than others. It also has a number of small enhancements along with several supporting directories common to any large enough real world application.
 
-If you are trying to learn Go or if you are building a PoC or a toy project for yourself this project layout is an overkill. Start with something really simple (a single `main.go` file is more than enough). As your project grows keep in mind that it'll be important to make sure your code is well structured otherwise you'll end up with a messy code with lots of hidden dependencies and global state. When you have more people working on the project you'll need even more structure. That's when it's important to introduce a common way to manage packages/libraries. When you have an open source project or when you know other projects import the code from your project repository that's when it's important to have private (aka `internal`) packages and code. Clone the repository, keep what you need and delete everything else! Just because it's there it doesn't mean you have to use it all. None of these patterns are used in every single project. Even the `vendor` pattern is not universal.
 
-Note that [`Go modules`](https://github.com/golang/go/wiki/Modules) and the related capabilities will have an impact on your project layout. The repo will be updated to include `Go modules` once it's fully enabled by default. In the meantime, feel free to add your thoughts and ideas in [`this`](https://github.com/golang-standards/project-layout/issues/18) Github issue.
 
-This project layout is intentionally generic and it doesn't try to impose a specific Go package structure.
 
-This is a community effort. Open an issue if you see a new pattern or if you think one of the existing patterns needs to be updated.
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-If you need help with naming, formatting and style start by running [`gofmt`](https://golang.org/cmd/gofmt/) and [`golint`](https://github.com/golang/lint). Also make sure to read these Go code style guidelines and recommendations:
-* https://talks.golang.org/2014/names.slide
-* https://golang.org/doc/effective_go.html#names
-* https://blog.golang.org/package-names
-* https://github.com/golang/go/wiki/CodeReviewComments
-* [Style guideline for Go packages](https://rakyll.org/style-packages) (rakyll/JBD)
 
-See [`Go Project Layout`](https://medium.com/golang-learn/go-project-layout-e5213cdcfaa2) for additional background information.
 
-More about naming and organizing packages as well as other code structure recommendations:
-* [GopherCon EU 2018: Peter Bourgon - Best Practices for Industrial Programming](https://www.youtube.com/watch?v=PTE4VJIdHPg)
-* [GopherCon Russia 2018: Ashley McNamara + Brian Ketelsen - Go best practices.](https://www.youtube.com/watch?v=MzTcsI6tn-0)
-* [GopherCon 2017: Edward Muller - Go Anti-Patterns](https://www.youtube.com/watch?v=ltqV6pDKZD8)
-* [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0)
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/othneildrew/Best-README-Template">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTAiMpuDegbDyd4bjoWMCi8MbKyo2epjq9rrkyDx6dQEP9PwRcc" alt="Logo" width="160" height="80">
+  </a>
 
-## Go Directories
+  <h3 align="center">Revature</h3>
 
-### `/cmd`
+  <p align="center">
+    An awesome README template to jumpstart your projects!
+    <br />
+    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    ·
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+  </p>
+</p>
 
-Main applications for this project.
 
-The directory name for each application should match the name of the executable you want to have (e.g., `/cmd/myapp`).
 
-Don't put a lot of code in the application directory. If you think the code can be imported and used in other projects, then it should live in the `/pkg` directory. If the code is not reusable or if you don't want others to reuse it, put that code in the `/internal` directory. You'll be surprised what others will do, so be explicit about your intentions!
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
 
-It's common to have a small `main` function that imports and invokes the code from the `/internal` and `/pkg` directories and nothing else.
+* [About the Project](#about-the-project)
+  * [Built With](#built-with)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Installation](#installation)
+* [Usage](#usage)
+* [Roadmap](#roadmap)
+* [Contributing](#contributing)
+* [Contact](#contact)
+* [Acknowledgements](#acknowledgements)
 
-See the [`/cmd`](cmd/README.md) directory for examples.
 
-### `/internal`
 
-Private application and library code. This is the code you don't want others importing in their applications or libraries. Note that this layout pattern is enforced by the Go compiler itself. See the Go 1.4 [`release notes`](https://golang.org/doc/go1.4#internalpackages) for more details. Note that you are not limited to the top level `internal` directory. You can have more than one `internal` directory at any level of your project tree.
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-You can optionally add a bit of extra structure to your internal packages to separate your shared and non-shared internal code. It's not required (especially for smaller projects), but it's nice to have visual clues showing the intended package use. Your actual application code can go in the `/internal/app` directory (e.g., `/internal/app/myapp`) and the code shared by those apps in the `/internal/pkg` directory (e.g., `/internal/pkg/myprivlib`).
+[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-### `/pkg`
+There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need.
 
-Library code that's ok to use by external applications (e.g., `/pkg/mypubliclib`). Other projects will import these libraries expecting them to work, so think twice before you put something here :-) Note that the `internal` directory is a better way to ensure your private packages are not importable because it's enforced by Go. The `/pkg` directory is still a good way to explicitly communicate that the code in that directory is safe for use by others. The [`I'll take pkg over internal`](https://travisjeffery.com/b/2019/11/i-ll-take-pkg-over-internal/) blog post by Travis Jeffery provides a good overview of the `pkg` and `internal` directories and when it might make sense to use them.
+Here's why:
+* Your time should be focused on creating something amazing. A project that solves a problem and helps others
+* You shouldn't be doing the same tasks over and over like creating a README from scratch
+* You should element DRY principles to the rest of your life :smile:
 
-It's also a way to group Go code in one place when your root directory contains lots of non-Go components and directories making it easier to run various Go tools (as mentioned in these talks: [`Best Practices for Industrial Programming`](https://www.youtube.com/watch?v=PTE4VJIdHPg) from GopherCon EU 2018, [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0) and [GoLab 2018 - Massimiliano Pippi - Project layout patterns in Go](https://www.youtube.com/watch?v=3gQa1LWwuzk)).
+Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue.
 
-See the [`/pkg`](pkg/README.md) directory if you want to see which popular Go repos use this project layout pattern. This is a common layout pattern, but it's not universally accepted and some in the Go community don't recommend it. 
+A list of commonly used resources that I find helpful are listed in the acknowledgements.
 
-Ok not to use it if your app project is really small and where an extra level of nesting doesn't add much value (unless you really want to :-)). Think about it when it's getting big enough and your root directory gets pretty busy (especially if you have a lot of non-Go app components).
+### Built With
+This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+* [Bootstrap](https://getbootstrap.com)
+* [JQuery](https://jquery.com)
+* [Laravel](https://laravel.com)
 
-### `/vendor`
 
-Application dependencies (managed manually or by your favorite dependency management tool like the new built-in, but still experimental, [`modules`](https://github.com/golang/go/wiki/Modules) feature).
 
-Don't commit your application dependencies if you are building a library.
+<!-- GETTING STARTED -->
+## Getting Started
 
-Note that since [`1.13`](https://golang.org/doc/go1.13#modules) Go also enabled the module proxy feature (using [`https://proxy.golang.org`](https://proxy.golang.org) as their module proxy server by default). Read more about it [`here`](https://blog.golang.org/module-mirror-launch) to see if it fits all of your requirements and constraints. If it does, then you won't need the `vendor` directory at all.
+This repository contains the source code for the Kreate cli, and Custom Ingress controller.
 
-## Service Application Directories
+### Prerequisites
 
-### `/api`
+- Kubernetes cluster must be already active for Kreate and Custom Ingress to function.
 
-OpenAPI/Swagger specs, JSON schema files, protocol definition files.
+- Uses Helm 2.10+ and not Helm 3, currently installs newest version of Helm 2 durring initialization.
 
-See the [`/api`](api/README.md) directory for examples.
+### Installation
 
-## Web Application Directories
+1. Build Kreate, navagate to project root and run build command below
+```sh
+go build ./cmd/kreate
+```
+2. Initilize Kreate
+```sh
+Kreate init
+```
 
-### `/web`
+<!-- USAGE EXAMPLES -->
+## Usage
 
-Web application specific components: static web assets, server side templates and SPAs.
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-## Common Application Directories
+```
+kreate <sub-command> [PROFILE_NAME]
+```
 
-### `/configs`
+_For more examples, please refer to the [Documentation](https://example.com)_
 
-Configuration file templates or default configs.
+### Creating a new Profile
 
-Put your `confd` or `consul-template` template files here.
+To create a new profile use the following command.
 
-### `/init`
+```bash
+kreate profile [PROFILE_NAME]
+```
 
-System init (systemd, upstart, sysv) and process manager/supervisor (runit, supervisord) configs.
+This command creates a new folder named `/kreate` under `/etc/` directory and places a new `.yaml` file with the provided named.
 
-### `/scripts`
+*Example:*
 
-Scripts to perform various build, install, analysis, etc operations.
+```bash
+kreate profile myprofile
+```
 
-These scripts keep the root level Makefile small and simple (e.g., [`https://github.com/hashicorp/terraform/blob/master/Makefile`](https://github.com/hashicorp/terraform/blob/master/Makefile)).
+*Output:*
 
-See the [`/scripts`](scripts/README.md) directory for examples.
+```view
+/etc
+└── /kreate
+    └── myprofile.yaml
+```
 
-### `/build`
+### kreate.CreateChart
+```
+kreate.CreateChart("myprofile.yaml")
+```
 
-Packaging and Continuous Integration.
+CreateChart is a function that generates a values.yaml, Chart.yaml, yaml templates for use with helm, and already-templated yamls ready for deployment in a Kubernetes cluster. 
 
-Put your cloud (AMI), container (Docker), OS (deb, rpm, pkg) package configurations and scripts in the `/build/package` directory.
+When this command is used, a charts folder will be added to your current working directory with the following structure.
+```
+.
+└── charts
+    └── example
+        ├── Chart.yaml
+        ├── deploy
+        │   ├── deployment.yaml
+        │   ├── ingress.yaml
+        │   └── service.yaml
+        ├── templates
+        │   ├── deployment.yaml
+        │   ├── ingress.yaml
+        │   └── service.yaml
+        └── values.yaml
+```
+The `charts` directory is where all charts generated using CreateChart will be located. Each folder underneath `charts`, will be a separate chart based on a unique kreate profile. If the program is run multiple times without editing the `name` value in `Chart.yaml`, the new deployment will overwrite any existing chart with the same name.
 
-Put your CI (travis, circle, drone) configurations and scripts in the `/build/ci` directory. Note that some of the CI tools (e.g., Travis CI) are very picky about the location of their config files. Try putting the config files in the `/build/ci` directory linking them to the location where the CI tools expect them (when possible).
+Within each unique chart folder, the `deploy` folder will hold already-templated .yaml files ready for deployment using [kubectl apply](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply).
 
-### `/deployments`
+The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
 
-IaaS, PaaS, system and container orchestration deployment configurations and templates (docker-compose, kubernetes/helm, mesos, terraform, bosh).
+### kreate.RunProfile
+```
+kreate.RunProfile("myprofile.yaml")
+```
 
-### `/test`
+RunProfile is a function which utilizes helm to deploy a profile directly to the Kubernetes Cluster. Given a profile name, RunProfile will attempt the following\:
+1. Determine if Helm is properly initialized. The tiller must be installed to the cluster prior to running a profile
+2. Build a custom Helm chart for the specified profile using kreate.CreateChart()
+3. Create the custom ingress configmap and install the portal custom resource to the cluster
+4. Install the Helm chart, or if the profile was previously deployed, Upgrade the existing installation.
 
-Additional external test apps and test data. Feel free to structure the `/test` directory anyway you want. For bigger projects it makes sense to have a data subdirectory. For example, you can have `/test/data` or `/test/testdata` if you need Go to ignore what's in that directory. Note that Go will also ignore directories or files that begin with "." or "_", so you have more flexibility in terms of how you name your test data directory.
+RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
-See the [`/test`](test/README.md) directory for examples.
+### kreate.EditProfile
 
-## Other Directories
+A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
 
-### `/docs`
+### kreate remove [PROFILE_NAME / --all / -a]
 
-Design and user documents (in addition to your godoc generated documentation).
+The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
 
-See the [`/docs`](docs/README.md) directory for examples.
+#### Getting Started
 
-### `/tools`
+Our implementation will allow changes to Cluster specific entries by setting values to each flag, the `FlagName` will map to the value within the file pointed to by the YamlFileName to modify their values.
 
-Supporting tools for this project. Note that these tools can import code from the `/pkg` and `/internal` directories.
+*Note* that the `AppName` flag must be set to an existing app's name within the yaml file, otherwise the function will not change any values and log to the user that a name was not correctly specified.
 
-See the [`/tools`](tools/README.md) directory for examples.
+#### Configuration flags specific to Cluster
 
-### `/examples`
+This section below list all the configuration flags for cluster related settings.
 
-Examples for your applications and/or public libraries.
+> `Name` - *Name for config*
 
-See the [`/examples`](examples/README.md) directory for examples.
+> `ClusterName` - *ClusterName for config*
 
-### `/third_party`
+> `ClusterIP` - *ClusterIp for config*
 
-External helper tools, forked code and other 3rd party utilities (e.g., Swagger UI).
+> `ClusterPort` - *ClusterPort for config*
 
-### `/githooks`
+>
+#### Configuration flags specific to individual app
 
-Git hooks.
+This section below list all configuration flags for app specific setting.
 
-### `/assets`
+> `AppName` - *Under App, the Name value*
 
-Other assets to go along with your repository (images, logos, etc).
+> `AppImageURL` - *Under App, the ImageURL*
 
-### `/website`
+> `AppServiceName` - *Under App, the ServiceName value*
 
-This is the place to put your project's website data if you are not using Github pages.
+> `AppServicePort` - *Under App, the ServicePort value*
 
-See the [`/website`](website/README.md) directory for examples.
+> `AppPort` - *Under App, Port Value*
 
-## Directories You Shouldn't Have
+> `AppEndpoint` - *Under App, Endpoint Value*
 
-### `/src`
+#### Prerequisites
 
-Some Go projects do have a `src` folder, but it usually happens when the devs came from the Java world where it's a common pattern. If you can help yourself try not to adopt this Java pattern. You really don't want your Go code or Go projects to look like Java :-)
+This function requires the name of the yaml in the form of `"defaultName"`.
 
-Don't confuse the project level `/src` directory with the `/src` directory Go uses for its workspaces as described in [`How to Write Go Code`](https://golang.org/doc/code.html). The `$GOPATH` environment variable points to your (current) workspace (by default it points to `$HOME/go` on non-windows systems). This workspace includes the top level `/pkg`, `/bin` and `/src` directories. Your actual project ends up being a sub-directory under `/src`, so if you have the `/src` directory in your project the project path will look like this: `/some/path/to/workspace/src/your_project/src/your_code.go`. Note that with Go 1.11 it's possible to have your project outside of your `GOPATH`, but it still doesn't mean it's a good idea to use this layout pattern.
+Before starting, initialization must be executed with:
 
+1. `kreate.Initialization()`
 
-## Badges
+Create a profile yaml named *defaultName.yaml* and store it under */etc/kreate/*, which is define as *kreate.PROFILES*.
 
-* [Go Report Card](https://goreportcard.com/) - It will scan your code with `gofmt`, `go vet`, `gocyclo`, `golint`, `ineffassign`, `license` and `misspell`. Replace `github.com/golang-standards/project-layout` with your project reference.
+2. `kreate.CreateProfile("defaultName")`
 
-* [GoDoc](http://godoc.org) - It will provide online version of your GoDoc generated documentation. Change the link to point to your project.
+Call `EditProfile()` to profile to change the values of this yaml to reflect how the configuration of the cluster and apps within the cluster should be.
 
-* Release - It will show the latest release number for your project. Change the github link to point to your project.
+`kreate.EditProfile("defaultName")`
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/golang-standards/project-layout?style=flat-square)](https://goreportcard.com/report/github.com/golang-standards/project-layout)
-[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/golang-standards/project-layout)
-[![Release](https://img.shields.io/github/release/golang-standards/project-layout.svg?style=flat-square)](https://github.com/golang-standards/project-layout/releases/latest)
+- Note that edit calls GetProfile to create an instance of a *kreate.Profile* from the name of the yaml file, and unmarshal the values into that instance:
 
-## Notes
+`profileInstance := kreate.GetProfile("defaultName")`
 
-A more opinionated project template with sample/reusable configs, scripts and code is a WIP.
+### kreate.Help()
 
+```
+kreate help
+```
+
+This sub-command will display a brief helpt text to familiarize the user with various commands associated with the tool.
+
+<!-- ROADMAP -->
+## Roadmap
+
+See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+
+
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+See also the list of [contributors](https://github.com/200106-uta-go/project-3/graphs/contributors) who participated in this project.
+
+
+
+<!-- LICENSE -->
+
+
+
+<!-- CONTACT -->
+## Contact
+
+Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+
+Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+
+
+
+<!-- ACKNOWLEDGEMENTS -->
+## Acknowledgements
+* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
+* [Img Shields](https://shields.io)
+* [Choose an Open Source License](https://choosealicense.com)
+* [GitHub Pages](https://pages.github.com)
+* [Animate.css](https://daneden.github.io/animate.css)
+* [Loaders.css](https://connoratherton.com/loaders)
+* [Slick Carousel](https://kenwheeler.github.io/slick)
+* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
+* [Sticky Kit](http://leafo.net/sticky-kit)
+* [JVectorMap](http://jvectormap.com)
+* [Font Awesome](https://fontawesome.com)
+
+
+
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
+[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
+[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
+[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
+[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
+[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
+[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
+[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
+[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/othneildrew
+[product-screenshot]: images/screenshot.png
