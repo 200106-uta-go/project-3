@@ -95,34 +95,24 @@ This section should list any major frameworks that you built your project using.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+This repository contains the source code for the Kreate cli, and Custom Ingress controller.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-```sh
-npm install npm@latest -g
-```
+- Kubernetes cluster must be already active for Kreate and Custom Ingress to function.
+
+- Uses Helm 2.10+ and not Helm 3, currently installs newest version of Helm 2 durring initialization.
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Build Kreate, navagate to project root and run build command below
 ```sh
-git clone https://github.com/your_username_/Project-Name.git
+go build ./cmd/kreate
 ```
-3. Install NPM packages
+2. Initilize Kreate
 ```sh
-npm install
+Kreate init
 ```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
-```
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
