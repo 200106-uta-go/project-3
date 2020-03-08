@@ -47,6 +47,8 @@ func main() {
 	case "remove":
 		// Removes an existing profile .yaml
 		kreate.RemoveProfile(flag.Arg(1))
+	case "ls":
+		fmt.Println(kreate.ListProfiles())
 	case "chart":
 		// Builds a helm chart using the specified profile
 		kreate.CreateChart(flag.Arg(1))
