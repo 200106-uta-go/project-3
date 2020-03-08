@@ -35,21 +35,9 @@ var AppPort string
 var AppEndpoint string
 
 // init assigns flag defaults and parses the flags, which are used to assign new values if they are set.
+// JZ: moved flag parsing to EditProfile since an init func here means an init func for everything within the kreate package
 func init() {
 
-	flag.StringVar(&Name, "Name", "", "Name for config.")
-	flag.StringVar(&ClusterName, "ClusterName", "", "ClusterName for config.")
-	flag.StringVar(&ClusterIP, "ClusterIP", "", "ClusterIp for config.")
-	flag.StringVar(&ClusterPort, "ClusterPort", "", "ClusterPort for config.")
-
-	flag.StringVar(&AppName, "AppName", "", "Under App, the Name value.")
-	flag.StringVar(&AppImageURL, "AppImageURL", "", "Under App, the ImageURL.")
-	flag.StringVar(&AppServiceName, "AppServiceName", "", "Under App, the ServiceName value.")
-	flag.IntVar(&AppServicePort, "AppServicePort", 0, "Under App, the ServicePort value.")
-	flag.StringVar(&AppPort, "AppPort", "", "Under App, Port Value.")
-	flag.StringVar(&AppEndpoint, "AppEndpoint", "", "Under App, Endpoint Value.")
-
-	flag.Parse()
 }
 
 // Check is a function that panics on any error that is not nill. Used to condense error handling into a function call.
@@ -104,6 +92,21 @@ func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint
 // EditProfile is a function that Checks a single cluster and overwrites any profile information, while Checking through app specific information
 //	 and adjusting according to provided flags
 func EditProfile(YamlName string) (Profile, error) {
+
+	flag.StringVar(&Name, "Name", "", "Name for config.")
+	flag.StringVar(&ClusterName, "ClusterName", "", "ClusterName for config.")
+	flag.StringVar(&ClusterIP, "ClusterIP", "", "ClusterIp for config.")
+	flag.StringVar(&ClusterPort, "ClusterPort", "", "ClusterPort for config.")
+
+	flag.StringVar(&AppName, "AppName", "", "Under App, the Name value.")
+	flag.StringVar(&AppImageURL, "AppImageURL", "", "Under App, the ImageURL.")
+	flag.StringVar(&AppServiceName, "AppServiceName", "", "Under App, the ServiceName value.")
+	flag.IntVar(&AppServicePort, "AppServicePort", 0, "Under App, the ServicePort value.")
+	flag.StringVar(&AppPort, "AppPort", "", "Under App, Port Value.")
+	flag.StringVar(&AppEndpoint, "AppEndpoint", "", "Under App, Endpoint Value.")
+
+	flag.Parse()
+	
 	if (YamlName == "") {
 		fmt.Println("No profile specified")
 		os.Exit(1)
