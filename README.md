@@ -124,9 +124,9 @@ kreate <sub-command> [PROFILE_NAME]
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-### kreate.CreateChart
+### Chart Sub-Command
 ```
-kreate.CreateChart("myprofile.yaml")
+kreate chart my_profile
 ```
 
 CreateChart is a function that generates a values.yaml, Chart.yaml, yaml templates for use with helm, and already-templated yamls ready for deployment in a Kubernetes cluster. 
@@ -153,9 +153,9 @@ Within each unique chart folder, the `deploy` folder will hold already-templated
 
 The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
 
-### kreate.RunProfile
+### Run Command
 ```
-kreate.RunProfile("myprofile.yaml")
+kreate run my_profile
 ```
 
 RunProfile is a function which utilizes helm to deploy a profile directly to the Kubernetes Cluster. Given a profile name, RunProfile will attempt the following\:
@@ -166,7 +166,10 @@ RunProfile is a function which utilizes helm to deploy a profile directly to the
 
 RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
-### kreate.EditProfile
+### Edit Command
+```
+kreate edit my_profile
+```
 
 A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
 
@@ -225,7 +228,7 @@ Call `EditProfile()` to profile to change the values of this yaml to reflect how
 
 `profileInstance := kreate.GetProfile("defaultName")`
 
-### kreate.Help()
+### Help Command
 
 ```
 kreate help
