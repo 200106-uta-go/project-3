@@ -124,9 +124,6 @@ kreate <sub-command> [PROFILE_NAME]
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-<<<<<<< HEAD
-### Chart Sub-Command
-=======
 ### Creating a new Profile
 
 To create a new profile use the following command.
@@ -151,8 +148,7 @@ kreate profile myprofile
     └── myprofile.yaml
 ```
 
-### kreate.CreateChart
->>>>>>> efd3bab437210986d5e3992c96f9e5bdcc6cea5d
+### Outputing a Chart
 ```
 kreate chart my_profile
 ```
@@ -181,7 +177,7 @@ Within each unique chart folder, the `deploy` folder will hold already-templated
 
 The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
 
-### Run Command
+### Using Run Command to apply a Profile
 ```
 kreate run my_profile
 ```
@@ -194,7 +190,7 @@ RunProfile is a function which utilizes helm to deploy a profile directly to the
 
 RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
-### Edit Command
+### Using the edit Command to change a Profile
 ```
 kreate edit my_profile
 ```
@@ -260,7 +256,7 @@ Call `EditProfile()` to profile to change the values of this yaml to reflect how
 
 `profileInstance := kreate.GetProfile("defaultName")`
 
-### Help Command
+### How to view the Help Text
 
 ```
 kreate help
