@@ -6,7 +6,7 @@ spec:
 {{- range $app := .Values.apps }}
 {{- range $endpoint := $app.endpoints }}
   rules:
-  - host:
+  - host: 
     http:
       paths:
       - path: {{ $endpoint }}
@@ -48,5 +48,20 @@ spec:
     - port: 80
       nodePort: 30100
       targetPort: 80
+  selector:
+    app: ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingressnode2
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      nodePort: 30101
+      targetPort: 8080
   selector:
     app: ingress
