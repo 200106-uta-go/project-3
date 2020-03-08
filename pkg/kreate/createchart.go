@@ -137,6 +137,9 @@ func buildFileSystem(profile Profile) {
 	if !dirExists("./charts/" + profile.Name + "/templates/") {
 		os.MkdirAll("./charts/"+profile.Name+"/templates/", 0777)
 	}
+	if !dirExists("./charts/" + profile.Name + "/crd/") {
+		os.MkdirAll("./charts/"+profile.Name+"/crd/", 0777)
+	}
 
 	//copy files from /var/local/kreate into ./templates
 	copyDir(MOULDFOLDERS, "./charts/"+profile.Name+"/templates/")
@@ -150,6 +153,12 @@ func fixFileSystem(profile Profile) {
 	//delete empty files in deploy folder
 	cmd2 := exec.Command("rm", "-r", "./charts/"+profile.Name+"/deploy/"+profile.Name)
 	err := cmd2.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	//move portalCRD into the crd folder so helm doesn't reapply it
+	_, err = shellCommand("mv ./charts/"+profile.Name+"/templates/portalCRD.yaml ./charts/"+profile.Name+"/crd/", "./")
 	if err != nil {
 		panic(err)
 	}
