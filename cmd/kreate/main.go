@@ -31,11 +31,15 @@ func main() {
 		kreate.InitializeEnvironment()
 	case "profile":
 		// Creates a new profile .yaml
-		err := kreate.CreateProfile(flag.Arg(1))
+		filename := flag.Arg(1)
+		if filename == "" {
+			filename = "myProfileName"
+		}
+		err := kreate.CreateProfile(filename)
 		if err != nil {
 			log.Printf(err.Error())
 		} else {
-			kreate.OpenFileInEditor(flag.Arg(1))
+			kreate.OpenFileInEditor(filename)
 		}
 	case "edit":
 		// Edits an existing profile .yaml
