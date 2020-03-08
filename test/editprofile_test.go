@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/200106-uta-go/project-3/pkg/kreate"
 	"gopkg.in/yaml.v2"
 )
 
@@ -14,6 +15,25 @@ import (
 const (
 	TESTINGPROFILEDIRECTORY = "/etc/kreate_test/"
 )
+
+// Profile defines the profile struct and converts between the struct format and the yaml format
+type Profile struct {
+	Name         string   `yaml:"name"`
+	ClusterName  string   `yaml:"clustername"`
+	ClusterIP    string   `yaml:"clusterip"`
+	ClusterPorts []string `yaml:"clusterports"`
+	Apps         []App    `yaml:"apps"`
+}
+
+// App ...
+type App struct {
+	Name        string   `yaml:"name"`
+	ImageURL    string   `yaml:"imageurl"`
+	ServiceName string   `yaml:"servicename"`
+	ServicePort int      `yaml:"serviceport"`
+	Ports       []string `yaml:"ports"`
+	Endpoints   []string `yaml:"endpoints"`
+}
 
 var defaultTestingProfile *Profile = &Profile{
 	Name:         "myProfileName",
@@ -43,7 +63,7 @@ var defaultTestingProfile *Profile = &Profile{
 func init() {
 	pathErr := os.MkdirAll(TESTINGPROFILEDIRECTORY, 1777)
 	if pathErr != nil {
-		log.Panicf("Error making directory %s => %v", PROFILES, pathErr)
+		log.Panicf("Error making directory %s => %v", TESTINGPROFILEDIRECTORY, pathErr)
 	}
 }
 
@@ -113,7 +133,7 @@ func GetTestProfile(profileName string) Profile {
 func TestEditProfile(t *testing.T) {
 	check(CreateTestingProfile("defaultTest"))
 	//pf := GetTestProfile("defaultTest")
-	pf, err := EditProfile("defaultTest")
+	pf, err := kreate.EditProfile("defaultTest")
 	check(err)
 	if pf.Name != "NEWNAME" {
 		t.Error("Profile struct and yaml did not change to NEWNAME.")

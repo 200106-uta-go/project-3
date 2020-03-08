@@ -30,7 +30,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTAiMpuDegbDyd4bjoWMCi8MbKyo2epjq9rrkyDx6dQEP9PwRcc" alt="Logo" width="80" height="80">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTAiMpuDegbDyd4bjoWMCi8MbKyo2epjq9rrkyDx6dQEP9PwRcc" alt="Logo" width="160" height="80">
   </a>
 
   <h3 align="center">Revature</h3>
@@ -124,7 +124,35 @@ kreate <sub-command> [PROFILE_NAME]
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
+<<<<<<< HEAD
 ### Chart Sub-Command
+=======
+### Creating a new Profile
+
+To create a new profile use the following command.
+
+```bash
+kreate profile [PROFILE_NAME]
+```
+
+This command creates a new folder named `/kreate` under `/etc/` directory and places a new `.yaml` file with the provided named.
+
+*Example:*
+
+```bash
+kreate profile myprofile
+```
+
+*Output:*
+
+```view
+/etc
+└── /kreate
+    └── myprofile.yaml
+```
+
+### kreate.CreateChart
+>>>>>>> efd3bab437210986d5e3992c96f9e5bdcc6cea5d
 ```
 kreate chart my_profile
 ```
@@ -172,6 +200,10 @@ kreate edit my_profile
 ```
 
 A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
+
+### kreate remove [PROFILE_NAME / --all / -a]
+
+The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
 
 #### Getting Started
 
