@@ -2,12 +2,12 @@
 
 ## kreate init
 
-1. Stage 1: Setup Directories and Environment.
+1. Setup Directories and Environment.
     - Makes directory for kreates mouldfolder located in /var/local/kreate
     - Makes directory for kreate’s profiles located in /etc/kreate
-    - Sets up kreates environment variable KREATE_MOULDFOLDER, value set to directory path of mouldfolder.
+    - Sets up kreate's environment variable KREATE_MOULDFOLDER, value set to directory path of mouldfolder.
     - Sets up kreate’s envrionment variable KREATE_PROFILE, value set to directory path of profile.
-2. Stage 2: Deploying Helm and Istio 
+2. Deploying Helm and Istio 
     - Istio 1.4.5 downloaded and installed.
     - Helm v2.16.3  downloaded and installed.
     - Helm initialized
