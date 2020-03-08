@@ -17,8 +17,13 @@ import (
 
 // RemoveProfile removes a specified profile from the directory.
 func RemoveProfile(profileName string) {
+	_, err := os.Stat(PROFILES + profileName + ".yaml")
+	if os.IsNotExist(err) {
+		fmt.Printf("Profile %s.yaml not found in %s\n", profileName, PROFILES)
+		return
+	}
 	for {
-		fmt.Printf("%s profile will be removed.\nAre you sure you want to continue (Y/n)? ", profileName)
+		fmt.Printf("Profile %s.yaml will be removed.\nAre you sure you want to continue (Y/n)? ", profileName)
 		reader := bufio.NewReader(os.Stdin)
 		answer, err := reader.ReadString('\n')
 		if err != nil {
@@ -29,9 +34,12 @@ func RemoveProfile(profileName string) {
 			cmd := exec.Command("rm", PROFILES+profileName+".yaml")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
-			cmd.Run()
-
-			fmt.Printf("%s profile has been removed\n", profileName)
+			err = cmd.Run()
+			if err != nil {
+				fmt.Printf("Failed to remove %s\n", profileName)
+			} else {
+				fmt.Printf("Profile %s has been removed\n", profileName)
+			}
 			return
 		} else if answer == "n" || answer == "N" {
 			return
@@ -44,7 +52,7 @@ func RemoveProfile(profileName string) {
 // RemoveAllProfiles removes all profiles from the directory.
 func RemoveAllProfiles() {
 	for {
-		fmt.Printf("All profiles will be removed.\nAre you sure you want to continue (Y/n)? ")
+		fmt.Printf("All profiles will be removed.\nAre you sure you want to continue (Y/n)?")
 		reader := bufio.NewReader(os.Stdin)
 		answer, err := reader.ReadString('\n')
 		if err != nil {
@@ -55,9 +63,12 @@ func RemoveAllProfiles() {
 			cmd := exec.Command("rm", PROFILES+"*.yaml")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
-			cmd.Run()
-
-			fmt.Println("All profiles have been removed")
+			err = cmd.Run()
+			if err != nil {
+				fmt.Println("Failed to remove all profiles.")
+			} else {
+				fmt.Println("All profiles have been removed.")
+			}
 			return
 		} else if answer == "n" || answer == "N" {
 			return
