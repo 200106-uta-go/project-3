@@ -39,13 +39,15 @@ func GetProfile(profileName string) Profile {
 	//open profile
 	file, err := os.Open(PROFILES + profileName)
 	if err != nil {
-		panic(err)
+		println(err.Error())
+		os.Exit(1)
 	}
 
 	//read all data in profile
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		panic(err)
+		println(err.Error())
+		os.Exit(1)
 	}
 
 	//unmarshal file's contents into profile struct

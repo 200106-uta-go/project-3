@@ -3,6 +3,7 @@ package kreate
 import (
 	"os"
 	"os/exec"
+	"strings"
 
 	yaml "gopkg.in/yaml.v3"
 )
@@ -83,7 +84,11 @@ func OpenFileInEditor(filename string) error {
 		return err
 	}
 
-	cmd := exec.Command(executable, PROFILES+filename+".yaml")
+	if (!strings.HasSuffix(filename, ".yaml") && !strings.HasSuffix(filename, ".yml")) {
+		filename += ".yaml"
+	}
+
+	cmd := exec.Command(executable, PROFILES+filename)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
