@@ -150,7 +150,7 @@ kreate profile myprofile
 
 ### Outputing a Chart
 ```
-kreate chart my_profile
+kreate chart [PROFILE_NAME]
 ```
 
 CreateChart is a function that generates a values.yaml, Chart.yaml, yaml templates for use with helm, and already-templated yamls ready for deployment in a Kubernetes cluster. 
@@ -179,7 +179,7 @@ The `templates` folder will hold a copy of the templates stored in `/var/local/k
 
 ### Using Run Command to apply a Profile
 ```
-kreate run my_profile
+kreate run [PROFILE_NAME]
 ```
 
 RunProfile is a function which utilizes helm to deploy a profile directly to the Kubernetes Cluster. Given a profile name, RunProfile will attempt the following\:
@@ -192,12 +192,12 @@ RunProfile anticipates that Kreate.InitializeEnvironment() has been completed su
 
 ### Using the edit Command to change a Profile
 ```
-kreate edit my_profile
+kreate edit [PROFILE_NAME]
 ```
 
 A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
 
-### kreate remove [PROFILE_NAME / --all / -a]
+### kreate remove [PROFILE_NAME | --all | -a]
 
 The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
 
@@ -293,10 +293,21 @@ See also the list of [contributors](https://github.com/200106-uta-go/project-3/g
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
+Last Name | First Name | Responsibilities | Github User
+----------|------------|------------------|------------
+Ackard | Matt | CRD,CLI | 
+Bland | Jessey | CLI | 
+Campbell | Nehemiah | CLI | 
+Feliciano | Emilio | CLI | 
+Kim | Aaron | CLI | 
+Locker | Brandon | CLI | 
+McDole | Ken | CRD,CLI |
+Moreno | Hector | CLI | 
+Nguyen | Josh | CLI |
+Oh | Jaeik | CLI,Visuals |
+Theiss | Joseph | Ingress |
+Thomas | Zach | Ingress |
+Zoeller | Joseph | CLI |
 
 
 <!-- ACKNOWLEDGEMENTS -->
