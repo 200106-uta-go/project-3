@@ -81,6 +81,7 @@ func runInstallScript() error {
 	rm helm.tar.gz
 	rm ../istio-1.4.5.tar.gz
 	sudo chmod 777 ../istio-1.4.5
+	# cp ../configmap.yaml install/kubernetes/helm/istio/charts/prometheus/templates/configmap.yaml -f
 	sudo kubectl apply -f install/kubernetes/helm/helm-service-account.yaml
 	sudo helm init --service-account tiller
 	echo "waiting for tiller pod to be ready ..."
@@ -88,7 +89,12 @@ func runInstallScript() error {
 	sudo helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
 	echo "waiting for istio-system jobs to complete (will take about minute)"
 	kubectl -n istio-system wait --for=condition=complete job --all
-	sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml` // script goes here
+	sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml
+	echo "Brandon locker's edits"
+	cd ../../..
+	echo $PWD
+	kubectl label namespace default istio-injection=enabled
+	kubectl apply -f deployments/terraform/dev_env/istio_env/istiometrics.yaml` // script goes here
 
 	er := ioutil.WriteFile(filename, []byte(installScript), 0777)
 	if er != nil {
@@ -101,4 +107,63 @@ func runInstallScript() error {
 	er = cmd.Run()
 	os.Remove(filename)
 	return er
+}
+
+func InitHelm() { 
+
+	home, _ := os.UserHomeDir()
+
+	workingDir, _ := os.Getwd()
+
+	//Downloading Istio 1.4.5
+	runcmd("sudo curl -L https://github.com/istio/istio/releases/download/1.4.5/istio-1.4.5-linux.tar.gz -o istio-1.4.5.tar.gz", home)
+
+	//Extract Istio
+	runcmd("tar -xf istio-1.4.5.tar.gz", home)
+
+	//Move istioctl into /bin
+	runcmd("sudo cp istio-1.4.5/bin/istioctl /bin/istioctl", home)
+
+	//Download helm.tar
+	runcmd("sudo curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz", home)
+
+	//Extract Helm
+	runcmd("tar -xf helm.tar.gz", home)
+
+	//Copy helm and tiller executable from home/linux-amd64/ into the bin folder
+	runcmd("sudo cp helm /bin/helm", home+"/linux-amd64/")
+	runcmd("sudo cp tiller /bin/tiller", home+"/linux-amd64/")
+}
+
+func InitIstio() { 
+
+	home, _ := os.UserHomeDir()
+
+	//Downloading Istio 1.4.5
+	runcmd("sudo curl -L https://github.com/istio/istio/releases/download/1.4.5/istio-1.4.5-linux.tar.gz -o istio-1.4.5.tar.gz", home)
+
+	//Extract Istio
+	runcmd("tar -xf istio-1.4.5.tar.gz", home)
+
+	//Move istioctl into /bin
+	runcmd("sudo cp istio-1.4.5/bin/istioctl /bin/istioctl", home)
+
+	//Download helm.tar
+	runcmd("sudo curl -L https://get.helm.sh/helm-v2.16.3-linux-amd64.tar.gz -o helm.tar.gz", home)
+
+	//Extract Helm
+	runcmd("tar -xf helm.tar.gz", home)
+
+	//Copy helm and tiller executable from home/linux-amd64/ into the bin folder
+	runcmd("sudo cp helm /bin/helm", home+"/linux-amd64/")
+	runcmd("sudo cp tiller /bin/tiller", home+"/linux-amd64/")
+}
+
+//Runs Com Command in Dir Directory
+func runcmd(com string, dir string) {
+	cmd := exec.Command("sh", "-c", com)
+	cmd.Dir = dir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }
