@@ -9,6 +9,7 @@ Trainer: Mehrab R.
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -103,7 +104,10 @@ func CheckAppValues(noImageURL, noServiceName, noServicePort, noPort, noEndpoint
 // EditProfile is a function that Checks a single cluster and overwrites any profile information, while Checking through app specific information
 //	 and adjusting according to provided flags
 func EditProfile(YamlName string) (Profile, error) {
-	if (!strings.HasSuffix(YamlName, ".yaml") && !strings.HasSuffix(YamlName, ".yml")) {
+	if (YamlName == "") {
+		fmt.Println("No profile specified")
+		os.Exit(1)
+	} else if (!strings.HasSuffix(YamlName, ".yaml") && !strings.HasSuffix(YamlName, ".yml")) {
 		YamlName += ".yaml"
 	}
 
