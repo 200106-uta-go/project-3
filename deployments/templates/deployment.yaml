@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $app.name -}}-deployment
+  name: {{ $app.name }}
   labels:
     app: {{ $app.name }}
 spec:
@@ -26,6 +26,6 @@ spec:
             cpu: "500m"
         ports:
         {{- range $port := $app.ports }}
-        - containerPort: {{$port -}}
+        - containerPort: {{ $port }}
         {{- end }}
 {{ end }}

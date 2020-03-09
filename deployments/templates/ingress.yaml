@@ -11,7 +11,7 @@ spec:
       paths:
       - path: {{ $endpoint }}
         backend:
-          serviceName: {{ $app.name }}-svc
+          serviceName: {{ $app.name }}
           servicePort: {{ $app.serviceport }}
 {{- end }}
 {{- end }}
