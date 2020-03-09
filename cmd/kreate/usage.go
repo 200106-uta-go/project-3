@@ -16,6 +16,7 @@ The commands are:
 		edit		edit a pre-existing profile
 		chart		will use a profile to produce a preconfigured chart that the user may use with his verstion of helm
 		remove		remove selected profile from system
+			-a, --all	removes all profiles from system
 		ls  		will produce a list of available profiles
 		run 		will apply the user defined profile to the Kubernetes cluster
 		help		display this help text
