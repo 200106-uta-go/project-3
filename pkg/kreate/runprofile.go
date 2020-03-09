@@ -67,8 +67,15 @@ func RunProfile(profileName string) string {
 	}
 
 	// 4. Deploy/Upgrade custom chart
-	str, err = shellCommand(fmt.Sprintf("helm install %s ./charts/%s", releaseName, profile.Name), currentDir)
+	str, err = shellCommand(fmt.Sprintf("helm install -n %s ./charts/%s", releaseName, profile.Name), currentDir)
 	if err != nil {
+		if strings.Contains(str, fmt.Sprintf("Error: a release named %s already exists.", releaseName)) {
+			str, err = shellCommand(fmt.Sprintf("helm upgrade %s ./charts/%s", releaseName, profile.Name), currentDir)
+			if err != nil {
+				return fmt.Sprintf("Error: Failed to upgrade custom helm chart - %s", str)
+			}
+			return fmt.Sprintf("Profile %s upgraded successfully", profileName)
+		}
 		return fmt.Sprintf("Error: Failed to deploy custom helm chart - %s", str)
 	}
 	return fmt.Sprintf("Profile %s deployed successfully", profileName)
