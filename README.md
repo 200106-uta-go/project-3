@@ -181,13 +181,13 @@ RunProfile is a function which utilizes helm to deploy a profile directly to the
 
 RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
-### kreate.EditProfile
-
-A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
-
 ### kreate remove [PROFILE_NAME / --all / -a]
 
 The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
+
+### kreate.EditProfile
+
+The edit function can be called within the main cli. it takes a primary input of a yaml name as a string input. The secondary argument is in the form of flag values and these will deteremine what values are modified in the new update yaml file. 
 
 #### Getting Started
 
