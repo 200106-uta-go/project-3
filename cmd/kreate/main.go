@@ -45,13 +45,8 @@ func main() {
 		// Edits an existing profile .yaml
 		kreate.EditProfile(flag.Arg(1))
 	case "remove":
-		if flag.Arg(1) == "-a" || flag.Arg(1) == "--all" {
-			// Removes all existing profile .yaml
-			kreate.RemoveAllProfiles()
-		} else {
-			// Removes an existing profile .yaml
-			kreate.RemoveProfile(flag.Arg(1))
-		}
+		// Removes an existing profile .yaml
+		kreate.RemoveProfile(flag.Arg(1))
 	case "ls":
 		fmt.Println(kreate.ListProfiles())
 	case "chart":

@@ -1,5 +1,5 @@
 package kreate
-/* JZ: commenting this unit test out for now. The test itself is failing, not EditProfile
+
 import (
 	"io/ioutil"
 	"log"
@@ -144,4 +144,3 @@ func TestEditProfile(t *testing.T) {
 func ExampleEditProfile() {
 
 }
-*/

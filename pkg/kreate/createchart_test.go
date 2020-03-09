@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 	//the end
 	os.Exit(code)
 }
-/*
+
 func TestBuildFileSystem(t *testing.T) {
 	//build file system
 	buildFileSystem(testProfile)
@@ -38,20 +38,14 @@ func TestBuildFileSystem(t *testing.T) {
 	}
 
 	if len(files) != 1 {
-		filenames := ""
-		for _, v := range files {
-			filenames += v.Name() + ", "
-		}
-		t.Errorf("Filesystem expected 1 items, got %d: %s", len(files), filenames)
+		t.Errorf("Filesystem expected 1 items, got %d", len(files))
 	}
 	if files[0].Name() != "templates" {
 		t.Error("Templates folder not created")
 	}
 }
-*/
+
 func TestCreateValues(t *testing.T) {
-	//build test charts dir
-	os.MkdirAll("./charts/"+testProfile.Name, 0777)
 
 	//generate values.yaml and read it
 	createValues(testProfile)
@@ -87,9 +81,6 @@ func TestCreateValues(t *testing.T) {
 }
 
 func TestCreateChartFile(t *testing.T) {
-	//build test charts dir
-	os.MkdirAll("./charts/"+testProfile.Name, 0777)
-
 	//copy of default Chart.yaml
 	defaultChart := fmt.Sprintf(`apiVersion: v1
 name: %s
@@ -123,49 +114,6 @@ maintainers:
 }
 
 func TestPopulateChart(t *testing.T) {
-	const testValueYaml = `name: Test
-clustername: TestCluster
-clusterip: 127.0.0.1
-clusterports:
-- 8080
-- 9090
-app:
-- name: TestApp
-  imageurl: testapp.com/image
-  ports: 
-  - 8000
-  - 9000
-  endpoints: 
-  - /one
-  - /two
-  - /three`
-
-	//copy of default Chart.yaml
-	const defaultChart = `apiVersion: v1
-name: Test
-version: 1.0.0
-description: A custom ingress controller to provide failover requests to another address
-keywords:
-- ingress
-- failover
-sources:
-- https://github.com/200106-uta-go/project-3
-maintainers:
-- name: do we want our names here? for posterity/blame`
-
-	//build test charts dir
-	os.MkdirAll("./charts/"+testProfile.Name+"/deploy/templates", 0777)
-
-	//write test values.yaml
-	er := ioutil.WriteFile("./charts/values.yaml", []byte(testValueYaml), 0777)
-	if er != nil {
-		t.Error("Values.yaml not created - ", er)
-	}
-	er = ioutil.WriteFile("./charts/Chart.yaml", []byte(defaultChart), 0777)
-	if er != nil {
-		t.Error("Chart.yaml not created - ", er)
-	}
-
 	populateChart("values.yaml", "./charts/"+testProfile.Name)
 
 	//check that all deployments were created in charts/test/deploy/
@@ -223,10 +171,8 @@ func TestCopyDir(t *testing.T) {
 	os.RemoveAll("./directory1")
 	os.RemoveAll("./directory2")
 }
-/*
-func TestFixFileSystem(t *testing.T) {
 
-	os.MkdirAll("./charts/"+testProfile.Name+"/deploy/templates", 0777)
+func TestFixFileSystem(t *testing.T) {
 	fixFileSystem(testProfile)
 
 	//check if helm generated files still exists
@@ -240,4 +186,3 @@ func TestFixFileSystem(t *testing.T) {
 		}
 	}
 }
-*/

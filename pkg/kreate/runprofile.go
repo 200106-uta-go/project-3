@@ -28,20 +28,12 @@ func RunProfile(profileName string) string {
 	// the logic below should work for now
 	str, err := shellCommand("sudo helm version", currentDir)
 	if !strings.Contains(str, "v2.16.3") && err == nil {
-		return fmt.Sprintf("Helm version is not v2.16.3 (required). Run kreate init to install Helm v2.16.3.")
+		return fmt.Sprintf("Error: Helm version is not v2.16.3 (required). Run kreate init to install Helm v2.16.3.")
 	} else if err != nil {
 		// Prerequisite: Confirm Helm init is already ran.
 		if strings.Contains(str, "could not find tiller") {
-			return fmt.Sprint("Could not find tiller. Run kreate init to initialize helm.")
+			return fmt.Sprint("Error: Could not find tiller. Please confirm that Helm is initialized.")
 		}
-		// Misc. error (Helm not installed, no Cluster, ect.)
-		return fmt.Sprintf("Error: %s", str)
-	}
-	// Prerequisite: Check if istio is already deployed
-	str, err = shellCommand("kubectl get services -n istio-system", currentDir)
-	if strings.Contains(str, "No resources found in istio-system namespace") {
-		fmt.Println("Istio is not yet deployed. Run kreate init to deploy Istio to the cluster.")
-	} else if err != nil {
 		// Misc. error (Helm not installed, no Cluster, ect.)
 		return fmt.Sprintf("Error: %s", str)
 	}
@@ -58,7 +50,7 @@ func RunProfile(profileName string) string {
 
 	//used cmd.Run because it needs to block execution
 	cmd := exec.Command("/bin/sh", "-c", "kubectl -n default wait --for condition=established --timeout=60s crd/portals.revature.com")
-	fmt.Println("Applying portal CRD to cluster ...")
+	fmt.Println("Applying portal CRD to cluster...")
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
@@ -67,8 +59,15 @@ func RunProfile(profileName string) string {
 	}
 
 	// 4. Deploy/Upgrade custom chart
-	str, err = shellCommand(fmt.Sprintf("helm upgrade --install %s ./charts/%s", releaseName, profile.Name), currentDir)
+	str, err = shellCommand(fmt.Sprintf("helm install -n %s ./charts/%s", releaseName, profile.Name), currentDir)
 	if err != nil {
+		if strings.Contains(str, fmt.Sprintf("Error: a release named %s already exists.", releaseName)) {
+			str, err = shellCommand(fmt.Sprintf("helm upgrade %s ./charts/%s", releaseName, profile.Name), currentDir)
+			if err != nil {
+				return fmt.Sprintf("Error: Failed to upgrade custom helm chart - %s", str)
+			}
+			return fmt.Sprintf("Profile %s upgraded successfully", profileName)
+		}
 		return fmt.Sprintf("Error: Failed to deploy custom helm chart - %s", str)
 	}
 	return fmt.Sprintf("Profile %s deployed successfully", profileName)
