@@ -139,9 +139,9 @@ kreate profile myprofile
     └── myprofile.yaml
 ```
 
-### kreate.CreateChart
+### Outputting a Chart
 ```
-kreate.CreateChart("myprofile.yaml")
+Kreate chart [PROFILE_NAME]
 ```
 
 CreateChart is a function that generates a values.yaml, Chart.yaml, yaml templates for use with helm, and already-templated yamls ready for deployment in a Kubernetes cluster. 
@@ -168,9 +168,9 @@ Within each unique chart folder, the `deploy` folder will hold already-templated
 
 The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
 
-### kreate.RunProfile
+### Using Run Command to apply a Profile
 ```
-kreate.RunProfile("myprofile.yaml")
+kreate run [PROFILE_NAME]
 ```
 
 RunProfile is a function which utilizes helm to deploy a profile directly to the Kubernetes Cluster. Given a profile name, RunProfile will attempt the following\:
@@ -183,11 +183,14 @@ RunProfile anticipates that Kreate.InitializeEnvironment() has been completed su
 
 ### kreate remove [PROFILE_NAME / --all / -a]
 
-The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
+The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profiles will be removed.
 
-### kreate.EditProfile
+### Using the edit Command to change a Profile
+```
+kreate edit [PROFILE_NAME]
+```
 
-The edit function can be called within the main cli. it takes a primary input of a yaml name as a string input. The secondary argument is in the form of flag values and these will deteremine what values are modified in the new update yaml file. 
+A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
 
 #### Getting Started
 
@@ -244,7 +247,8 @@ Call `Edit` to profile to change the values of this yaml to reflect how the conf
 `./kreate edit defaultName`
 *Note* Without passing any flag values nano text editor will open the yaml file and allow manual edits from that program, otherwise after defining the filename, flags can be passed to this function in the form of *-flag FlagValue*.
 
-### kreate.Help()
+### How to view the Help Text
+
 
 ```
 kreate help
@@ -281,42 +285,18 @@ See also the list of [contributors](https://github.com/200106-uta-go/project-3/g
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
-
-
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
+-Last Name | First Name | Responsibilities | Github User
+-----------|------------|------------------|------------
+-Ackard | Matt | CRD,CLI | 
+-Bland | Jessey | CLI | 
+-Campbell | Nehemiah | CLI | 
+-Feliciano | Emilio | CLI | 
+-Kim | Aaron | CLI | 
+-Locker | Brandon | CLI | 
+-McDole | Ken | CRD,CLI |
+-Moreno | Hector | CLI | 
+-Nguyen | Josh | CLI |
+-Oh | Jaeik | CLI,Visuals |
+-Theiss | Joseph | Ingress |
+-Thomas | Zach | Ingress |
+-Zoeller | Joseph | CLI |
