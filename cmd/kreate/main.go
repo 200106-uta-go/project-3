@@ -33,7 +33,7 @@ func main() {
 		// Creates a new profile .yaml
 		filename := flag.Arg(1)
 		if filename == "" {
-			filename = "myProfileName"
+			filename = "myprofile"
 		}
 		err := kreate.CreateProfile(filename)
 		if err != nil {
