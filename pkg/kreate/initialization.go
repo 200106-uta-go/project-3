@@ -97,7 +97,9 @@ func runInstallScript() error {
 	kubectl -n istio-system wait --for=condition=complete job --all
 	sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml
 	kubectl label namespace default istio-injection=enabled
-	kubectl apply -f ../../../deployments/istio_env/istiometrics.yaml` // script goes here
+	svn export http://github.com/200106-uta-go/project-3/trunk/deployments/istio_env/istiometrics.yaml
+	kubectl apply -f ./istiometrics.yaml
+	rm istiometrics.yaml` // script goes here
 
 	er := ioutil.WriteFile(filename, []byte(installScript), 0777)
 	if er != nil {
