@@ -187,11 +187,7 @@ A function that receives a profile struct and allows edits based on set flags to
 
 ### kreate remove [PROFILE_NAME / --all / -a]
 
-<<<<<<< HEAD
-Edit is a function that receives the name of a profile.yaml and allows users to set values based on flags to create a new profile struct that is used to `update` the yaml file with the same file name..
-=======
 The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profile will be removed.
->>>>>>> dev
 
 #### Getting Started
 
