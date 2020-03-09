@@ -28,12 +28,20 @@ func RunProfile(profileName string) string {
 	// the logic below should work for now
 	str, err := shellCommand("sudo helm version", currentDir)
 	if !strings.Contains(str, "v2.16.3") && err == nil {
-		return fmt.Sprintf("Error: Helm version is not v2.16.3 (required). Run kreate init to install Helm v2.16.3.")
+		return fmt.Sprintf("Helm version is not v2.16.3 (required). Run kreate init to install Helm v2.16.3.")
 	} else if err != nil {
 		// Prerequisite: Confirm Helm init is already ran.
 		if strings.Contains(str, "could not find tiller") {
-			return fmt.Sprint("Error: Could not find tiller. Please confirm that Helm is initialized.")
+			return fmt.Sprint("Could not find tiller. Run kreate init to initialize helm.")
 		}
+		// Misc. error (Helm not installed, no Cluster, ect.)
+		return fmt.Sprintf("Error: %s", str)
+	}
+	// Prerequisite: Check if istio is already deployed
+	str, err = shellCommand("kubectl get services -n istio-system", currentDir)
+	if strings.Contains(str, "No resources found in istio-system namespace") {
+		fmt.Println("Istio is not yet deployed. Run kreate init to deploy Istio to the cluster.")
+	} else if err != nil {
 		// Misc. error (Helm not installed, no Cluster, ect.)
 		return fmt.Sprintf("Error: %s", str)
 	}
@@ -57,7 +65,7 @@ func RunProfile(profileName string) string {
 		fmt.Println(cmd.Stderr)
 		panic(err)
 	}
-
+	
 	// 4. Deploy/Upgrade custom chart
 	str, err = shellCommand(fmt.Sprintf("helm install -n %s ./charts/%s", releaseName, profile.Name), currentDir)
 	if err != nil {
