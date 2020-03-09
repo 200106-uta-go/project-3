@@ -6,11 +6,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 	"net"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 )
 
 var mu sync.Mutex // mutex lock
@@ -132,13 +133,12 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 			fmt.Println("Going to Send Conn to: " + destination)
 			serverConn, err = net.Dial("tcp", destination)
 			if err != nil {
-				mu.Unlock()
 				fmt.Println("Could not resolve: " + destination + " server could not be dialed: " + err.Error())
 				serverConn = nil
 				break
 			}
 			defer serverConn.Close()
-			serverConn.Write(buf)
+
 			break
 		}
 	}
@@ -186,7 +186,7 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 		go SessionListener(conn, shutdownSession, serverConn)
 		fmt.Println(<-shutdownSession)
 	} else {
-		conn.Write([]byte("404: Page not found on any cluster"))
+		conn.Write([]byte("404: Page not found on any cluster \n"))
 	}
 }
 

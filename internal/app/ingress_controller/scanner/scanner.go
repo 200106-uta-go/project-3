@@ -222,15 +222,17 @@ func GetIngress() {
 	var MyRoute = Route{}
 	var MyRules = Rules{}
 	serviceURL := "http://localhost:8001/apis/extensions/v1beta1/ingresses"
+
 	body, err := GetResponse(serviceURL)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Println(body)
+
 	err = json.Unmarshal(body, &TargetData)
 	if err != nil {
 		fmt.Println(err)
+		fmt.Println("This is where We think the error is during unmarshal of ingress")
 		return
 	}
 
