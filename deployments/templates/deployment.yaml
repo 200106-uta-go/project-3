@@ -1,21 +1,23 @@
+{{- range $app := .Values.apps }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name -}}-deployment
+  name: {{ $app.name }}
   labels:
-    app: {{ .Values.name }}
+    app: {{ $app.name }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      app: {{ $app.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.name }}
+        app: {{ $app.name }}
     spec:
+      serviceAccountName: {{ $app.name }}-svcact
       containers:
-      {{- range $app := .Values.apps }}
       - name: {{ $app.name }}
         image: {{ $app.imageurl }}
         resources:
@@ -24,6 +26,6 @@ spec:
             cpu: "500m"
         ports:
         {{- range $port := $app.ports }}
-        - containerPort: {{$port -}}
+        - containerPort: {{ $port }}
         {{- end }}
-      {{ end }}
+{{ end }}

@@ -3,13 +3,20 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $app.name }}-svc
+  name: {{ $app.name }}
 spec:
   ports:
   {{ range $port := $app.ports }}
     - port: {{ $port }}
-      name: {{"tcp-"}}{{- $port }}
+      name: http
   {{ end }}
   selector:
     app: {{ $app.name }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $app.name }}-svcact
+  labels:
+    account: {{ $app.name }}
 {{ end }}

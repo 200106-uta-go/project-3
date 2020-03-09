@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: zach-server-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - zach-server-gateway
+  http:
+  - match:
+    - uri:
+        exact: /
+    - uri:
+        exact: /player
+    - uri:
+        exact: /stats
+    - uri:
+        exact: /sorted_stats
+    route:
+    - destination:
+        host: zach-server
+        port:
+          number: 4000
