@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-monitoring
+  labels:
+    prometheus: k8s
+spec:
+  externalLabels:
+    cluster: prometheus-monitoring
+  replicas: 1
+  version: v2.13.1
+  serviceAccountName: prometheus-monitoring
+  serviceMonitorSelector:
+    matchExpressions:
+    - key: k8s-app
+      operator: In
+      values:
+      - monitoring
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-monitoring

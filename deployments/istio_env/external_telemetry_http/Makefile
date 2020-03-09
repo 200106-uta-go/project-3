@@ -1,9 +1,7 @@
 # modification of neo's makefile
 help:
-	echo Makefile contains-
-	echo	startLb - downloads metallb for istio
-	echo 	startIstio - runs all commands to start a demo version of istio with bookinfo
-
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	
 jDelete:
 	kubectl delete gateway tracing-gateway -n istio-system
 	kubectl delete virtualservice tracing-vts -n istio-system

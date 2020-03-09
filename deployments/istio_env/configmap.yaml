@@ -210,7 +210,7 @@ data:
       kubernetes_sd_configs:
       - role: service
       relabel_configs:
-      - source_labels: [__is_user_exporter]
+      - source_labels: [is_user_exporter]
         action: keep
         regex: true
 
