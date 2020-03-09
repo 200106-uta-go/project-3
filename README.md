@@ -1,14 +1,3 @@
-<!--
-*** Thanks for checking out this README Template. If you have a suggestion that would
-*** make this better, please fork the repo and create a pull request or simply open
-*** an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-
-
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
@@ -29,23 +18,21 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTAiMpuDegbDyd4bjoWMCi8MbKyo2epjq9rrkyDx6dQEP9PwRcc" alt="Logo" width="160" height="80">
+  <a href="https://github.com/200106-uta-go/project-3">
+    <img src="revature.jpg" alt="Logo" width="160" height="80">
   </a>
 
   <h3 align="center">Revature</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    A custom ingress controller to route failed requests between Kubernetes clusters. A custom CLI for the deployment of Helm, Istio, Jaeger, Prometheus, and Grafana.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/200106-uta-go/project-3"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+     <a href="https://github.com/200106-uta-go/project-3/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/200106-uta-go/project-3/issues">Request Feature</a>
   </p>
 </p>
 
@@ -60,6 +47,7 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
+  * [Creating a New Profile](#Creating-a-New-Profile)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [Contact](#contact)
@@ -70,24 +58,27 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue.
-
-A list of commonly used resources that I find helpful are listed in the acknowledgements.
+### Revature Hybrid Ingress Controller Tasks
+* Create a CLI tool that functions similar to helm create, which creates an empty Helm chart scaffold set up with the following dependencies fully configured
+    * Istio
+    * Jaeger
+    * Grafana
+* Implement a custom Kubernetes resource Cluster, which represents necessary details of some Revature Kubernetes Cluster, Cluster B
+* Create a Custom Ingress Controller that can be deployed in some Kubernetes Cluster Cluster A such that
+    * If a request is made to Cluster A and fails for any reason, the request will be retried against the same Service in Cluster B
+    * If the retried request is made to Cluster B, then returning a failed response is acceptable
 
 ### Built With
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
+
+* [Go](https://golang.org/)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+* [Terraform](https://www.terraform.io/)
+* [Istio](https://istio.io/)
+* [Jaeger](https://www.jaegertracing.io/)
+* [Grafana](https://grafana.com)
+* [Helm](https://helm.sh/)
+* [Prometheus](https://prometheus.io/)
 
 
 
@@ -124,7 +115,7 @@ kreate <sub-command> [PROFILE_NAME]
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-### Creating a new Profile
+### Creating a New Profile
 
 To create a new profile use the following command.
 
