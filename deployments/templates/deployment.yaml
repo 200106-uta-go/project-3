@@ -25,5 +25,7 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         ports:
-        - containerPort: {{ $app.serviceport }}
+          {{- range $port := $app.ports }}
+          - containerPort: {{$port -}}
+          {{- end }}
 {{ end }}
