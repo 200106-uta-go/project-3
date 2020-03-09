@@ -199,62 +199,62 @@ The `remove` command removes a specified profile from `/etc/kreate/` directory. 
 kreate edit [PROFILE_NAME]
 ```
 
-A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
+Edit is a function that receives the name of a profile.yaml and allows users to set values based on flags to create a new profile struct that is used to `update` the yaml file with the same file name..
 
 #### Getting Started
 
-Our implementation will allow changes to Cluster specific entries by setting values to each flag, the `FlagName` will map to the value within the file pointed to by the YamlFileName to modify their values.
+Our implementation will allow changes to Cluster specific entries by setting values to each flag, each flag is checked to see if the value is different from the default flag values and if so, an instance of a *Profile* will be created and its values will be set to reflect the values set in the flags. After all values have been set, the *profile* instance wil be used to write to a new file with the same file name and delete the old instance of the yaml. 
 
-*Note* that the `AppName` flag must be set to an existing app's name within the yaml file, otherwise the function will not change any values and log to the user that a name was not correctly specified.
+To view all the configuration flags for edit will be located in: 
+`./kreate usage`
+
+*Note* that the `name` flag must be set to an existing app's name within the yaml file, otherwise the function will not change any values corresponding to any app, and a message will be logged to the user that a name was not correctly specified.
 
 #### Configuration flags specific to Cluster
 
 This section below list all the configuration flags for cluster related settings.
 
-> `Name` - *Name for config*
+> `name` - *Sets the name of profile*
 
-> `ClusterName` - *ClusterName for config*
+> `clustername` - *Sets the clustername of the profile*
 
-> `ClusterIP` - *ClusterIp for config*
+> `clusterip` - *Sets the clusterip of the profile*
 
-> `ClusterPort` - *ClusterPort for config*
+> `clusterport` - *Append a clusterport to the profile*
 
 >
 #### Configuration flags specific to individual app
 
 This section below list all configuration flags for app specific setting.
 
-> `AppName` - *Under App, the Name value*
+> `NameOfApp` - *Specifies the name of the app which will be modified by the app-related input flags*
 
-> `AppImageURL` - *Under App, the ImageURL*
+> `imageurl` - *An App-related flag. Sets the imageurl of the App specified by the NameOfApp flag*
 
-> `AppServiceName` - *Under App, the ServiceName value*
+> `servicename` - *An App-related flag. Sets the servicename of the App specified by the NameOfApp flag*
 
-> `AppServicePort` - *Under App, the ServicePort value*
+> `serviceport` - *An App-related flag. Sets the serviceport of the App specified by the NameOfApp flag*
 
-> `AppPort` - *Under App, Port Value*
+> `port` - *An App-related flag. Appends a port to the App specified by the NameOfApp flag*
 
-> `AppEndpoint` - *Under App, Endpoint Value*
+> `endpoint` - *An App-related flag. Appends an endpoint to the App specified by the NameOfApp flag*
 
 #### Prerequisites
 
 This function requires the name of the yaml in the form of `"defaultName"`.
 
-Before starting, initialization must be executed with:
+Before starting, within the cmd folder, initialization must be executed with:
 
-1. `kreate.Initialization()`
+1. `./kreate init`
 
 Create a profile yaml named *defaultName.yaml* and store it under */etc/kreate/*, which is define as *kreate.PROFILES*.
 
-2. `kreate.CreateProfile("defaultName")`
+2. `./kreate profile defaultName`
 
-Call `EditProfile()` to profile to change the values of this yaml to reflect how the configuration of the cluster and apps within the cluster should be.
+Call `Edit` to profile to change the values of this yaml to reflect how the configuration of the cluster and apps within the cluster should be.
 
-`kreate.EditProfile("defaultName")`
-
-- Note that edit calls GetProfile to create an instance of a *kreate.Profile* from the name of the yaml file, and unmarshal the values into that instance:
-
-`profileInstance := kreate.GetProfile("defaultName")`
+`./kreate edit defaultName`
+*Note* Without passing any flag values nano text editor will open the yaml file and allow manual edits from that program, otherwise after defining the filename, flags can be passed to this function in the form of *-flag FlagValue*.
 
 ### How to view the Help Text
 
