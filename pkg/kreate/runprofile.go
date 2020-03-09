@@ -58,7 +58,7 @@ func RunProfile(profileName string) string {
 
 	//used cmd.Run because it needs to block execution
 	cmd := exec.Command("/bin/sh", "-c", "kubectl -n default wait --for condition=established --timeout=60s crd/portals.revature.com")
-	fmt.Println("Applying portal CRD to cluster ...")
+	fmt.Println("Applying portal CRD to cluster...")
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
@@ -67,7 +67,7 @@ func RunProfile(profileName string) string {
 	}
 
 	// 4. Deploy/Upgrade custom chart
-	str, err = shellCommand(fmt.Sprintf("helm upgrade --install %s ./charts/%s", releaseName, profile.Name), currentDir)
+	str, err = shellCommand(fmt.Sprintf("helm install %s ./charts/%s", releaseName, profile.Name), currentDir)
 	if err != nil {
 		return fmt.Sprintf("Error: Failed to deploy custom helm chart - %s", str)
 	}
