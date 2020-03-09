@@ -51,7 +51,7 @@ resource "aws_instance" "cluster" {
       destination = "/home/ubuntu/Temp.pem"
     }
     provisioner "file" {
-      source = "./istio_env"
+      source = "../../istio_env"
       destination = "/home/ubuntu/istio_env"
     }
 

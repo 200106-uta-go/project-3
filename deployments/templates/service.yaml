@@ -12,4 +12,11 @@ spec:
   {{ end }}
   selector:
     app: {{ $app.name }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $app.name }}-svcact
+  labels:
+    account: {{ $app.name }}-svc
 {{ end }}
