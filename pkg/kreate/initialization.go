@@ -93,7 +93,7 @@ func runInstallScript() error {
 	echo "waiting for tiller pod to be ready ..."
 	sudo kubectl -n kube-system wait --for=condition=Ready pod -l name=tiller --timeout=300s
 	sudo helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
-	echo "waiting for istio-system jobs to complete (will take about minute)"
+	echo "Waiting for istio-system jobs to complete (this may take a moment)..."
 	kubectl -n istio-system wait --for=condition=complete job --all
 	sudo helm install install/kubernetes/helm/istio --name istio --namespace istio-system --values install/kubernetes/helm/istio/values-istio-demo.yaml
 	kubectl label namespace default istio-injection=enabled
