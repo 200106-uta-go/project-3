@@ -6,11 +6,12 @@ package main
 
 import (
 	"fmt"
-	"github/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 	"net"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 )
 
 var mu sync.Mutex // mutex lock
@@ -137,7 +138,7 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 				break
 			}
 			defer serverConn.Close()
-			serverConn.Write(buf)
+
 			break
 		}
 	}
