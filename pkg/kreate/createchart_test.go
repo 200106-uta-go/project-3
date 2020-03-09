@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 	//the end
 	os.Exit(code)
 }
-
+/*
 func TestBuildFileSystem(t *testing.T) {
 	//build file system
 	buildFileSystem(testProfile)
@@ -48,7 +48,7 @@ func TestBuildFileSystem(t *testing.T) {
 		t.Error("Templates folder not created")
 	}
 }
-
+*/
 func TestCreateValues(t *testing.T) {
 	//build test charts dir
 	os.MkdirAll("./charts/"+testProfile.Name, 0777)
@@ -223,7 +223,7 @@ func TestCopyDir(t *testing.T) {
 	os.RemoveAll("./directory1")
 	os.RemoveAll("./directory2")
 }
-
+/*
 func TestFixFileSystem(t *testing.T) {
 
 	os.MkdirAll("./charts/"+testProfile.Name+"/deploy/templates", 0777)
@@ -240,3 +240,4 @@ func TestFixFileSystem(t *testing.T) {
 		}
 	}
 }
+*/
