@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zach-server
+  labels:
+    app: zach-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zach-server
+  template:
+    metadata:
+      labels:
+        app: zach-server
+    spec:
+      serviceAccountName: zach-server
+      containers:
+      - name: zach-server
+        image: zachthomas823/server
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zach-server
+  labels:
+    app: zach-server
+    service: zach-server
+spec:
+  ports:
+  - port: 4000
+    name: http
+  selector:
+    app: zach-server
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zach-server
+  labels:
+    account: zach-server
