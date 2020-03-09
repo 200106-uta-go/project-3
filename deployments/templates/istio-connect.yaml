@@ -12,7 +12,7 @@ spec:
   {{- range $port := $app.ports }}
   - port:
       number: {{ $port }}
-      name: {{"http-"}}{{ $port }}
+      name: http
       protocol: HTTP
     hosts:
     - "*"
@@ -35,7 +35,7 @@ spec:
   {{- end }}
     route:
     - destination:
-        host: {{ $app.name }}-svc
+        host: {{ $app.name }}
         port:
-          number: {{ index $app.ports 0 }}
+          number: {{ $app.serviceport }}
 {{ end }}
