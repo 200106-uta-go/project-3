@@ -181,9 +181,12 @@ RunProfile is a function which utilizes helm to deploy a profile directly to the
 
 RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
-### kreate remove [PROFILE_NAME / --all / -a]
+### Using Remove Command to remove a Profile
+```
+kreate remove [PROFILE_NAME | --all | -a]
+```
 
-The `remove` command removes a specified profile from `/etc/kreate/` directory. When using `--all` (or the shorthand `-a`) inplace of a profile name, all profiles will be removed.
+The remove command removes a specified profile from /etc/kreate/ directory. When using --all (or the shorthand -a) inplace of a profile name, all profiles will be removed.
 
 ### Using the edit Command to change a Profile
 ```
