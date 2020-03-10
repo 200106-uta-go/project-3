@@ -9,12 +9,6 @@ import (
 	"strings"
 )
 
-/*
-## kreate remove <profile name> (--all, -a)
-1. The specified profile must be deleted (confirmation up to implementer).
-2. (up to implementer) The --all, -a flag must delete all flag.
-*/
-
 // RemoveProfile removes a specified profile from the directory.
 func RemoveProfile(profileName string) {
 	//check if profileName has an extension, if not add .yaml
