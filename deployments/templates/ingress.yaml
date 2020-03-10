@@ -1,12 +1,12 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Values.clustername }}
+  name: ingressname
 spec:
-{{- range $app := .Values.apps }}
-{{- range $endpoint := $app.endpoints }}
   rules:
-  - host: 
+  - host:
+    {{- range $app := .Values.apps }}
+    {{- range $endpoint := $app.endpoints }} 
     http:
       paths:
       - path: {{ $endpoint }}
@@ -28,6 +28,7 @@ spec:
     image: jtheiss19/ingress-controller
     ports:
     - containerPort: 80
+    - containerPort: 8080
     volumeMounts:
     - name: config-volume
       mountPath: /root/.kube/
