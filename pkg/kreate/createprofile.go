@@ -24,7 +24,7 @@ import (
 var defaultProfile *Profile = &Profile{
 	Name:         "myprofile",
 	ClusterName:  "foreign-cluster",
-	ClusterIP:    "127.0.0.1:30101",
+	ClusterIP:    "replace_with_ip:30101",
 	ClusterPorts: []string{"30101"},
 	Apps: []App{
 		App{
@@ -32,8 +32,8 @@ var defaultProfile *Profile = &Profile{
 			ImageURL:    "hello-world",
 			ServiceName: "hello-service",
 			ServicePort: 7777,
-			Ports:       []string{"80", "8080"},
-			Endpoints:   []string{"/", "/helloworld"},
+			Ports:       []string{"80"},
+			Endpoints:   []string{"/helloworld"},
 		},
 	},
 }
