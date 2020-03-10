@@ -41,7 +41,7 @@ type Service struct {
 			Name       string `json:"name"`
 			Protocol   string `json:"protocol"`
 			Port       int    `json:"port"`
-			TargetPort int    `json:"targetPort"`
+			TargetPort string  `json:"targetPort"`
 		} `json:"ports"`
 		ClusterIP       string `json:"clusterIP"`
 		Type            string `json:"type"`
