@@ -8,7 +8,7 @@ spec:
   ports:
   {{ range $port := $app.ports }}
     - port: {{ $port }}
-      targetport: {{ $app.serviceport }}
+      targetPort: {{ $app.serviceport }}
       name: {{"http-"}}{{- $port }}
   {{ end }}
   selector:
