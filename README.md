@@ -19,7 +19,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/200106-uta-go/project-3">
-    <img src="revature.jpg" alt="Logo" width="160" height="80">
+    <img src="Revature.png" alt="Logo" width="480" height="160">
   </a>
 
   <h3 align="center">Revature</h3>

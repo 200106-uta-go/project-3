@@ -61,6 +61,19 @@ func InitializeEnvironment() {
 
 	runInstallScript()
 
+	//3. set up cluster pre-requisites
+	shellCommand("kubectl create configmap ingress --from-file=${HOME}/.kube/config", "./")
+	shellCommand("kubectl apply -f ./portalCRD.yaml", "/var/local/kreate")
+
+	//used cmd.Run because it needs to block execution
+	cmd := exec.Command("/bin/sh", "-c", "kubectl -n default wait --for condition=established --timeout=60s crd/portals.revature.com")
+	fmt.Println("Applying portal CRD to cluster...")
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(cmd.Stderr)
+		panic(err)
+	}
 	// testing
 	// InitHelm()
 	// InitIstio()
