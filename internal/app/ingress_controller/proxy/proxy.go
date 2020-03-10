@@ -14,6 +14,8 @@ import (
 	"github.com/200106-uta-go/project-3/internal/app/ingress_controller/scanner"
 )
 
+var count int
+
 var mu sync.Mutex // mutex lock
 
 // TIMETOSLEEP is how long the program waits in between checking for services
@@ -88,6 +90,8 @@ func StartReverseProxy(port string) {
 //session handles all interactions with the connected
 //client
 func Session(ln net.Listener, ConnSignal chan string, port string) {
+	count++
+	fmt.Println(count)
 	conn, err := ln.Accept()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -126,28 +130,35 @@ func Session(ln net.Listener, ConnSignal chan string, port string) {
 
 	mu.Lock()
 	for _, v := range rulesList {
+		fmt.Println(rulesList)
+		fmt.Println(v)
 		if v.Path == path && strings.ToLower(v.Protocol) == protocol {
 			// route to location specified by the rule
 			route := v.Route
 			destination := route.ServiceIP + ":" + route.ServicePort
 			fmt.Println("Going to Send Conn to: " + destination)
 			serverConn, err = net.Dial("tcp", destination)
+			fmt.Println(serverConn == nil)
 			if err != nil {
 				fmt.Println("Could not resolve: " + destination + " server could not be dialed: " + err.Error())
 				serverConn = nil
 				break
 			}
 			defer serverConn.Close()
-
+			fmt.Println(string(buf))
+			serverConn.Write(buf)
 			break
 		}
 	}
 	shutdownSession := make(chan string)
 
+	fmt.Println(serverConn == nil)
 	if serverConn == nil && IsFirst {
+		fmt.Println("portal")
 		for _, v := range clusterList {
 			// send request to other clusters
 			// destination := v.ClusterIP + ":" + v.ClusterPort
+			fmt.Println(v.ClusterIP)
 			destination := v.ClusterIP
 			serverConn, err = net.Dial("tcp", destination)
 			if err == nil {

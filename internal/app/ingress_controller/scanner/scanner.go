@@ -38,10 +38,9 @@ type Service struct {
 	} `json:"metadata"`
 	Spec struct {
 		Ports []struct {
-			Name       string `json:"name"`
 			Protocol   string `json:"protocol"`
 			Port       int    `json:"port"`
-			TargetPort string  `json:"targetPort"`
+			TargetPort int    `json:"targetPort"`
 		} `json:"ports"`
 		ClusterIP       string `json:"clusterIP"`
 		Type            string `json:"type"`
@@ -179,7 +178,7 @@ func Scan() (ruleset []Rules, targetIP []AltCluster) {
 }
 
 // GetServices gets all of the services in our cluster from the API
-func GetServices(serviceName string) (clusterIP string) {
+func GetServices(serviceName string) (clusterIP string, clusterPort string) {
 
 	// request information of services from k8s API
 	serviceURL := "http://localhost:8001/api/v1/services"
@@ -194,19 +193,24 @@ func GetServices(serviceName string) (clusterIP string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	clusterIP = FindService(serviceName)
+	clusterIP, clusterPort = FindService(serviceName)
 
 	return
 }
 
 //FindService searches list of services by 'name' to match
-func FindService(serviceName string) (clusterIP string) {
+func FindService(serviceName string) (clusterIP string, clusterPort string) {
 
 	serviceLst := ReqServices.Items
 	for i := 0; i < len(serviceLst); i++ {
 		currService := serviceLst[i]
+		fmt.Println("Looking for: ", serviceName)
+		fmt.Println("currently on: ", currService.Metadata.Name)
 		if currService.Metadata.Name == serviceName {
 			clusterIP = currService.Spec.ClusterIP
+			clusterPort = strconv.Itoa(currService.Spec.Ports[0].Port)
+			fmt.Println("clusterIP = ", clusterIP)
+			fmt.Println("clusterPort = ", clusterPort)
 			return
 		}
 	}
@@ -247,13 +251,18 @@ func GetIngress() {
 	}
 
 	for i := 0; i < len(MyIngress); i++ {
-		MyRoute.ServiceName = MyIngress[i].Prot.Paths[0].Backend.ServiceName
-		MyRoute.ServicePort = strconv.Itoa(MyIngress[i].Prot.Paths[0].Backend.ServicePort)
-		MyRoute.ServiceIP = GetServices(MyIngress[i].Prot.Paths[0].Backend.ServiceName)
-		MyRules.Path = MyIngress[i].Prot.Paths[0].Path
-		MyRules.Route = MyRoute
-		MyRules.Protocol = "http"
-		Ruleset = append(Ruleset, MyRules)
+
+		for k := range MyIngress[i].Prot.Paths {
+			serviceIP, servicePort := GetServices(MyIngress[i].Prot.Paths[k].Backend.ServiceName)
+
+			MyRoute.ServiceName = MyIngress[i].Prot.Paths[k].Backend.ServiceName
+			MyRoute.ServicePort = servicePort
+			MyRoute.ServiceIP = serviceIP
+			MyRules.Path = MyIngress[i].Prot.Paths[k].Path
+			MyRules.Route = MyRoute
+			MyRules.Protocol = "http"
+			Ruleset = append(Ruleset, MyRules)
+		}
 	}
 
 }
