@@ -61,6 +61,9 @@ func InitializeEnvironment() {
 
 	runInstallScript()
 
+	//Init Prometheus
+	//initProm()
+
 	//3. set up cluster pre-requisites
 	shellCommand("kubectl create configmap ingress --from-file=${HOME}/.kube/config", "./")
 	shellCommand("kubectl apply -f ./portalCRD.yaml", "/var/local/kreate")
@@ -126,6 +129,10 @@ func runInstallScript() error {
 	os.Remove(filename)
 	return er
 }
+
+// func initProm() error{
+// 	return error
+// }
 
 func InitHelm() {
 	home, _ := os.UserHomeDir()

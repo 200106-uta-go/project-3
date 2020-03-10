@@ -258,6 +258,15 @@ This sub-command will display a brief helpt text to familiarize the user with va
 
 <!-- ROADMAP -->
 ## Roadmap
+### Features 
+* Allow the creation of multiple profiles
+* Add a command to reset the cluster to a pre-init configuration
+* Add a command to uninstall a profile chart from the cluster
+* Add portals that query additional times
+* Remove helm dependencies
+* Configure metrics applications outside of Istio profile
+* Add a command to add a prometheus exporter to the cluster
+
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
 
