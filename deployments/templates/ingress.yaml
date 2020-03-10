@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   name: ingressname
 spec:
+  {{- range $app := .Values.apps }}
   rules:
   - host:
-    {{- range $app := .Values.apps }}
-    {{- range $endpoint := $app.endpoints }} 
     http:
       paths:
+      {{- range $endpoint := $app.endpoints }} 
       - path: {{ $endpoint }}
         backend:
           serviceName: {{ $app.name }}
