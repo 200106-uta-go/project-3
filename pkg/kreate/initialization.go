@@ -165,7 +165,6 @@ func initProm(){
 
 	//Export prometheus-service ip into promIP.txt
 	runcmd("kubectl describe svc -n monitoring prometheus-service | grep Endpoints >> prometheus/promIP.txt", home)
-	runcmd("kubectl -n monitoring wait --for=condition=available service/prometheus-service --timeout=60s", home)
 
 	//Delete extra files
 	runcmd("rm -rf prometheus/promOperator", home)
