@@ -42,6 +42,16 @@ pDelete: ## delete prometheus gateways
 	kubectl delete virtualservice prometheus-vts -n istio-system
 	kubectl delete destinationrule prometheus -n istio-system
 
+demoSetup: ## sets up environment for demo all the way through building binaries
+	sudo snap install go --classic
+	mkdir -p go/src/github.com/200106-uta-go/project-3
+	cd go/src/github.com/200106-uta-go/project-3
+	git init
+	git pull https://github.com/200106-uta-go/project-3
+	sudo go get -d ./...
+	sudo go build ./cmd/kreate
+	sudo mv kreate /bin
+
 delete: jDelete gDelete kDelete pDelete
 
 jApply:
