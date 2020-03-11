@@ -1,7 +1,6 @@
 package kreate
 
 import (
-	"time"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -150,10 +149,11 @@ func initProm(){
 
 	//Create Prometheus operator
 	runcmd("kubectl apply -n monitoring -f prometheus/promOperator", home)
-	fmt.Println("Creating Prometheus Operator")
+	fmt.Println("Waiting for Prometheus Operator to be ready")
 
 	//Wait to make sure that operator is running
-	time.Sleep(60*time.Second)
+	runcmd("kubectl -n monitoring wait --for=condition=available deployment/prometheus-operator --timeout=60s", home)
+
 
 	//Create Prometheus service
 	runcmd("kubectl apply -n monitoring -f prometheus/promService", home)
@@ -165,6 +165,7 @@ func initProm(){
 
 	//Export prometheus-service ip into promIP.txt
 	runcmd("kubectl describe svc -n monitoring prometheus-service | grep Endpoints >> prometheus/promIP.txt", home)
+	runcmd("kubectl -n monitoring wait --for=condition=available service/prometheus-service --timeout=60s", home)
 
 	//Delete extra files
 	runcmd("rm -rf prometheus/promOperator", home)

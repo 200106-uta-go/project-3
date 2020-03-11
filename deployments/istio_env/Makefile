@@ -44,13 +44,13 @@ pDelete: ## delete prometheus gateways
 
 demoSetup: ## sets up environment for demo all the way through building binaries
 	sudo snap install go --classic
-	mkdir -p go/src/github.com/200106-uta-go/project-3
-	cd go/src/github.com/200106-uta-go/project-3
-	git init
-	git pull https://github.com/200106-uta-go/project-3
+	mkdir -p ~/go/src/github.com/200106-uta-go/project-3
+	git init go/src/github.com/200106-uta-go/project-3
+	cd go/src/github.com/200106-uta-go/project-3/ && git pull https://github.com/200106-uta-go/project-3
 	sudo go get -d ./...
 	sudo go build ./cmd/kreate
 	sudo mv kreate /bin
+	sudo chgrp roog /bin/kreate
 
 delete: jDelete gDelete kDelete pDelete
 
