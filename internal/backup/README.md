@@ -6,20 +6,10 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-<p align="center">
-    <a href="https://github.com/200106-uta-go/project-3/graphs/contributors" alt="Contributors">
-        <img src="https://img.shields.io/github/contributors/badges/shields"/></a>       
-    <a href="https://github.com/200106-uta-go/project-3/network/members" alt="Forks">
-        <img src="https://img.shields.io/github/forks/badges/shields" /></a> 
-    <a href="https://github.com/200106-uta-go/project-3/issues" alt="Issues">
-        <img src="https://img.shields.io/github/issues/badges/shields" /></a> 
-</p>
-
-<!--
 [![Contributors][contributors-shield]][https://github.com/200106-uta-go/project-3/graphs/contributors]
 [![Forks][forks-shield]][https://github.com/200106-uta-go/project-3/network/members]
 [![Stargazers][stars-shield]][https://github.com/200106-uta-go/project-3/stargazers]
-[![Issues][issues-shield]][https://github.com/200106-uta-go/project-3/issues] -->
+[![Issues][issues-shield]][https://github.com/200106-uta-go/project-3/issues]
 
 
 <!-- PROJECT LOGO -->
@@ -92,13 +82,13 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This repository contains the source code for the Kreate CLI, Custom Ingress controller, and Custom Resource Definition [CRD] (Portal).
+This repository contains the source code for the Kreate cli, and Custom Ingress controller.
 
 ### Prerequisites
 
-- `Kubernetes` cluster must be already active for Kreate and Custom Ingress to function.
+- Kubernetes cluster must be already active for Kreate and Custom Ingress to function.
 
-- Uses `Helm 2.10+` and not Helm 3, currently installs newest version of Helm 2 during initialization.
+- Uses Helm 2.10+ and not Helm 3, currently installs newest version of Helm 2 durring initialization.
 
 ### Installation
 
@@ -108,7 +98,7 @@ go build ./cmd/kreate
 ```
 2. Initilize Kreate
 ```sh
-kreate init
+Kreate init
 ```
 
 <!-- USAGE EXAMPLES -->
@@ -119,6 +109,8 @@ Use this space to show useful examples of how a project can be used. Additional 
 ```
 kreate <sub-command> [PROFILE_NAME]
 ```
+
+_For more examples, please refer to the [Documentation](https://example.com)_
 
 ### Creating a New Profile
 
@@ -146,10 +138,10 @@ kreate profile myprofile
 
 ### Outputting a Chart
 ```
-kreate chart [PROFILE_NAME]
+Kreate chart [PROFILE_NAME]
 ```
 
-`kreate chart` is a function that generates a `values.yaml`, `Chart.yaml`, yaml templates for use with helm, and already-templated yamls ready for deployment in a `Kubernetes` cluster. 
+CreateChart is a function that generates a values.yaml, Chart.yaml, yaml templates for use with helm, and already-templated yamls ready for deployment in a Kubernetes cluster. 
 
 When this command is used, a charts folder will be added to your current working directory with the following structure.
 ```
@@ -167,9 +159,9 @@ When this command is used, a charts folder will be added to your current working
         │   └── service.yaml
         └── values.yaml
 ```
-The `charts` directory is where all charts generated using `kreate chart` will be located. Each folder underneath `charts`, will be a separate chart based on a unique `kreate` profile. If the program is run multiple times without editing the `name` value in `Chart.yaml`, the new deployment will overwrite any existing chart with the same name.
+The `charts` directory is where all charts generated using CreateChart will be located. Each folder underneath `charts`, will be a separate chart based on a unique kreate profile. If the program is run multiple times without editing the `name` value in `Chart.yaml`, the new deployment will overwrite any existing chart with the same name.
 
-Within each unique chart folder, the `deploy` folder will hold already-templated yaml files ready for deployment using [kubectl apply](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply).
+Within each unique chart folder, the `deploy` folder will hold already-templated .yaml files ready for deployment using [kubectl apply](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply).
 
 The `templates` folder will hold a copy of the templates stored in `/var/local/kreate` that are used to generate the templated yaml files in the `deploy` folder. These templates are for use with [Go text templating](https://golang.org/pkg/text/template/), and can be used directly with [Helm](https://v2.helm.sh/docs/) or expanded with more templated values.
 
@@ -178,76 +170,91 @@ The `templates` folder will hold a copy of the templates stored in `/var/local/k
 kreate run [PROFILE_NAME]
 ```
 
-`kreate run` is a function which utilizes `Helm` to deploy a profile directly to the `Kubernetes` cluster. Given a profile name, `kreate run` will do the following:
-1. Determine if `Helm` is properly initialized. The `tiller` must be installed to the cluster prior to running a profile
-2. Build a custom `Helm chart` for the specified profile using `kreate chart`
+RunProfile is a function which utilizes helm to deploy a profile directly to the Kubernetes Cluster. Given a profile name, RunProfile will attempt the following\:
+1. Determine if Helm is properly initialized. The tiller must be installed to the cluster prior to running a profile
+2. Build a custom Helm chart for the specified profile using kreate.CreateChart()
 3. Create the custom ingress configmap and install the portal custom resource to the cluster
-4. Install the custom `Helm chart`, or if the profile was previously deployed, Upgrade the existing installation.
+4. Install the Helm chart, or if the profile was previously deployed, Upgrade the existing installation.
 
-`kreate run` anticipates that `kreate init` has been completed successfully. **Thus, the user is required to run `kreate Init` prior to `kreate run`.**
+RunProfile anticipates that Kreate.InitializeEnvironment() has been completed successfully. **Thus, the user is required to run kreate Init prior to kreate Run.**
 
 ### Using Remove Command to remove a Profile
 ```
 kreate remove [PROFILE_NAME | --all | -a]
 ```
 
-The remove command removes a specified profile from /etc/kreate/ directory. When using `--all` (or the shorthand `-a`) in place of a profile name, all profiles will be removed.
+The remove command removes a specified profile from /etc/kreate/ directory. When using --all (or the shorthand -a) inplace of a profile name, all profiles will be removed.
 
 ### Using the edit Command to change a Profile
 ```
-kreate edit [PROFILE_NAME] [flags...]
+kreate edit [PROFILE_NAME]
 ```
-`kreate edit` allows changes by setting values to each flag, each flag is checked to see if the value is different from the default flag values and if so, an instance of a *Profile* will be created and its values will be set to reflect the values set in the flags. After all values have been set, the *profile* instance will be used to write to a new file with the same file name and delete the old instance of the *Profile*. 
+
+A function that receives a profile struct and allows edits based on set flags to create a new profile struct that is used to `update` the yaml file with the same name corresponding to the input profile struct.
+
+#### Getting Started
+
+Our implementation will allow changes to Cluster specific entries by setting values to each flag, each flag is checked to see if the value is different from the default flag values and if so, an instance of a *Profile* will be created and its values will be set to reflect the values set in the flags. After all values have been set, the *profile* instance wil be used to write to a new file with the same file name and delete the old instance of the yaml. 
 
 To view all the configuration flags for edit will be located in: 
-`kreate usage`
+`./kreate usage`
 
-*Note* that the `name` flag must be set to an existing app's name within the *Profile* , otherwise the function will not change any values corresponding to that app, and a message will be logged to the user that a name was not correctly specified.
+*Note* that the `name` flag must be set to an existing app's name within the yaml file, otherwise the function will not change any values corresponding to any app, and a message will be logged to the user that a name was not correctly specified.
 
-#### Edit configuration flags specific to the cluster
+#### Configuration flags specific to Cluster
 
 This section below list all the configuration flags for cluster related settings.
 
 > `name` - *Sets the name of profile*
+
 > `clustername` - *Sets the clustername of the profile*
+
 > `clusterip` - *Sets the clusterip of the profile*
+
 > `clusterport` - *Append a clusterport to the profile*
 
-#### Edit configuration flags specific to an individual app
+>
+#### Configuration flags specific to individual app
 
 This section below list all configuration flags for app specific setting.
 
 > `NameOfApp` - *Specifies the name of the app which will be modified by the app-related input flags*
+
 > `imageurl` - *An App-related flag. Sets the imageurl of the App specified by the NameOfApp flag*
+
 > `servicename` - *An App-related flag. Sets the servicename of the App specified by the NameOfApp flag*
+
 > `serviceport` - *An App-related flag. Sets the serviceport of the App specified by the NameOfApp flag*
+
 > `port` - *An App-related flag. Appends a port to the App specified by the NameOfApp flag*
+
 > `endpoint` - *An App-related flag. Appends an endpoint to the App specified by the NameOfApp flag*
 
-`kreate edit` anticipates that `kreate init` and `kreate profile` have been completed successfully. **Thus, the user is required to run `kreate Init` and `kreate profile` prior to `kreate edit`.**
+#### Prerequisites
 
-### Example:
-A profile `defaultName` has already been created using 
-```
-kreate profile defaultName`
-```
-We can edit one of two was:
-```
-kreate edit defaultName`
-```
-*Note* Without passing any flag values nano text editor will open the yaml file and allow manual edits from that program. 
+This function requires the name of the yaml in the form of `"defaultName"`.
 
-Otherwise after defining the filename, flags can be passed to this function in the form of *-flag FlagValue*.
-```
-kreate edit defaultName -name newName
-```
+Before starting, within the cmd folder, initialization must be executed with:
+
+1. `./kreate init`
+
+Create a profile yaml named *defaultName.yaml* and store it under */etc/kreate/*, which is define as *kreate.PROFILES*.
+
+2. `./kreate profile defaultName`
+
+Call `Edit` to profile to change the values of this yaml to reflect how the configuration of the cluster and apps within the cluster should be.
+
+`./kreate edit defaultName`
+*Note* Without passing any flag values nano text editor will open the yaml file and allow manual edits from that program, otherwise after defining the filename, flags can be passed to this function in the form of *-flag FlagValue*.
+
 ### How to view the Help Text
+
 
 ```
 kreate help
 ```
 
-This sub-command will display a brief help text to familiarize the user with various commands associated with the tool.
+This sub-command will display a brief helpt text to familiarize the user with various commands associated with the tool.
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -258,9 +265,11 @@ This sub-command will display a brief help text to familiarize the user with var
 * Add portals that query additional times
 * Remove helm dependencies
 * Configure metrics applications outside of Istio profile
-* Add a command to add a Prometheus exporter to the cluster
+* Add a command to add a prometheus exporter to the cluster
+
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+
 
 
 <!-- CONTRIBUTING -->
@@ -301,4 +310,3 @@ See also the list of [contributors](https://github.com/200106-uta-go/project-3/g
 -Theiss | Joseph | Ingress | [jtheiss19](https://github.com/jtheiss19)
 -Thomas | Zach | Ingress | [zachthomas823](https://github.com/zachthomas823)
 -Zoeller | Joseph | CLI | [JosephZoeller](https://github.com/JosephZoeller)
-
