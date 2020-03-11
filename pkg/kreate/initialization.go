@@ -169,7 +169,6 @@ func initProm(){
 	//Delete extra files
 	runcmd("rm -rf prometheus/promOperator", home)
 	runcmd("rm -rf prometheus/nodeExporter", home)
-	runcmd("rm -rf prometheus/promService", home)
 }
 
 //InitHelm initializes helm on the cluster
