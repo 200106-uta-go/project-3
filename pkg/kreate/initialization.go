@@ -153,7 +153,7 @@ func initProm(){
 	fmt.Println("Creating Prometheus Operator")
 
 	//Wait to make sure that operator is running
-	time.Sleep(30*time.Second)
+	time.Sleep(45*time.Second)
 
 	//Create Prometheus service
 	runcmd("kubectl apply -n monitoring -f prometheus/promService", home)
