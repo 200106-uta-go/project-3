@@ -6,13 +6,10 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
+[![Contributors][contributors-shield]][https://github.com/200106-uta-go/project-3/graphs/contributors]
+[![Forks][forks-shield]][https://github.com/200106-uta-go/project-3/network/members]
+[![Stargazers][stars-shield]][https://github.com/200106-uta-go/project-3/stargazers]
+[![Issues][issues-shield]][https://github.com/200106-uta-go/project-3/issues]
 
 
 <!-- PROJECT LOGO -->
@@ -290,16 +287,17 @@ See also the list of [contributors](https://github.com/200106-uta-go/project-3/g
 
 -Last Name | First Name | Responsibilities | Github User
 -----------|------------|------------------|------------
--Ackard | Matt | CRD,CLI | 
--Bland | Jessey | CLI | 
--Campbell | Nehemiah | CLI | 
--Feliciano | Emilio | CLI | 
--Kim | Aaron | CLI | 
--Locker | Brandon | CLI | 
--McDole | Ken | CRD,CLI |
+-Ackard | Matt | CRD,CLI | [mattackard](https://github.com/mattackard)
+-Bland | Jessey | CLI | [JesseyBland](https://github.com/JesseyBland)
+-Campbell | Nehemiah | CLI | [NehemiahG7](https://github.com/NehemiahG7)
+-Estrada | Dania | Ingress | 
+-Feliciano | Emilio | CLI | [FelicianoEJ](https://github.com/FelicianoEJ)
+-Kim | Aaron | CLI | [ajkim19](https://github.com/ajkim19)
+-Locker | Brandon | CLI | [Gamemastertwig](https://github.com/Gamemastertwig)
+-McDole | Ken | CRD,CLI | [ken343](https://github.com/ken343)
 -Moreno | Hector | CLI | 
--Nguyen | Josh | CLI |
--Oh | Jaeik | CLI,Visuals |
--Theiss | Joseph | Ingress |
--Thomas | Zach | Ingress |
--Zoeller | Joseph | CLI |
+-Nguyen | Josh | CLI | [CodeZipline](https://github.com/CodeZipline)
+-Oh | Jaeik | CLI,Visuals | [flyerjayden](https://github.com/flyerjayden)
+-Theiss | Joseph | Ingress | [jtheiss19](https://github.com/jtheiss19)
+-Thomas | Zach | Ingress | [zachthomas823](https://github.com/zachthomas823)
+-Zoeller | Joseph | CLI | [JosephZoeller](https://github.com/JosephZoeller)
