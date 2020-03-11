@@ -6,15 +6,12 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-<p align="center">
-    <a href="https://github.com/200106-uta-go/project-3/graphs/contributors" alt="Contributors">
-        <img src="https://img.shields.io/github/contributors/badges/shields"/></a>       
-    <a href="https://github.com/200106-uta-go/project-3/network/members" alt="Forks">
-        <img src="https://img.shields.io/github/forks/badges/shields" /></a> 
-    <a href="https://github.com/200106-uta-go/project-3/issues" alt="Issues">
-        <img src="https://img.shields.io/github/issues/badges/shields" /></a> 
-</p>
 
+![GitHub contributors](https://img.shields.io/github/contributors/200106-uta-go/project-3)
+![GitHub forks](https://img.shields.io/github/forks/200106-uta-go/project-3?label=Forks)
+![GitHub stars](https://img.shields.io/github/stars/200106-uta-go/project-3?style=Stars)
+![GitHub issues](https://img.shields.io/github/issues-raw/200106-uta-go/project-3)
+[![Go Report Card](https://goreportcard.com/badge/github.com/200106-uta-go/project-3)](https://goreportcard.com/report/github.com/200106-uta-go/project-3)
 <!--
 [![Contributors][contributors-shield]][https://github.com/200106-uta-go/project-3/graphs/contributors]
 [![Forks][forks-shield]][https://github.com/200106-uta-go/project-3/network/members]
