@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: monitoring
+  name: service-monitor
   labels:
     prometheus: prometheus-monitoring
     k8s-app: monitoring
@@ -14,5 +14,5 @@ spec:
     matchNames:
     - monitoring
   endpoints:
-  - port: http
+  - port: http-metrics
     interval: 30s

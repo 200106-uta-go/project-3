@@ -1,6 +1,7 @@
 package kreate
 
 import (
+	"time"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -24,6 +25,7 @@ var (
 2. Setup kreate's environment variables (If any)
 */
 
+//InitializeDirectories creates all directories needed by the application
 func InitializeDirectories() {
 	pathErr := os.MkdirAll(MOULDFOLDERS, 0777)
 	if pathErr != nil {
@@ -55,11 +57,15 @@ func InitializeDirectories() {
 	}
 }
 
+//InitializeEnvironment init's the program
 func InitializeEnvironment() {
 	// TODO check if helm version is 2.16.3. If not, prompt the user to overwrite?
 	// TODO check if istio environment is already deployed?
 
 	runInstallScript()
+
+	//Init Prometheus
+	initProm()
 
 	//3. set up cluster pre-requisites
 	shellCommand("kubectl create configmap ingress --from-file=${HOME}/.kube/config", "./")
@@ -127,6 +133,46 @@ func runInstallScript() error {
 	return er
 }
 
+func initProm(){
+	home, _ := os.UserHomeDir()
+
+	fmt.Println("-----Starting Prometheus-----")
+
+	//Pull prometheus directory from project repo
+	runcmd("svn export http://github.com/200106-uta-go/project-3/trunk/deployments/prometheus", home)
+	fmt.Println("Pulling prometheus directory")
+
+	//create and label monioring namespace
+	runcmd("kubectl create namespace monitoring", home)
+	fmt.Println("Creating \"monitoring\" namespace")
+	runcmd("kubectl label namespace monitoring istio-injection=enabled", home)
+	fmt.Println("Labeling monitoring namespece for Istio")
+
+	//Create Prometheus operator
+	runcmd("kubectl apply -n monitoring -f prometheus/promOperator", home)
+	fmt.Println("Creating Prometheus Operator")
+
+	//Wait to make sure that operator is running
+	time.Sleep(10*time.Second)
+
+	//Create Prometheus service
+	runcmd("kubectl apply -n monitoring -f prometheus/promService", home)
+	fmt.Println("Creating Prometheus service in monitoring")
+
+	//Create node exporter deamonset and service to monitor
+	runcmd("kubectl apply -n monitoring -f prometheus/nodeExporter", home)
+	fmt.Println("Creating node exporter deamonset and services")
+
+	//Export prometheus-service ip into promIP.txt
+	runcmd("kubectl describe svc -n monitoring prometheus-service | grep Endpoints >> prometheus/promIP.txt", home)
+
+	//Delete extra files
+	runcmd("rm -rf prometheus/promOperator", home)
+	runcmd("rm -rf prometheus/nodeExporter", home)
+	runcmd("rm -rf prometheus/promService", home)
+}
+
+//InitHelm initializes helm on the cluster
 func InitHelm() {
 	home, _ := os.UserHomeDir()
 
@@ -144,6 +190,7 @@ func InitHelm() {
 	runcmd("sudo cp tiller /bin/tiller", home+"/linux-amd64/")
 }
 
+//InitIstio initializes Istio on the cluster
 func InitIstio() {
 	home, _ := os.UserHomeDir()
 
@@ -160,6 +207,7 @@ func InitIstio() {
 	runcmd("sudo cp istio-1.4.5/bin/istioctl /bin/istioctl", home)
 }
 
+//InitKreate initializes Kreate on the cluster
 func InitKreate() {
 	home, _ := os.UserHomeDir()
 
@@ -211,7 +259,7 @@ func InitKreate() {
 	}
 	//runcmd("kubectl -n istio-system wait --for=condition=complete job --all", home)
 
-	// install istio to the cluster
+	// install istio to thekubectl describe svc -n monitoring prometheus-service | grep Endpoints >> prometheus/promIP.txt cluster
 	fmt.Println("LOG: Deploy Istio (demo) to cluster...")
 	runcmd("sudo helm install istio-1.4.5/install/kubernetes/helm/istio --name istio --namespace istio-system --values istio-1.4.5/install/kubernetes/helm/istio/values-istio-demo.yaml", home)
 
@@ -225,6 +273,7 @@ func InitKreate() {
 	runcmd("kubectl apply -f deployments/istio_env/istiometrics.yaml", home+"/go/src/github.com/200106-uta-go/project-3/")
 }
 
+//RemoveArtifacts delets are artifacts made by the application
 func RemoveArtifacts() {
 	home, _ := os.UserHomeDir()
 

@@ -106,14 +106,15 @@ func createChartFile(profile Profile) {
 	chart := fmt.Sprintf(`apiVersion: v1
 name: %s
 version: 1.0.0
-description: A custom ingress controller to provide failover requests to another address
+description: %s configured with custom ingress and request failure portals
 keywords:
 - ingress
+- portals
 - failover
 sources:
 - https://github.com/200106-uta-go/project-3
 maintainers:
-- name: do we want our names here? for posterity/blame`, profile.Name)
+- name: Revature Go Batch Jan-6-2020`, profile.Name, profile.Name)
 
 	chartFile, err := os.Create("./charts/" + profile.Name + "/Chart.yaml")
 	if err != nil {
