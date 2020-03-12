@@ -1,0 +1,17 @@
+name: zach-server
+clustername: foreign-cluster
+clusterip: 127.0.0.1:30101
+clusterports:
+  - "30101"
+apps:
+  - name: zach-server
+    imageurl: zachthomas823/server
+    servicename: zach-server
+    serviceport: 4000
+    ports:
+      - "80"
+    endpoints:
+      - /
+      - /player
+      - /stats
+      - /sorted_stats
