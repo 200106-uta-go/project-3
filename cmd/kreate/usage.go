@@ -14,7 +14,7 @@ The commands are:
 		init		sets up necessary dependencies
 		profile		create a new profile which the user can set key value pairs in "etc/kreate"
 		edit		edit a pre-existing profile
-                       -name   Sets the name of profile
+                       -name   Sets the name of cluster's portal
                        -clustername    Sets the clustername of the profile
                        -clusterip      Sets the clusterip of the profile
                        -clusterport    Append a clusterport to the profile
