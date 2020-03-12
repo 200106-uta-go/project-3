@@ -125,6 +125,7 @@ func EditProfile(YamlName string) (Profile, error) {
 
 	if flag.NFlag() == 0 {
 	 	OpenFileInEditor(YamlName)
+		return pf, nil 
 	}
 
 	//Checking this 4 if statements to see if any one of our next four flags where set to make changes to the file pointed to by YamlFileName.
