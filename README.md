@@ -203,7 +203,7 @@ To view all the configuration flags for edit will be located in:
 
 This section below list all the configuration flags for cluster related settings.
 
-> `name` - *Sets the name of profile*
+> `name` - *Sets the name of the portal*
 > `clustername` - *Sets the clustername of the profile*
 > `clusterip` - *Sets the clusterip of the profile*
 > `clusterport` - *Append a clusterport to the profile*
