@@ -1,0 +1,7 @@
+[
+    {
+        "ClusterName": "cluster_a",
+        "ClusterIP": "1.2.3.4",
+        "ClusterPort": "80"
+    }
+]

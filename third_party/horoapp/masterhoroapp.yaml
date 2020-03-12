@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata: 
+  name: horoapi-deployment
+  labels: 
+    type: back-end
+
+spec:
+  template:
+    metadata:
+      labels:
+        app: horoscopems-pod
+        type: back-end
+
+    spec:
+      containers:
+        - name: horoscopems
+          image: felicianoej/horoscopems:latest
+          ports:
+          - containerPort: 8080
+
+  replicas: 2
+
+  selector:
+    matchLabels:
+      type: back-end
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: horoapisvc
+
+spec:
+  type: ClusterIP
+  
+  ports:
+  - targetPort: 8080
+    port: 8080
+
+  selector:
+    type: back-end
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata: 
+  name: horoweb-deployment
+  labels: 
+    type: front-end
+
+spec:
+  template:
+    metadata:
+      labels:
+        app: horoscoped-pod
+        type: front-end
+
+    spec:
+      containers:
+        - name: horoscoped
+          image: felicianoej/horoscoped:latest
+          args: ["-ip=horoapisvc", "-p=8080"]
+          ports:
+          - containerPort: 8080
+
+  replicas: 2
+
+  selector:
+    matchLabels:
+      type: front-end
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: horowebsvc
+
+spec:
+  type: NodePort
+  
+  ports:
+  - name: horoweb-svc-port
+    targetPort: 8080
+    port: 80
+    nodePort: 30080
+  
+  selector:
+    type: front-end

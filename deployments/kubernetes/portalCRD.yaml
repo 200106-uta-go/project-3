@@ -1,0 +1,47 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: portals.revature.com
+spec:
+  group: revature.com
+  # resource will be available in namespace only
+  scope: Namespaced
+  # names to be used in "kind" field and "kubectl get"
+  names:
+    plural: portals
+    singular: portal
+    kind: Portal
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      # schema for pipe objects
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                portal:
+                  type: "string"
+                targetip:
+                  type: "string"
+                port: 
+                  type: "string"
+                  # validates the string to be an ip address
+                  # pattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+      # tells kubectl what to print when running "kubectl get"
+      additionalPrinterColumns:
+        - name: Cluster
+          type: string
+          description: The name of the portal
+          jsonPath: .spec.portal
+        - name: IP
+          type: string
+          description: The IP address of the foreign cluster
+          jsonPath: .spec.targetip
+        - name: Port
+          type: string
+          description: The port of the foreign cluster
+          jsonPath: .spec.port 

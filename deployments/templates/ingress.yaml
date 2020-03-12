@@ -1,0 +1,68 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingressname
+spec:
+  {{- range $app := .Values.apps }}
+  rules:
+  - host:
+    http:
+      paths:
+      {{- range $endpoint := $app.endpoints }} 
+      - path: {{ $endpoint }}
+        backend:
+          serviceName: {{ $app.name }}
+          servicePort: {{ $app.serviceport }}
+{{- end }}
+{{- end }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ingresscontroller
+  labels:
+    app: ingress
+spec:
+  containers:
+  - name: ingresscontroller
+    image: zachthomas823/ingress-controller
+    ports:
+    - containerPort: 80
+    - containerPort: 8080
+    volumeMounts:
+    - name: config-volume
+      mountPath: /root/.kube/
+  volumes:
+  - name: config-volume
+    configMap:
+      name: ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingressnode
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      nodePort: 30100
+      targetPort: 80
+  selector:
+    app: ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingressnode2
+  labels:
+    name: node
+spec:
+  type: NodePort
+  ports:
+    - port: 8081
+      nodePort: 30101
+      targetPort: 8080
+  selector:
+    app: ingress

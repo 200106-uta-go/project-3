@@ -1,0 +1,29 @@
+{{- range $app := .Values.apps }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $app.name }}
+  labels:
+    app: {{ $app.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $app.name }}
+    spec:
+      serviceAccountName: {{ $app.name }}-svcact
+      containers:
+      - name: {{ $app.name }}
+        image: {{ $app.imageurl }}
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: {{$app.serviceport -}}
+{{ end }}
